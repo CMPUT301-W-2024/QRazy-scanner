@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "110973400499",
+    "project_id": "qrazy-scanner",
+    "storage_bucket": "qrazy-scanner.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:110973400499:android:745973bc930a0e6c4f47c6",
+        "android_client_info": {
+          "package_name": "com.example.projectapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMu3-KxAesI5vLg_Mr_9eAnyB3fnhTbDs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
