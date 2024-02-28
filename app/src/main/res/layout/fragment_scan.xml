@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/fragment_scan.xml -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Camera preview (small square) -->
+    <SurfaceView
+        android:id="@+id/cameraPreview"
+        android:layout_width="300dp"
+        android:layout_height="500dp"
+        android:layout_centerInParent="true" />
+
+    <!-- TextView to display QR code information -->
+    <TextView
+        android:id="@+id/qrCodeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/linear_buttons"
+        android:layout_centerHorizontal="true"
+        android:text="Scan QR Code"
+        android:textSize="18sp" />
+
+    <!-- User button (top left) -->
+    <Button
+        android:id="@+id/userButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:text="User Profile" />
+
+    <!-- Button for scan success (below QR code text) -->
+
+    <LinearLayout
+        android:id="@+id/linear_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:padding="16dp">
+
+        <!-- Event Description -->
+        <Button
+            android:id="@+id/scanSuccessButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Scan Successfully" />
+        <Button
+            android:id="@+id/scan_fragment_cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="CANCEL" />
+
+    </LinearLayout>
+
+</RelativeLayout>
+
