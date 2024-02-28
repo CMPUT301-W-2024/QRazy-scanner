@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 public class ProfileFragment extends Fragment {
 
@@ -25,17 +26,16 @@ public class ProfileFragment extends Fragment {
         phoneEditText = view.findViewById(R.id.phoneEditText);
 
         // Load saved values from SharedPreferences
-        loadSavedValues();
 
         // Save button click listener
         Button saveButton = view.findViewById(R.id.saveButton);
-        saveButton.setOnClickListener(v -> {saveValues();
-            ScanFragment scanFragment = new ScanFragment();
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(android.R.id.content, scanFragment) // Use android.R.id.content as the container
-                    .addToBackStack(null) // Optional: Add to back stack for navigation
-                    .commit();});
+        saveButton.setOnClickListener(v -> {
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+            if (fragmentManager.getBackStackEntryCount() > 0) {
+                loadSavedValues();
+                fragmentManager.popBackStackImmediate(); // Navigate back to the previous fragment
+            }
+        });
 
         return view;
     }

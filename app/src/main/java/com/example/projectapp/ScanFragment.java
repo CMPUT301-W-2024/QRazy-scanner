@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 public class ScanFragment extends Fragment {
 
@@ -22,6 +23,7 @@ public class ScanFragment extends Fragment {
         TextView qrCodeTextView = rootView.findViewById(R.id.qrCodeTextView);
         Button userButton = rootView.findViewById(R.id.userButton);
         Button scanSuccessButton = rootView.findViewById(R.id.scanSuccessButton);
+        Button cancelButton = rootView.findViewById(R.id.scan_fragment_cancel_button);
 
         // Set click listener for user button (directs to user profile fragment)
         userButton.setOnClickListener(new View.OnClickListener() {
@@ -31,7 +33,9 @@ public class ScanFragment extends Fragment {
                 ProfileFragment profileFragment = new ProfileFragment();
                 requireActivity().getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(android.R.id.content, profileFragment) // Use android.R.id.content as the container
+                        .replace(android.R.id.content, profileFragment)
+                        // Use android.R.id.content as the container
+                        .addToBackStack(null)
                         .commit();
             }
         });
@@ -47,6 +51,13 @@ public class ScanFragment extends Fragment {
                         .replace(android.R.id.content, eventInfoFragment) // Use android.R.id.content as the container
                         .addToBackStack(null) // Optional: Add to back stack for navigation
                         .commit();
+            }
+        });
+
+        cancelButton.setOnClickListener(v -> {
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+            if (fragmentManager.getBackStackEntryCount() > 0) {
+                fragmentManager.popBackStackImmediate(); // Navigate back to the previous fragment
             }
         });
 
