@@ -1,5 +1,7 @@
 package com.example.projectapp;
 
-public class Event {
+import java.util.ArrayList;
 
+public class Event {
+    AttendeeTracker attendees;
 }
