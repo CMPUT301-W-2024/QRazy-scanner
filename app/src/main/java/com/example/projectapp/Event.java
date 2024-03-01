@@ -1,22 +1,7 @@
 package com.example.projectapp;
 
+import java.util.ArrayList;
+
 public class Event {
-    public String name;
-    public String dcrip;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDcrip() {
-        return dcrip;
-    }
-
-    public void setDcrip(String dcrip) {
-        this.dcrip = dcrip;
-    }
+    AttendeeTracker attendees;
 }
