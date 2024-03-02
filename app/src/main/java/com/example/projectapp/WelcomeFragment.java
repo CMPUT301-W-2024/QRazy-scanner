@@ -1,5 +1,6 @@
 package com.example.projectapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,18 @@ public class WelcomeFragment extends Fragment {
             }
         });
 
+        // "Create Event" button
+        Button createEventButton = rootView.findViewById(R.id.createEventButton);
+        createEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), CreateEventActivity.class);
+                startActivity(intent);
+            }
+        });
+
         return rootView;
     }
+
+
 }
