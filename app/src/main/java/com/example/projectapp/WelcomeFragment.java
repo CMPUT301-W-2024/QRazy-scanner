@@ -1,8 +1,12 @@
 package com.example.projectapp;
 
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
+
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -68,8 +72,19 @@ public class WelcomeFragment extends Fragment {
             }
         });
 
+        // "Create Event" button
+        Button createEventButton = rootView.findViewById(R.id.createEventButton);
+        createEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), CreateEventActivity.class);
+                startActivity(intent);
+            }
+        });
+
         return rootView;
     }
+
 
     public String getAttendeeId(){
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("AttendeePref", Context.MODE_PRIVATE);
@@ -82,4 +97,7 @@ public class WelcomeFragment extends Fragment {
         editor.putString("attendeeId", MainActivity.getAttendee().getAttendeeID());
         editor.apply();
     }
+
+
+
 }
