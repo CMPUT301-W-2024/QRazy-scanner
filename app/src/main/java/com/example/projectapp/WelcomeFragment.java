@@ -1,6 +1,10 @@
 package com.example.projectapp;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +14,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class WelcomeFragment extends Fragment {
+
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Nullable
     @Override
@@ -22,16 +32,54 @@ public class WelcomeFragment extends Fragment {
         joinEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // User has logged in before, get their info
+                if (getAttendeeId() != null){
+                    db.collection("attendees").document(getAttendeeId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            MainActivity.setAttendee(documentSnapshot.toObject(Attendee.class));
+                        }
+                    });
+
+                    Intent i = new Intent(getActivity(), ScanActivity.class);
+                    startActivity(i);
+                }
+                else {
+
+                    MainActivity.setAttendee(new Attendee());
+                    saveAttendeeId();
+                    db.collection("attendees").document(MainActivity.getAttendee().getAttendeeID()).set(MainActivity.getAttendee());
+
+                    ProfileFragment profileFragment = new ProfileFragment();
+                    requireActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(android.R.id.content, profileFragment)
+                            // Use android.R.id.content as the container
+                            .addToBackStack(null)
+                            .commit();
+                }
                 // Create and navigate to the ScanFragment
-                ScanFragment scanFragment = new ScanFragment();
+/*                ScanFragment scanFragment = new ScanFragment();
                 requireActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .replace(android.R.id.content, scanFragment) // Use android.R.id.content as the container
                         .addToBackStack(null) // Optional: Add to back stack for navigation
-                        .commit();
+                        .commit();*/
             }
         });
 
         return rootView;
+    }
+
+    public String getAttendeeId(){
+        SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("AttendeePref", Context.MODE_PRIVATE);
+        return prefs.getString("attendeeId", null);
+    }
+
+    public void saveAttendeeId(){
+        SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("AttendeePref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("attendeeId", MainActivity.getAttendee().getAttendeeID());
+        editor.apply();
     }
 }
