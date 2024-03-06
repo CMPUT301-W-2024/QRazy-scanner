@@ -38,15 +38,17 @@ public class WelcomeFragment extends Fragment {
             public void onClick(View v) {
                 // User has logged in before, get their info
                 if (getAttendeeId() != null){
+                    System.out.println("success click here");
                     db.collection("attendees").document(getAttendeeId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            System.out.println("success click not here");
                             MainActivity.setAttendee(documentSnapshot.toObject(Attendee.class));
+                            Intent i = new Intent(getActivity(), ScanActivity.class);
+                            startActivity(i);
                         }
                     });
 
-                    Intent i = new Intent(getActivity(), ScanActivity.class);
-                    startActivity(i);
                 }
                 else {
 
@@ -90,7 +92,6 @@ public class WelcomeFragment extends Fragment {
                     db.collection("organizers").document(getOrganizerId()).set(MainActivity.getOrganizer()).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
-                            System.out.println("success click here");
                             Intent intent = new Intent(getActivity(), CreateEventActivity.class);
                             startActivity(intent);
                             System.out.println("success click not here");
