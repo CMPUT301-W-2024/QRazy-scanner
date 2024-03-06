@@ -47,7 +47,11 @@
 
         <activity
             android:name=".CreateNewEventActivity"
-            android:exported="true">
+            android:exported="false">
+        </activity>
+        <activity
+            android:name=".CreateEventActivity"
+            android:exported="false">
         </activity>
 
     </application>
