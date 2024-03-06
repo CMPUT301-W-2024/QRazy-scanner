@@ -86,6 +86,7 @@ public class WelcomeFragment extends Fragment {
                 } else {
 
                     MainActivity.setOrganizer(new Organizer());
+                    MainActivity.getOrganizer().setOrganizerId(getOrganizerId());
                     saveOrganizerId();
                     db.collection("organizers").document(MainActivity.getOrganizer().getOrganizerId()).set(MainActivity.getOrganizer());
                 }
