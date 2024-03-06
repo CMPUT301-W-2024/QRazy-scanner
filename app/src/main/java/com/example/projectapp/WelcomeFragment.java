@@ -85,14 +85,15 @@ public class WelcomeFragment extends Fragment {
                     });
                 } else {
                     MainActivity.setOrganizer(new Organizer());
-                    MainActivity.getOrganizer().setOrganizerId(getOrganizerId());
                     saveOrganizerId();
 
                     db.collection("organizers").document(getOrganizerId()).set(MainActivity.getOrganizer()).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
+                            System.out.println("success click here");
                             Intent intent = new Intent(getActivity(), CreateEventActivity.class);
                             startActivity(intent);
+                            System.out.println("success click not here");
                         }
                     });
                 }
