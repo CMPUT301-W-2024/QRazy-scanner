@@ -90,21 +90,14 @@ public class WelcomeFragment extends Fragment {
                     db.collection("organizers").document(MainActivity.getOrganizer().getOrganizerId()).set(MainActivity.getOrganizer());
                 }
 
-                ProfileFragment profileFragment = new ProfileFragment();
-                requireActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(android.R.id.content, profileFragment)
-                        // Use android.R.id.content as the container
-                        .addToBackStack(null)
-                        .commit();
+                Intent intent = new Intent(getActivity(), CreateEventActivity.class);
+                startActivity(intent);
 /*=======
         // "Create Event" button
         Button createEventButton = rootView.findViewById(R.id.createEventButton);
         createEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CreateEventActivity.class);
-                startActivity(intent);
 >>>>>>> e8a8cc9b92e3ff3bae27612236861a158523ab3f*/
             }
         });
