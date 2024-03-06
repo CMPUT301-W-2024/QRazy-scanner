@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +28,7 @@ public class WelcomeFragment extends Fragment {
 
         // Find the "Join Event" button
         Button joinEventButton = rootView.findViewById(R.id.joinEventButton);
+        Button createEventButton = rootView.findViewById(R.id.createEventButton);
         joinEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,7 +48,7 @@ public class WelcomeFragment extends Fragment {
 
                     MainActivity.setAttendee(new Attendee());
                     saveAttendeeId();
-                    db.collection("attendees").document(MainActivity.getAttendee().getAttendeeID()).set(MainActivity.getAttendee());
+                    db.collection("attendees").document(MainActivity.getAttendee().getAttendeeId()).set(MainActivity.getAttendee());
 
                     ProfileFragment profileFragment = new ProfileFragment();
                     requireActivity().getSupportFragmentManager()
@@ -68,6 +68,35 @@ public class WelcomeFragment extends Fragment {
             }
         });
 
+
+        createEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // User has logged in before, get their info
+                if (getOrganizerId() != null) {
+                    db.collection("organizers").document(getOrganizerId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            MainActivity.setOrganizer(documentSnapshot.toObject(Organizer.class));
+                        }
+                    });
+                } else {
+
+                    MainActivity.setOrganizer(new Organizer());
+                    saveOrganizerId();
+                    db.collection("organizers").document(MainActivity.getOrganizer().getOrganizerId()).set(MainActivity.getOrganizer());
+                }
+
+                ProfileFragment profileFragment = new ProfileFragment();
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(android.R.id.content, profileFragment)
+                        // Use android.R.id.content as the container
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
         return rootView;
     }
 
@@ -79,7 +108,19 @@ public class WelcomeFragment extends Fragment {
     public void saveAttendeeId(){
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("AttendeePref", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("attendeeId", MainActivity.getAttendee().getAttendeeID());
+        editor.putString("attendeeId", MainActivity.getAttendee().getAttendeeId());
+        editor.apply();
+    }
+
+    public String getOrganizerId(){
+        SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("OrganizerPref", Context.MODE_PRIVATE);
+        return prefs.getString("organizerId", null);
+    }
+
+    public void saveOrganizerId(){
+        SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("OrganizerPref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("organizerId", MainActivity.getOrganizer().getOrganizerId());
         editor.apply();
     }
 }
