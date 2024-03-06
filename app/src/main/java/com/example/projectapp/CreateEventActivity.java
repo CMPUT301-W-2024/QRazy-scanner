@@ -1,6 +1,9 @@
 package com.example.projectapp;
 
-
+<<<<<<< HEAD
+public class CreateEventActivity {
+}
+=======
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -38,3 +41,5 @@ public class CreateEventActivity extends AppCompatActivity {
     private void createEvent(String organizerName) {
     }
 }
+
+>>>>>>> 1c0a295649cdfe947a589935a1507772f95bb224
