@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class MainActivity extends AppCompatActivity {
 
     private static Attendee attendee;
+    private static Organizer organizer;
 
 
     @Override
@@ -48,4 +49,9 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.attendee = attendee;
     }
 
+    public static Organizer getOrganizer() {return organizer;}
+
+    public static void setOrganizer(Organizer organizer) {
+        MainActivity.organizer = organizer;
+    }
 }

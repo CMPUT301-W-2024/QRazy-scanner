@@ -1,7 +1,61 @@
 package com.example.projectapp;
 
-import java.util.ArrayList;
 
+import android.media.Image;
+
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.UUID;
+
+// temporary event class so that conflicts dont occur
 public class Event {
-    AttendeeTracker attendees;
+    private String eventId;
+    private HashMap<String, Integer> attendees;
+    private Image poster;
+    public Event(){
+        eventId = UUID.randomUUID().toString();
+        attendees = new HashMap<>();
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
+
+    public HashMap<String, Integer> getAttendees() {
+        return attendees;
+    }
+
+    public void setAttendees(HashMap<String, Integer> attendees) {
+        this.attendees = attendees;
+    }
+
+    public Image getPoster() {
+        return poster;
+    }
+
+    public void setPoster(Image poster) {
+        this.poster = poster;
+    }
+
+    public Integer getAttendance() {
+        return attendees.size();
+    }
+
+    public void addAttendee(String attendeeId){
+        if (!attendees.containsKey(attendeeId)){
+            attendees.put(attendeeId, 0);
+        }
+        else{
+            Integer checkIns = attendees.get(attendeeId) + 1;
+            attendees.put(attendeeId, checkIns);
+        }
+        DocumentReference attendeeRef = FirebaseFirestore.getInstance().collection("events").document(eventId);
+        attendeeRef.update("attendees", attendees);
+    }
 }

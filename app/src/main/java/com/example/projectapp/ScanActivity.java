@@ -1,27 +1,21 @@
 package com.example.projectapp;
 
-import static androidx.core.app.ActivityCompat.requestPermissions;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.Result;
-
-import java.util.ArrayList;
 
 public class ScanActivity extends AppCompatActivity {
 
@@ -44,7 +38,15 @@ public class ScanActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(ScanActivity.this, result.getText(), Toast.LENGTH_SHORT).show();
+
                         MainActivity.getAttendee().addEvent(result.getText());
+                        db.collection("events").document(result.getText()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                Event event = documentSnapshot.toObject(Event.class);
+                                event.addAttendee(MainActivity.getAttendee().getAttendeeId());
+                            }
+                        });;
                     }
                 });
             }
