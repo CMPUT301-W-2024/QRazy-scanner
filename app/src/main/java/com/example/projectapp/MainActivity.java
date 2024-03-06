@@ -10,6 +10,13 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
+<<<<<<< HEAD
+=======
+    private static Attendee attendee;
+    private static Organizer organizer;
+
+
+>>>>>>> 196777651a74db3aad87dfa2a8928aa65ff6ae0c
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,4 +35,19 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(android.R.id.content, welcomeFragment);
         fragmentTransaction.commit();
     }
+
+    public static Attendee getAttendee() {
+        return attendee;
+    }
+
+    public static void setAttendee(Attendee attendee) {
+        MainActivity.attendee = attendee;
+    }
+
+    public static Organizer getOrganizer() {return organizer;}
+
+    public static void setOrganizer(Organizer organizer) {
+        MainActivity.organizer = organizer;
+    }
+
 }
