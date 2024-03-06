@@ -1,8 +1,12 @@
 package com.example.projectapp;
 
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
+
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,7 +72,6 @@ public class WelcomeFragment extends Fragment {
             }
         });
 
-
         createEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,11 +97,21 @@ public class WelcomeFragment extends Fragment {
                         // Use android.R.id.content as the container
                         .addToBackStack(null)
                         .commit();
+/*=======
+        // "Create Event" button
+        Button createEventButton = rootView.findViewById(R.id.createEventButton);
+        createEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), CreateEventActivity.class);
+                startActivity(intent);
+>>>>>>> e8a8cc9b92e3ff3bae27612236861a158523ab3f*/
             }
         });
 
         return rootView;
     }
+
 
     public String getAttendeeId(){
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("AttendeePref", Context.MODE_PRIVATE);
@@ -123,4 +136,7 @@ public class WelcomeFragment extends Fragment {
         editor.putString("organizerId", MainActivity.getOrganizer().getOrganizerId());
         editor.apply();
     }
+
+
+
 }
