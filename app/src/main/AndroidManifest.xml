@@ -45,6 +45,11 @@
             </intent-filter>
         </receiver>
 
+        <activity
+            android:name=".CreateNewEventActivity"
+            android:exported="true">
+        </activity>
+
     </application>
 
 </manifest>
