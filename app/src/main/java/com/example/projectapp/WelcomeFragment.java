@@ -46,7 +46,6 @@ public class WelcomeFragment extends Fragment {
                             startActivity(i);
                         }
                     });
-
                 }
                 else {
 

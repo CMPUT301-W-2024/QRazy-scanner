@@ -1,19 +1,25 @@
-<!-- res/layout/fragment_profile.xml -->
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <!-- Clickable avatar image (ImageButton) at the top -->
-    <ImageButton
-        android:id="@+id/avatarImageButton"
+    <ImageView
+        android:id="@+id/avatarImage"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:src="@android:drawable/ic_menu_gallery"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"
+        android:contentDescription="Avatar Image" />
+
+    <Button
+        android:id="@+id/avatarImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/avatarImage"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
         android:background="@null"
-        android:contentDescription="Avatar Image"
+        android:text="Change and Save Avatar"
         android:onClick="showImageChangeDialog" />
 
     <!-- User name (editable) -->
