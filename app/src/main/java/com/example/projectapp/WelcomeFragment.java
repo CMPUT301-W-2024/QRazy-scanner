@@ -87,7 +87,7 @@ public class WelcomeFragment extends Fragment {
 
                     MainActivity.setOrganizer(new Organizer());
                     saveOrganizerId();
-                    db.collection("organizers").document(MainActivity.getOrganizer().getOrganizerId()).set(MainActivity.getOrganizer());
+                    db.collection("organizers").document(getOrganizerId()).set(MainActivity.getOrganizer());
                 }
 
                 Intent intent = new Intent(getActivity(), CreateEventActivity.class);
