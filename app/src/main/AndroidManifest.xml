@@ -18,9 +18,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProjectApp"
         tools:targetApi="31">
+        <activity android:name=".Admin" />
         <activity
             android:name=".ScanActivity"
-            android:exported="true">
+            android:exported="false">
 
         </activity>
         <activity
@@ -32,12 +33,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <receiver
+            android:name=".AdminReceiver"
+            android:permission="android.permission.BIND_DEVICE_ADMIN"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
 
         <activity
-            android:name=".CreateEventActivity"
-            android:exported="true">
-
+            android:name=".CreateNewEventActivity"
+            android:exported="false">
         </activity>
+        <activity
+            android:name=".CreateEventActivity"
+            android:exported="false">
+        </activity>
+
     </application>
 
 </manifest>

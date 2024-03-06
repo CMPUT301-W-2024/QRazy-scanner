@@ -2,30 +2,22 @@ package com.example.projectapp;
 
 import android.media.Image;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.Firebase;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
-
-import android.content.Context;
-import android.content.SharedPreferences;
 
 public class Attendee {
     private String profilePic;
     private String name;
     private String homepage;
     private String contactInfo;
-    private String attendeeID;
+    private String attendeeId;
     private HashMap<String, Integer> events;
 
     public Attendee(){
-        this.attendeeID = UUID.randomUUID().toString();
+        attendeeId = UUID.randomUUID().toString();
         events = new HashMap<>();
     }
 
@@ -61,23 +53,23 @@ public class Attendee {
         this.contactInfo = contactInfo;
     }
 
-    public String getAttendeeID() {
-        return attendeeID;
+    public String getAttendeeId() {
+        return attendeeId;
     }
 
     public HashMap<String, Integer> getEvents() {
         return events;
     }
 
-    public void addEvent(String event){
-        if (!events.containsKey(event)){
-            events.put(event, 0);
+    public void addEvent(String eventId){
+        if (!events.containsKey(eventId)){
+            events.put(eventId, 0);
         }
         else{
-            Integer checkIns = events.get(event) + 1;
-            events.put(event, checkIns);
+            Integer checkIns = events.get(eventId) + 1;
+            events.put(eventId, checkIns);
         }
-        DocumentReference attendeeRef = FirebaseFirestore.getInstance().collection("attendees").document(attendeeID);
+        DocumentReference attendeeRef = FirebaseFirestore.getInstance().collection("attendees").document(attendeeId);
         attendeeRef.update("events", events);
     }
 

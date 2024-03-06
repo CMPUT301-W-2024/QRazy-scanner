@@ -3,4 +3,10 @@
     <string name="welcome">Welcome!</string>
     <string name="joinevent">Join Event</string>
     <string name="createevent">Create Event</string>
+    <string name="events">Events</string>
+    <string name="events_view">Events view</string>
+    <string name="profiles">Profiles</string>
+    <string name="images">Images</string>
+    <string name="profiles_view">profiles_view</string>
+    <string name="Images">Images</string>
 </resources>
