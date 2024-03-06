@@ -17,7 +17,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class Attendee {
-    private Image profilePic;
+    private String profilePic;
     private String name;
     private String homepage;
     private String contactInfo;
@@ -29,11 +29,11 @@ public class Attendee {
         events = new HashMap<>();
     }
 
-    public Image getProfilePic() {
+    public String getProfilePic() {
         return profilePic;
     }
 
-    public void setProfilePic(Image profilePic) {
+    public void setProfilePic(String profilePic) {
         this.profilePic = profilePic;
     }
 

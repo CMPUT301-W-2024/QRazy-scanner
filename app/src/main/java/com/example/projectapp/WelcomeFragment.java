@@ -47,6 +47,10 @@ public class WelcomeFragment extends Fragment {
 
                     Intent i = new Intent(getActivity(), ScanActivity.class);
                     startActivity(i);
+                    // In your Fragment
+
+
+
                 }
                 else {
 
@@ -74,13 +78,13 @@ public class WelcomeFragment extends Fragment {
 
         // "Create Event" button
         Button createEventButton = rootView.findViewById(R.id.createEventButton);
-        createEventButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CreateEventActivity.class);
-                startActivity(intent);
-            }
-        });
+//        createEventButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getActivity(), CreateEventActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 
         return rootView;
     }
