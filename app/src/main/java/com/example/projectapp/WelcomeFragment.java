@@ -84,21 +84,17 @@ public class WelcomeFragment extends Fragment {
                         }
                     });
                 } else {
-
                     MainActivity.setOrganizer(new Organizer());
                     saveOrganizerId();
-                    db.collection("organizers").document(getOrganizerId()).set(MainActivity.getOrganizer());
+                    db.collection("organizers").document(getOrganizerId()).set(MainActivity.getOrganizer()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Intent intent = new Intent(getActivity(), CreateEventActivity.class);
+                            startActivity(intent);
+                        }
+                    });
                 }
 
-                Intent intent = new Intent(getActivity(), CreateEventActivity.class);
-                startActivity(intent);
-/*=======
-        // "Create Event" button
-        Button createEventButton = rootView.findViewById(R.id.createEventButton);
-        createEventButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
->>>>>>> e8a8cc9b92e3ff3bae27612236861a158523ab3f*/
             }
         });
 
