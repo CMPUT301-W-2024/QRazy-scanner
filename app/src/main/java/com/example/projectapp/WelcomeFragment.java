@@ -99,11 +99,18 @@ public class WelcomeFragment extends Fragment {
     }
 
 
+    /**
+     * get attendee id
+     * @return
+     */
     public String getAttendeeId(){
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("AttendeePref", Context.MODE_PRIVATE);
         return prefs.getString("attendeeId", null);
     }
 
+    /**
+     * save attendee ID
+     */
     public void saveAttendeeId(){
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("AttendeePref", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -111,11 +118,18 @@ public class WelcomeFragment extends Fragment {
         editor.apply();
     }
 
+    /**
+     * get organizer's ID
+     * @return ORGANIZER'S id
+     */
     public String getOrganizerId(){
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("OrganizerPref", Context.MODE_PRIVATE);
         return prefs.getString("organizerId", null);
     }
 
+    /**
+     * save organizer's ID
+     */
     public void saveOrganizerId(){
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("OrganizerPref", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();

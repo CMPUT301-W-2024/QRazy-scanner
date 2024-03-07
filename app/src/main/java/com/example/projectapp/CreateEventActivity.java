@@ -34,6 +34,7 @@ public class CreateEventActivity extends AppCompatActivity {
 
 
     }
+    
 
 
     private void createEvent(String organizerName) {
