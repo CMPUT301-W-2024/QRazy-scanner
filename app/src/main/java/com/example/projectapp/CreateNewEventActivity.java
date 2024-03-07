@@ -123,7 +123,6 @@ public class CreateNewEventActivity extends AppCompatActivity {
         eventMap.put("date", newEvent.getDate());
         eventMap.put("description", newEvent.getDescription());
         eventMap.put("attendanceLimit", newEvent.getAttendanceLimit());
-        eventMap.put("poster", newEvent.getPoster());
 
         // Add the image string to the map if it's not null
         if (encodedImage != null && !encodedImage.isEmpty()) {
