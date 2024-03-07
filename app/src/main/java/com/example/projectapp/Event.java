@@ -20,28 +20,25 @@ public class Event {
     private HashMap<String, Integer> attendees;
     private Integer attendanceLimit;
     private Image poster;
-    private String Description;
 
-    /**
-     * get event description
-     * @return a description
-     */
-    public String getDescription() {
-        return Description;
-    }
+    public interface eventListener{
 
-    /**
-     * set event's description
-     * @param description a description
-     */
-    public void setDescription(String description) {
-        Description = description;
     }
 
     /**
      * Event constructor
      */
     public Event(){
+/*        eventId = UUID.randomUUID().toString();
+        attendees = new HashMap<>();*/
+    }
+
+    public Event(String name, String date, String organizer, Integer attendanceLimit, String description) {
+        this.name = name;
+        this.date = date;
+        this.organizer = organizer;
+        this.attendanceLimit = attendanceLimit;
+        this.description = description;
         eventId = UUID.randomUUID().toString();
         attendees = new HashMap<>();
     }
@@ -129,6 +126,22 @@ public class Event {
 
     public void setAttendanceLimit(Integer attendanceLimit) {
         this.attendanceLimit = attendanceLimit;
+    }
+
+    /**
+     * get event description
+     * @return a description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * set event's description
+     * @param description a description
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**

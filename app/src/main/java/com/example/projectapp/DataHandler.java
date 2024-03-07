@@ -10,17 +10,22 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 
 public class DataHandler {
 
     private static DataHandler instance;
     private FirebaseFirestore db;
-
-    Attendee attendee;
+    private AttendeePageActivity attendeePageActivity;
+    private Attendee attendee;
+    private ListenerRegistration attendeesListener;
+    private ListenerRegistration eventsListener;
+    private     ListenerRegistration organizersListener;
 
     private DataHandler(){
         db = FirebaseFirestore.getInstance();
+        attendeePageActivity = AttendeePageActivity.getInstance();
     }
 
     public static DataHandler getInstance(){
@@ -30,17 +35,17 @@ public class DataHandler {
         return instance;
     }
 
-    public void addAttendeeListener(){
+    public void addAttendeesListener(){
         CollectionReference attendeesRef = db.collection("attendees");
 
-        attendeesRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        attendeesListener = attendeesRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
                 for (DocumentChange dc : snapshots.getDocumentChanges()) {
                     switch (dc.getType()) {
                         case ADDED:
-                            System.out.println("New attendee: " + dc.getDocument().getData());
+                            System.out.println("Attendee added: " + dc.getDocument().toObject(Attendee.class).getAttendeeId());
                             break;
                         case MODIFIED:
                             System.out.println("Modified attendee: " + dc.getDocument().getData());
@@ -54,23 +59,29 @@ public class DataHandler {
         });
     }
 
-    public void addEventListener(){
+    public void removeAttendeesListener(){
+        attendeesListener.remove();
+    }
+
+    public void addEventsListener(){
+        System.out.println("added listener letsgooo");
         CollectionReference eventsRef = db.collection("events");
 
-        eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        eventsListener = eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
                 for (DocumentChange dc : snapshots.getDocumentChanges()) {
                     switch (dc.getType()) {
                         case ADDED:
-                            System.out.println("New event: " + dc.getDocument().getData());
+                            System.out.println("Added event: " + dc.getDocument().toObject(Event.class).getEventId());
+                            AttendeePageActivity.getInstance().addEvent(dc.getDocument().toObject(Event.class));
                             break;
                         case MODIFIED:
                             System.out.println("Modified event: " + dc.getDocument().getData());
                             break;
                         case REMOVED:
-                            System.out.println("Removed event: " + dc.getDocument().getData());
+                            AttendeePageActivity.getInstance().removeEvent(dc.getDocument().toObject(Event.class));
                             break;
                     }
                 }
@@ -78,10 +89,14 @@ public class DataHandler {
         });
     }
 
-    public void addOrganizerListener(){
+    public void removeEventsListener(){
+        eventsListener.remove();
+    }
+
+    public void addOrganizersListener(){
         CollectionReference organizersRef = db.collection("organizers");
 
-        organizersRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        organizersListener = organizersRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
@@ -102,10 +117,14 @@ public class DataHandler {
         });
     }
 
+    public void removeOrganizersListener(){
+        organizersListener.remove();
+    }
+
     public void addAllListeners(){
-        addAttendeeListener();
-        addOrganizerListener();
-        addEventListener();
+        addAttendeesListener();
+        addOrganizersListener();
+        addEventsListener();
     }
 
     public Attendee getAttendee(String attendeeId){
@@ -123,6 +142,12 @@ public class DataHandler {
         CollectionReference attendeesRef = db.collection("attendees");
 
         attendeesRef.document(attendee.getAttendeeId()).set(attendee);
+    }
+
+    public void addEvent(Event event){
+        CollectionReference attendeesRef = db.collection("events");
+
+        attendeesRef.document(event.getEventId()).set(event);
     }
 
 }

@@ -87,6 +87,7 @@ public class CreateNewEventActivity extends AppCompatActivity {
         saveEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                finish();
                 saveEvent();
             }
         });

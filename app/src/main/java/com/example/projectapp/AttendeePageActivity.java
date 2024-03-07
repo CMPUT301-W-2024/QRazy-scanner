@@ -4,48 +4,73 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class AttendeePageActivity extends AppCompatActivity {
+    private static AttendeePageActivity instance;
     RecyclerView recyclerView;
+    ArrayList<Event> events;
+    EventAdapter eventAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attendee_page);
 
+        instance = this;
+
         recyclerView = findViewById(R.id.events_recycler_view);
 
-        ArrayList<Event> data = new ArrayList<>();
-        Event event = new Event();
-        event.setName("Hello");
-        event.setOrganizer("Vought");
-        event.setDescription("afsdsadasdasdasdasdasd adsdasd asdasfrjgbds fjksdbfsdhfb");
-        Event event1 = new Event();
-        event1.setName("Hello");
-        event1.setOrganizer("Vought");
-        event1.setDescription("afsdsadasdasdasdasdasd adsdasd asdasfrjgbds fjksdbfsdhfb");
-        Event event2 = new Event();
-        event2.setName("Hello");
-        event2.setOrganizer("Vought");
-        event2.setDescription("afsdsadasdasdasdasdasd adsdasd asdasfrjgbds fjksdbfsdhfb");
-        Event event3 = new Event();
-        event3.setName("Hello");
-        event3.setOrganizer("Vought");
-        event3.setDescription("afsdsadasdasdasdasdasd adsdasd asdasfrjgbds fjksdbfsdhfb");
-        data.add(event);
-        data.add(event1);
-        data.add(event2);
-        data.add(event3);
-
+        events = new ArrayList<>();
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        displayEvents(data);
+        eventAdapter = new EventAdapter(events);
+        recyclerView.setAdapter(eventAdapter);
+
+        findViewById(R.id.test_button).setOnClickListener(v -> {
+            startActivity(new Intent(getApplication(), CreateNewEventActivity.class));
+        });
     }
 
-    public void displayEvents(ArrayList<Event> events){
-        recyclerView.setAdapter(new EventAdapter(events));
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DataHandler.getInstance().removeEventsListener();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DataHandler.getInstance().addEventsListener();
+    }
+
+    public void addEvent(Event event){
+        System.out.println(event.getEventId() + " Event sdded here");
+        for (int i=0; i<events.size(); i++){
+            if (event.getEventId() != null && event.getEventId().equals(events.get(i).getEventId())){
+                System.out.println("same here letsgooo  " + event.getName());
+                return;
+            }
+        }
+        events.add(event);
+        eventAdapter.notifyDataSetChanged();
+    }
+
+    public void removeEvent(Event event){
+        Iterator<Event> i = events.iterator();
+        while(i.hasNext()){
+            Event e = i.next();
+            if (e.getEventId().equals(event.getEventId())){
+                i.remove();
+            }
+        }
+        eventAdapter.notifyDataSetChanged();
+    }
+
+    public static AttendeePageActivity getInstance(){
+        return instance;
+    }
 }
