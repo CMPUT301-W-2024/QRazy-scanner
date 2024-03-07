@@ -13,9 +13,11 @@ import java.util.UUID;
 public class Event {
     private String eventId;
     private String name;
+    private String date;
     private String organizer;
     private String description;
     private HashMap<String, Integer> attendees;
+    private Integer attendanceLimit;
     private Image poster;
     public Event(){
         eventId = UUID.randomUUID().toString();
@@ -72,6 +74,21 @@ public class Event {
 
     public Integer getAttendance() {
         return attendees.size();
+    }
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public Integer getAttendanceLimit() {
+        return attendanceLimit;
+    }
+
+    public void setAttendanceLimit(Integer attendanceLimit) {
+        this.attendanceLimit = attendanceLimit;
     }
 
     public void addAttendee(String attendeeId){
