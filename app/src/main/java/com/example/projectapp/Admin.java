@@ -91,8 +91,6 @@ public class Admin extends AppCompatActivity {
         TextView attendeeNameView = attendeeView.findViewById(R.id.attendee);
         attendeeNameView.setText(attendee.getName());
 
-
-
         verticalLayout.addView(attendeeView);
     }
 
