@@ -1,7 +1,5 @@
 package com.example.projectapp;
 
-import static androidx.core.app.ActivityCompat.requestPermissions;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -14,12 +12,17 @@ import android.widget.Toast;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.Result;
 
 public class ScanActivity extends AppCompatActivity {
 
     private CodeScanner mCodeScanner;
     private final int CAMERA_PERMISSION_CODE = 100;
+
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +38,15 @@ public class ScanActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(ScanActivity.this, result.getText(), Toast.LENGTH_SHORT).show();
+
+                        MainActivity.getAttendee().addEvent(result.getText());
+                        db.collection("events").document(result.getText()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                Event event = documentSnapshot.toObject(Event.class);
+                                event.addAttendee(MainActivity.getAttendee().getAttendeeId());
+                            }
+                        });;
                     }
                 });
             }
@@ -60,6 +72,11 @@ public class ScanActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    // Gets permission for camera if needed
+
+    /**
+     * Check for camera's permission
+     */
     public void checkPermission(){
         if(ContextCompat.checkSelfPermission(ScanActivity.this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
             // permission is already granted
@@ -70,6 +87,7 @@ public class ScanActivity extends AppCompatActivity {
         }
     }
 
+    // What to do if permission granted or not granted
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
     {
