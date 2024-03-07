@@ -108,6 +108,8 @@ public class Event {
      * @param poster a poster Image
      */
     public void setPoster(String poster) {
+        this.poster = poster;
+    }
 
 
     
