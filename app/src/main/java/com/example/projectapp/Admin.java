@@ -3,6 +3,7 @@ package com.example.projectapp;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
@@ -13,7 +14,10 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -34,10 +38,10 @@ public class Admin extends AppCompatActivity {
 
         horizontalLayout = findViewById(R.id.horizontalLayout);
         verticalLayout = findViewById(R.id.verticalLayout);
-        //loadEventsFromFirebase();
-        loadMockEvents();
-        loadMockProfiles();
-        //loadAttendeesFromFirebase();
+        loadEventsFromFirebase();
+        //loadMockEvents();
+        //loadMockProfiles();
+        loadAttendeesFromFirebase();
     }
 
     private void loadMockProfiles() {
@@ -94,41 +98,31 @@ public class Admin extends AppCompatActivity {
         verticalLayout.addView(attendeeView);
     }
 
+
     private void loadEventsFromFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("events").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("events").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Map<String, Object> docMap = document.getData();
-                        Event event = new Event();
-                        event.setEventId(document.getId());
-                        event.setName((String) docMap.get("name"));
-                        event.setDate((String) docMap.get("date"));
-                        event.setOrganizer((String) docMap.get("organizer"));
-                        event.setDescription((String) docMap.get("description"));
-                        event.setPoster((String) docMap.get("poster"));
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("Admin", "Listen failed.", e);
+                    return;
+                }
 
-                        if(docMap.get("attendanceLimit") != null) {
-                            event.setAttendanceLimit(((Long) docMap.get("attendanceLimit")).intValue());
-                        }
-
-                        if (docMap.get("attendees") instanceof Map) {
-                            Map<String, Long> attendeesMap = (Map<String, Long>) docMap.get("attendees");
-                            HashMap<String, Integer> attendees = new HashMap<>();
-                            for (Map.Entry<String, Long> entry : attendeesMap.entrySet()) {
-                                attendees.put(entry.getKey(), entry.getValue().intValue());
-                            }
-                            event.setAttendees(attendees);
-                        }
-
+                if (snapshots != null && !snapshots.isEmpty()) {
+                    horizontalLayout.removeAllViews(); // Clear existing views
+                    for (DocumentSnapshot document : snapshots.getDocuments()) {
+                        Event event = document.toObject(Event.class);
                         addEventToScrollView(event);
                     }
+                } else {
+                    Log.d("Admin", "Current data: null");
                 }
             }
         });
     }
+
 
 
     private void addEventToScrollView(Event event) {

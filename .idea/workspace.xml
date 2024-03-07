@@ -15,6 +15,26 @@
           <theme>@style/Theme.ProjectApp</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_scan.xml">
+        <config>
+          <theme>@style/Theme.ProjectApp</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/announcement_scroll_view.xml">
+        <config>
+          <theme>@style/Theme.ProjectApp</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/create_event_fragment.xml">
+        <config>
+          <theme>@style/Theme.ProjectApp</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/event_info_attendee_fragment.xml">
+        <config>
+          <theme>@style/Theme.ProjectApp</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/event_scroll_view.xml">
         <config>
           <theme>@style/Theme.ProjectApp</theme>
@@ -25,7 +45,32 @@
           <theme>@style/Theme.ProjectApp</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_attendee_events.xml">
+        <config>
+          <theme>@style/Theme.ProjectApp</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_profile.xml">
+        <config>
+          <theme>@style/Theme.ProjectApp</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_scan.xml">
+        <config>
+          <theme>@style/Theme.ProjectApp</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_event.xml">
+        <config>
+          <theme>@style/Theme.ProjectApp</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/profile_widget.xml">
+        <config>
+          <theme>@style/Theme.ProjectApp</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/welcome_fragment.xml">
         <config>
           <theme>@style/Theme.ProjectApp</theme>
         </config>
@@ -36,7 +81,12 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33141556-d996-4518-8004-cbe4367a9bf8" name="Changes" comment="" />
+    <list default="true" id="33141556-d996-4518-8004-cbe4367a9bf8" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/announcement_scroll_view.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/Admin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/MainActivity.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -45,7 +95,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\kodya\.android\avd\Medium_Phone_API_34.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\kodya\.android\avd\Pixel_4_API_34.avd]" />
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
