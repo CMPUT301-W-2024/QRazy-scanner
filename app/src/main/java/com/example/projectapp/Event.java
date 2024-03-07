@@ -13,6 +13,9 @@ import java.util.UUID;
 // temporary event class so that conflicts dont occur
 public class Event {
     private String eventId;
+    private String name;
+    private String organizer;
+    private String description;
     private HashMap<String, Integer> attendees;
     private Image poster;
     private Date date;
@@ -74,10 +77,32 @@ public class Event {
         this.eventId = eventId;
     }
 
-    /**
-     * get Attendess
-     * @return
-     */
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getOrganizer() {
+        return organizer;
+    }
+
+    public void setOrganizer(String organizer) {
+        this.organizer = organizer;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
     public HashMap<String, Integer> getAttendees() {
         return attendees;
     }
