@@ -9,4 +9,6 @@
     <string name="images">Images</string>
     <string name="profiles_view">profiles_view</string>
     <string name="Images">Images</string>
+    <string name="event">Event</string>
+    <string name="organizer">Organizer</string>
 </resources>

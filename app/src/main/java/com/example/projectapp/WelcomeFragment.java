@@ -42,11 +42,10 @@ public class WelcomeFragment extends Fragment {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             MainActivity.setAttendee(documentSnapshot.toObject(Attendee.class));
+                            Intent i = new Intent(getActivity(), ScanActivity.class);
+                            startActivity(i);
                         }
                     });
-
-                    Intent i = new Intent(getActivity(), ScanActivity.class);
-                    startActivity(i);
                 }
                 else {
 
@@ -81,11 +80,12 @@ public class WelcomeFragment extends Fragment {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             MainActivity.setOrganizer(documentSnapshot.toObject(Organizer.class));
+                            Intent intent = new Intent(getActivity(), CreateEventActivity.class);
+                            startActivity(intent);
                         }
                     });
                 } else {
                     MainActivity.setOrganizer(new Organizer());
-                    MainActivity.getOrganizer().setOrganizerId(getOrganizerId());
                     saveOrganizerId();
 
                     db.collection("organizers").document(getOrganizerId()).set(MainActivity.getOrganizer()).addOnSuccessListener(new OnSuccessListener<Void>() {
