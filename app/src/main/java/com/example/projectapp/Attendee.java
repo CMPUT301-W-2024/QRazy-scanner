@@ -12,6 +12,7 @@ import java.util.UUID;
  * Class for Attendee
  */
 public class Attendee {
+
     private String profilePic;
     private String name;
     private String homepage;

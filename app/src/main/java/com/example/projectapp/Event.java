@@ -18,8 +18,11 @@ public class Event {
     private String organizer;
     private String description;
     private HashMap<String, Integer> attendees;
+
+    private String poster;
+
     private Integer attendanceLimit;
-    private Image poster;
+    
     private String Description;
 
     /**
@@ -41,6 +44,7 @@ public class Event {
     /**
      * Event constructor
      */
+
     public Event(){
         eventId = UUID.randomUUID().toString();
         attendees = new HashMap<>();
@@ -95,17 +99,18 @@ public class Event {
      * get the Poster
      * @return poster
      */
-    public Image getPoster() {
+    public String getPoster() {
         return poster;
     }
 
-    /**
+  /**
      * Set Event's poster
      * @param poster a poster Image
      */
-    public void setPoster(Image poster) {
-        this.poster = poster;
-    }
+    public void setPoster(String poster) {
+
+
+    
 
     /**
      * Get Attendence
