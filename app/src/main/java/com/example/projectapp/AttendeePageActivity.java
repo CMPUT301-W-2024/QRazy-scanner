@@ -9,13 +9,14 @@ import android.os.Bundle;
 import java.util.ArrayList;
 
 public class AttendeePageActivity extends AppCompatActivity {
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attendee_page);
 
-        RecyclerView recyclerView = findViewById(R.id.events_recycler_view);
+        recyclerView = findViewById(R.id.events_recycler_view);
 
         ArrayList<Event> data = new ArrayList<>();
         Event event = new Event();
@@ -40,6 +41,11 @@ public class AttendeePageActivity extends AppCompatActivity {
         data.add(event3);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        recyclerView.setAdapter(new AttendeeEventAdapter(data));
+        displayEvents(data);
     }
+
+    public void displayEvents(ArrayList<Event> events){
+        recyclerView.setAdapter(new EventAdapter(events));
+    }
+
 }

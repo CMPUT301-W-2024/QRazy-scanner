@@ -7,19 +7,23 @@ import android.widget.Toast;
 import android.provider.Settings;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
 
 
     private static Attendee attendee;
     private static Organizer organizer;
+    private FirebaseFirestore db;
+    private DataHandler dataHandler;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        
+        dataHandler = DataHandler.getInstance();
 
         // Load the WelcomeFragment initially
         String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
