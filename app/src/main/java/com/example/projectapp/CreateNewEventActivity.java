@@ -74,6 +74,7 @@ public class CreateNewEventActivity extends AppCompatActivity {
                                 // Set the chosen date to the EditText
                                 String selectedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
                                 eventDateEditText.setText(selectedDate);
+                                db.collection("events").document(newEvent.getEventId()).update("date", selectedDate);
                             }
                         }, year, month, day);
                 datePickerDialog.show();
@@ -136,6 +137,7 @@ public class CreateNewEventActivity extends AppCompatActivity {
                 });
     }
 
+
     private void pickImage(){
         Intent intent = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R && android.os.ext.SdkExtensions.getExtensionVersion(android.os.Build.VERSION_CODES.R) >= 2) {
@@ -143,6 +145,10 @@ public class CreateNewEventActivity extends AppCompatActivity {
         }
         resultLauncher.launch(intent);
     }
+
+    /**
+     * Update view and poster field in firestore
+     */
     private void registerResult() {
         resultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -162,6 +168,12 @@ public class CreateNewEventActivity extends AppCompatActivity {
                 }
         );
     }
+
+    /**
+     * Convert Bitmap to String
+     * @param bitmap the bitmap for converting
+     * @return Bitmap in String
+     */
     public String bitmapToString(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
