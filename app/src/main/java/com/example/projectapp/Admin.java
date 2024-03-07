@@ -34,10 +34,10 @@ public class Admin extends AppCompatActivity {
 
         horizontalLayout = findViewById(R.id.horizontalLayout);
         verticalLayout = findViewById(R.id.verticalLayout);
-        loadEventsFromFirebase();
-        //loadMockEvents();
-        //loadMockProfiles();
-        loadAttendeesFromFirebase();
+        //loadEventsFromFirebase();
+        loadMockEvents();
+        loadMockProfiles();
+        //loadAttendeesFromFirebase();
     }
 
     private void loadMockProfiles() {
