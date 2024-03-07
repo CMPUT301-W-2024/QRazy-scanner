@@ -85,4 +85,7 @@ public class Event {
         DocumentReference attendeeRef = FirebaseFirestore.getInstance().collection("events").document(eventId);
         attendeeRef.update("attendees", attendees);
     }
+    public void eventtodb(){
+        DocumentReference attendeeRef = FirebaseFirestore.getInstance().collection("events").document(eventId);
+    }
 }
