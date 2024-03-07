@@ -40,6 +40,7 @@ public class CreateNewEventActivity extends AppCompatActivity {
     ActivityResultLauncher<Intent> resultLauncher;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ImageView poster;
+    private String encodedImage;
     private Event newEvent;
     private TextInputEditText eventNameEditText, eventDescriptionEditText, attendanceLimitEditText;
 
@@ -123,6 +124,11 @@ public class CreateNewEventActivity extends AppCompatActivity {
         eventMap.put("attendanceLimit", newEvent.getAttendanceLimit());
         eventMap.put("poster", newEvent.getPoster());
 
+        // Add the image string to the map if it's not null
+        if (encodedImage != null && !encodedImage.isEmpty()) {
+            eventMap.put("poster", encodedImage);
+        }
+
         // Upload the event details to Firebase
         db.collection("events").document(newEvent.getEventId())
                 .set(eventMap)
@@ -148,15 +154,22 @@ public class CreateNewEventActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
-                    public void onActivityResult(ActivityResult o) {
-                        try{
-                            Uri imageUri = o.getData().getData();
-                            poster.setImageURI(imageUri);
-                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(CreateNewEventActivity.this.getContentResolver(), imageUri);
-                            db.collection("events").document(newEvent.getEventId()).update("poster", bitmapToString(bitmap));
-                        }catch(Exception e){
-                            Toast.makeText(CreateNewEventActivity.this, "Failed to load image.", Toast.LENGTH_SHORT).show();
-                            e.printStackTrace();
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                            Uri imageUri = result.getData().getData();
+                            if (imageUri != null) {
+                                poster.setImageURI(imageUri);
+                                try {
+                                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                                    // Set the encodedImage string here
+                                    encodedImage = bitmapToString(bitmap);
+                                    // Now we can save the event details including the image string
+                                    saveEvent();
+                                } catch (Exception e) {
+                                    Toast.makeText(CreateNewEventActivity.this, "Failed to load image.", Toast.LENGTH_SHORT).show();
+                                    e.printStackTrace();
+                                }
+                            }
                         }
                     }
                 }

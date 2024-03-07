@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
+public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdapter.ViewHolder> {
 
     private List<Event> events;
 
@@ -29,7 +29,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
      *
      * @param events list containing the data to populate views to be used
      */
-    public EventAdapter(List<Event> events) {
+    public AttendeeEventAdapter(List<Event> events) {
         this.events = events;
     }
 

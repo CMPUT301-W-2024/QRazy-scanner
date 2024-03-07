@@ -40,6 +40,6 @@ public class AttendeePageActivity extends AppCompatActivity {
         data.add(event3);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        recyclerView.setAdapter(new EventAdapter(data));
+        recyclerView.setAdapter(new AttendeeEventAdapter(data));
     }
 }

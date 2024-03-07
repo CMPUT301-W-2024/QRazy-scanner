@@ -6,11 +6,12 @@ import android.media.Image;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.UUID;
 
 // temporary event class so that conflicts dont occur
-public class Event {
+public class Event implements Serializable {
     private String eventId;
     private String name;
     private String date;

@@ -10,6 +10,8 @@ import android.widget.EditText;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class CreateEventActivity extends AppCompatActivity {
 
     private EditText organizerNameEditText;
@@ -34,8 +36,6 @@ public class CreateEventActivity extends AppCompatActivity {
 
 
     }
-    
-
 
     private void createEvent(String organizerName) {
     }
