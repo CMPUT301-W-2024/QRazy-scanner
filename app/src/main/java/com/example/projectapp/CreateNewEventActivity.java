@@ -12,6 +12,7 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -26,7 +27,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class CreateNewEventActivity extends AppCompatActivity {
 
@@ -38,6 +41,7 @@ public class CreateNewEventActivity extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ImageView poster;
     private Event newEvent;
+    private TextInputEditText eventNameEditText, eventDescriptionEditText, attendanceLimitEditText;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,6 +49,9 @@ public class CreateNewEventActivity extends AppCompatActivity {
         setContentView(R.layout.create_event_fragment);
 
         eventDateEditText = findViewById(R.id.eventDateEditText);
+        eventNameEditText = findViewById(R.id.eventNameEditText);
+        eventDescriptionEditText = findViewById(R.id.eventDescriptionEditText);
+        attendanceLimitEditText = findViewById(R.id.attendanceLimitEditText);
         calendar = Calendar.getInstance();
         newEvent = new Event();
         db.collection("events").document(newEvent.getEventId()).set(newEvent);
@@ -71,8 +78,20 @@ public class CreateNewEventActivity extends AppCompatActivity {
                             }
                         }, year, month, day);
                 datePickerDialog.show();
+                db.collection("events").document(newEvent.getEventId()).update("date", eventDateEditText.getText().toString());
+
             }
         });
+
+        MaterialButton saveEventButton = findViewById(R.id.newQrButton);
+        saveEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveEvent();
+            }
+        });
+
+
 
         uploadButton = findViewById(R.id.upload);
         poster = findViewById(R.id.eventPosterImageView);
@@ -82,9 +101,43 @@ public class CreateNewEventActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * Pick Image
-     */
+    private void saveEvent() {
+        // Get the event details from the input fields
+        String eventName = eventNameEditText.getText().toString().trim();
+        String eventDate = eventDateEditText.getText().toString().trim();
+        String eventDescription = eventDescriptionEditText.getText().toString().trim();
+        String attendanceLimitStr = attendanceLimitEditText.getText().toString().trim();
+        int attendanceLimit = attendanceLimitStr.isEmpty() ? 0 : Integer.parseInt(attendanceLimitStr);
+
+        // Set the event details to the newEvent object
+        newEvent.setName(eventName);
+        newEvent.setDate(eventDate);
+        newEvent.setDescription(eventDescription);
+        newEvent.setAttendanceLimit(attendanceLimit);
+
+        // Convert the Event object to a Map to save to Firebase
+        Map<String, Object> eventMap = new HashMap<>();
+        eventMap.put("event id", newEvent.getEventId());
+        eventMap.put("name", newEvent.getName());
+        eventMap.put("date", newEvent.getDate());
+        eventMap.put("description", newEvent.getDescription());
+        eventMap.put("attendanceLimit", newEvent.getAttendanceLimit());
+        eventMap.put("poster", newEvent.getPoster());
+
+        // Upload the event details to Firebase
+        db.collection("events").document(newEvent.getEventId())
+                .set(eventMap)
+                .addOnSuccessListener(aVoid -> {
+                    // Success handling
+                    Toast.makeText(CreateNewEventActivity.this, "Event saved successfully", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    // Failure handling
+                    Toast.makeText(CreateNewEventActivity.this, "Failed to save event", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+
     private void pickImage(){
         Intent intent = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R && android.os.ext.SdkExtensions.getExtensionVersion(android.os.Build.VERSION_CODES.R) >= 2) {
@@ -108,7 +161,8 @@ public class CreateNewEventActivity extends AppCompatActivity {
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(CreateNewEventActivity.this.getContentResolver(), imageUri);
                             db.collection("events").document(newEvent.getEventId()).update("poster", bitmapToString(bitmap));
                         }catch(Exception e){
-                            //
+                            Toast.makeText(CreateNewEventActivity.this, "Failed to load image.", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
                         }
                     }
                 }
