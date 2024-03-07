@@ -38,20 +38,15 @@ public class WelcomeFragment extends Fragment {
             public void onClick(View v) {
                 // User has logged in before, get their info
                 if (getAttendeeId() != null){
-                    db.collection("attendees").document(getAttendeeId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            MainActivity.setAttendee(documentSnapshot.toObject(Attendee.class));
-                            Intent i = new Intent(getActivity(), ScanActivity.class);
-                            startActivity(i);
-                        }
-                    });
+                    DataHandler.getInstance().getAttendee(getAttendeeId());
+                    Intent i = new Intent(getActivity(), ScanActivity.class);
+                    startActivity(i);
                 }
                 else {
 
                     MainActivity.setAttendee(new Attendee());
                     saveAttendeeId();
-                    db.collection("attendees").document(MainActivity.getAttendee().getAttendeeId()).set(MainActivity.getAttendee());
+                    DataHandler.getInstance().addAttendee(MainActivity.getAttendee());
 
                     ProfileFragment profileFragment = new ProfileFragment();
                     requireActivity().getSupportFragmentManager()

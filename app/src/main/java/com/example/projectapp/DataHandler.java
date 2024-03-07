@@ -2,8 +2,11 @@ package com.example.projectapp;
 
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -13,6 +16,8 @@ public class DataHandler {
 
     private static DataHandler instance;
     private FirebaseFirestore db;
+
+    Attendee attendee;
 
     private DataHandler(){
         db = FirebaseFirestore.getInstance();
@@ -101,6 +106,23 @@ public class DataHandler {
         addAttendeeListener();
         addOrganizerListener();
         addEventListener();
+    }
+
+    public Attendee getAttendee(String attendeeId){
+        CollectionReference attendeesRef = db.collection("attendees");
+        attendeesRef.document(attendeeId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                attendee = documentSnapshot.toObject(Attendee.class);
+            }
+        });;
+        return attendee;
+    }
+
+    public void addAttendee(Attendee attendee){
+        CollectionReference attendeesRef = db.collection("attendees");
+
+        attendeesRef.document(attendee.getAttendeeId()).set(attendee);
     }
 
 }
