@@ -18,14 +18,14 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Admin extends AppCompatActivity {
 
     LinearLayout horizontalLayout;
     LinearLayout verticalLayout;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,8 +96,6 @@ public class Admin extends AppCompatActivity {
         verticalLayout.addView(attendeeView);
     }
 
-
-
     private void loadEventsFromFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("events").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -105,13 +103,35 @@ public class Admin extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        Event event = document.toObject(Event.class);
+                        Map<String, Object> docMap = document.getData();
+                        Event event = new Event();
+                        event.setEventId(document.getId());
+                        event.setName((String) docMap.get("name"));
+                        event.setDate((String) docMap.get("date"));
+                        event.setOrganizer((String) docMap.get("organizer"));
+                        event.setDescription((String) docMap.get("description"));
+                        event.setPoster((String) docMap.get("poster"));
+
+                        if(docMap.get("attendanceLimit") != null) {
+                            event.setAttendanceLimit(((Long) docMap.get("attendanceLimit")).intValue());
+                        }
+
+                        if (docMap.get("attendees") instanceof Map) {
+                            Map<String, Long> attendeesMap = (Map<String, Long>) docMap.get("attendees");
+                            HashMap<String, Integer> attendees = new HashMap<>();
+                            for (Map.Entry<String, Long> entry : attendeesMap.entrySet()) {
+                                attendees.put(entry.getKey(), entry.getValue().intValue());
+                            }
+                            event.setAttendees(attendees);
+                        }
+
                         addEventToScrollView(event);
                     }
                 }
             }
         });
     }
+
 
     private void addEventToScrollView(Event event) {
         View eventView = LayoutInflater.from(this).inflate(R.layout.event_widget, horizontalLayout, false);
@@ -136,14 +156,20 @@ public class Admin extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        Attendee attendee = document.toObject(Attendee.class);
+                        Map<String, Object> docMap = document.getData();
+
+                        // Create a new Attendee object and set its fields from the map
+                        Attendee attendee = new Attendee();
+                        attendee.setAttendeeId(document.getId()); // Assuming the document ID is the attendee ID
+                        attendee.setName((String) docMap.get("name"));
+                        // Set other fields of Attendee as needed
+
                         addAttendeeToScrollView(attendee);
                     }
-                } else {
-                    Log.d("Admin", "Error getting documents: ", task.getException());
                 }
             }
         });
     }
+
 
 }

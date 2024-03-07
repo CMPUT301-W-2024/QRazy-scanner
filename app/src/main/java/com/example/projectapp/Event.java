@@ -108,7 +108,8 @@ public class Event {
      * @param poster a poster Image
      */
     public void setPoster(String poster) {
-
+        this.poster = poster;
+    }
 
     
 
@@ -136,10 +137,7 @@ public class Event {
         this.attendanceLimit = attendanceLimit;
     }
 
-    /**
-     * Add an attendee
-     * @param attendeeId
-     */
+    
     public void addAttendee(String attendeeId){
         if (!attendees.containsKey(attendeeId)){
             attendees.put(attendeeId, 0);

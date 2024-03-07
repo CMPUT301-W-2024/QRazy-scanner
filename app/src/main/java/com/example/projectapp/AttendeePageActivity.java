@@ -45,7 +45,7 @@ public class AttendeePageActivity extends AppCompatActivity {
     }
 
     public void displayEvents(ArrayList<Event> events){
-        recyclerView.setAdapter(new EventAdapter(events));
+        recyclerView.setAdapter(new AttendeeEventAdapter(events));
     }
 
 }

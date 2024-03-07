@@ -124,5 +124,8 @@ public class Attendee {
         DocumentReference attendeeRef = FirebaseFirestore.getInstance().collection("attendees").document(attendeeId);
         attendeeRef.update("events", events);
     }
+    public void setAttendeeId(String attendeeId) {
+        this.attendeeId = attendeeId;
+    }
 
 }
