@@ -73,6 +73,10 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     // Gets permission for camera if needed
+
+    /**
+     * Check for camera's permission
+     */
     public void checkPermission(){
         if(ContextCompat.checkSelfPermission(ScanActivity.this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
             // permission is already granted

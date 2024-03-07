@@ -84,6 +84,9 @@ public class ProfileFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * load the saved values on firestore
+     */
     private void loadSavedValues() {
         CollectionReference a = db.collection("attendees");
         Query query = a.whereEqualTo("attendeeID",getAttendeeId());
@@ -112,6 +115,10 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
+
+    /**
+     * Pick image
+     */
     private void pickImage(){
         Intent intent = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R && android.os.ext.SdkExtensions.getExtensionVersion(android.os.Build.VERSION_CODES.R) >= 2) {
@@ -119,11 +126,19 @@ public class ProfileFragment extends Fragment {
         }
         resultLauncher.launch(intent);
     }
+
+    /**
+     * get attendee's Id
+     * @return
+     */
     public String getAttendeeId(){
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("AttendeePref", Context.MODE_PRIVATE);
         return prefs.getString("attendeeId", null);
     }
 
+    /**
+     * get picture and set it
+     */
     private void registerResult() {
         resultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -142,6 +157,12 @@ public class ProfileFragment extends Fragment {
                 }
         );
     }
+
+    /**
+     * convert bitmap to string
+     * @param bitmap a bitmap
+     * @return a string
+     */
     public String bitmapToString(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
@@ -149,6 +170,12 @@ public class ProfileFragment extends Fragment {
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 
+
+    /**
+     * convert string to bitmap
+     * @param encodedString a string
+     * @return a bitmap
+     */
     public Bitmap stringToBitmap(String encodedString) {
         try {
             byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
@@ -161,6 +188,9 @@ public class ProfileFragment extends Fragment {
     }
 
 
+    /**
+     * save values to db
+     */
     private void saveValues() {
         db.collection("attendees").document(getAttendeeId()).update("name", userNameEditText.getText().toString());
         db.collection("attendees").document(getAttendeeId()).update("contactInfo", emailEditText.getText().toString());
