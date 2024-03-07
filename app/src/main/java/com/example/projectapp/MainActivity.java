@@ -41,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Method to load the WelcomeFragment
+
+    /**
+     * Load the Fragment
+     */
     private void loadWelcomeFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -51,6 +55,11 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
+    /**
+     * Check if it is admin's device
+     * @param androidId Device's Id
+     * @return true or false
+     */
     private boolean isSpecificDevice(String androidId) {
 
         // Replace "SpecificAndroidID" with the actual Android ID of the admin device
@@ -58,16 +67,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Get the Attendee
+     * @return the Attendee
+     */
     public static Attendee getAttendee() {
         return attendee;
     }
 
+    /**
+     * Set the attendee
+     * @param attendee an attendee
+     */
     public static void setAttendee(Attendee attendee) {
         MainActivity.attendee = attendee;
     }
 
+    /**
+     * Get the organizer
+     * @return the organizer
+     */
     public static Organizer getOrganizer() {return organizer;}
 
+    /**
+     * Set the organizer
+     * @param organizer a organizer
+     */
     public static void setOrganizer(Organizer organizer) {
         MainActivity.organizer = organizer;
     }
