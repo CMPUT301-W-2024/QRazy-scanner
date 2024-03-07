@@ -38,20 +38,15 @@ public class WelcomeFragment extends Fragment {
             public void onClick(View v) {
                 // User has logged in before, get their info
                 if (getAttendeeId() != null){
-                    db.collection("attendees").document(getAttendeeId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            MainActivity.setAttendee(documentSnapshot.toObject(Attendee.class));
-                            Intent i = new Intent(getActivity(), ScanActivity.class);
-                            startActivity(i);
-                        }
-                    });
+                    DataHandler.getInstance().getAttendee(getAttendeeId());
+                    Intent i = new Intent(getActivity(), ScanActivity.class);
+                    startActivity(i);
                 }
                 else {
 
                     MainActivity.setAttendee(new Attendee());
                     saveAttendeeId();
-                    db.collection("attendees").document(MainActivity.getAttendee().getAttendeeId()).set(MainActivity.getAttendee());
+                    DataHandler.getInstance().addAttendee(MainActivity.getAttendee());
 
                     ProfileFragment profileFragment = new ProfileFragment();
                     requireActivity().getSupportFragmentManager()
@@ -104,11 +99,18 @@ public class WelcomeFragment extends Fragment {
     }
 
 
+    /**
+     * get attendee id
+     * @return
+     */
     public String getAttendeeId(){
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("AttendeePref", Context.MODE_PRIVATE);
         return prefs.getString("attendeeId", null);
     }
 
+    /**
+     * save attendee ID
+     */
     public void saveAttendeeId(){
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("AttendeePref", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -116,11 +118,18 @@ public class WelcomeFragment extends Fragment {
         editor.apply();
     }
 
+    /**
+     * get organizer's ID
+     * @return ORGANIZER'S id
+     */
     public String getOrganizerId(){
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("OrganizerPref", Context.MODE_PRIVATE);
         return prefs.getString("organizerId", null);
     }
 
+    /**
+     * save organizer's ID
+     */
     public void saveOrganizerId(){
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("OrganizerPref", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
