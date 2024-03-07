@@ -20,24 +20,7 @@ public class Event {
     private HashMap<String, Integer> attendees;
     private Integer attendanceLimit;
     private Image poster;
-    private Date date;
     private String Description;
-
-    /**
-     * get event's date
-     * @return event's date
-     */
-    public Date getDate() {
-        return date;
-    }
-
-    /**
-     * set event's date
-     * @param date a date
-     */
-    public void setDate(Date date) {
-        this.date = date;
-    }
 
     /**
      * get event description
@@ -96,15 +79,6 @@ public class Event {
         this.organizer = organizer;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-
     public HashMap<String, Integer> getAttendees() {
         return attendees;
     }
@@ -140,6 +114,7 @@ public class Event {
     public Integer getAttendance() {
         return attendees.size();
     }
+
     public String getDate() {
         return date;
     }
