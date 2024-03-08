@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
@@ -20,36 +21,39 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class AttendeePageActivity extends AppCompatActivity {
-    private static AttendeePageActivity instance;
-    private RecyclerView recyclerView;
     private ArrayList<Event> allEvents;
     private ArrayList<Event> attendeeEvents;
-    private AttendeeEventAdapter eventAdapter;
+    private AttendeeEventAdapter attendeeEventsAdapter;
+    private AttendeeEventAdapter allEventsAdapter;
     private ListenerRegistration attendeeEventsListener;
+    private ListenerRegistration allEventsListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attendee_page);
 
-        instance = this;
+        RecyclerView attendeeEventsList = findViewById(R.id.attendeeEventsList);
+        RecyclerView allEventsList = findViewById(R.id.allEventsList);
 
-        recyclerView = findViewById(R.id.events_recycler_view);
-
+        attendeeEvents = new ArrayList<>();
         allEvents = new ArrayList<>();
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        eventAdapter = new AttendeeEventAdapter(allEvents);
-        recyclerView.setAdapter(eventAdapter);
 
-        findViewById(R.id.test_button).setOnClickListener(v -> {
-            startActivity(new Intent(getApplication(), CreateNewEventActivity.class));
-        });
+        attendeeEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        allEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        attendeeEventsAdapter = new AttendeeEventAdapter(attendeeEvents);
+        allEventsAdapter = new AttendeeEventAdapter(allEvents);
+
+        attendeeEventsList.setAdapter(attendeeEventsAdapter);
+        allEventsList.setAdapter(allEventsAdapter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        removeAttendeeEventsListener();
+        attendeeEventsListener.remove();
+        allEventsListener.remove();
     }
 
 
@@ -57,35 +61,37 @@ public class AttendeePageActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         addAttendeeEventsListener();
+        addAllEventsListener();
     }
 
-    public void addEvent(Event event){
-        for (int i=0; i<allEvents.size(); i++){
-            if (event.getEventId() != null && (event.getEventId()).equals(allEvents.get(i).getEventId())){
+    public void addEvent(Event event, ArrayList<Event> list, AttendeeEventAdapter adapter){
+        for (int i=0; i<list.size(); i++){
+            if (event.getEventId() != null && (event.getEventId()).equals(list.get(i).getEventId())){
                 return;
             }
         }
-        allEvents.add(event);
-        eventAdapter.notifyDataSetChanged();
+        list.add(event);
+        adapter.notifyDataSetChanged();
     }
 
-    public void updateEvent(Event event){
-        for (int i=0; i<allEvents.size(); i++){
-            if (event.getEventId() != null && (event.getEventId()).equals(allEvents.get(i).getEventId())){
-
+    public void updateEvent(Event event, ArrayList<Event> list, AttendeeEventAdapter adapter){
+        for (int i=0; i<list.size(); i++){
+            if (event.getEventId() != null && (event.getEventId()).equals(list.get(i).getEventId())){
+                list.set(i, event);
             }
         }
+        adapter.notifyDataSetChanged();
     }
 
-    public void removeEvent(Event event){
-        Iterator<Event> i = allEvents.iterator();
+    public void removeEvent(Event event, ArrayList<Event> list, AttendeeEventAdapter adapter){
+        Iterator<Event> i = list.iterator();
         while(i.hasNext()){
             Event e = i.next();
             if ((e.getEventId()).equals(event.getEventId())){
                 i.remove();
             }
         }
-        eventAdapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
     }
 
     private void addAttendeeEventsListener(){
@@ -96,15 +102,16 @@ public class AttendeePageActivity extends AppCompatActivity {
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
                 for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                    Event event = dc.getDocument().toObject(Event.class);
                     switch (dc.getType()) {
                         case ADDED:
-                            addEvent(dc.getDocument().toObject(Event.class));
+                            addEvent(event, attendeeEvents, attendeeEventsAdapter);
                             break;
                         case MODIFIED:
-                            System.out.println("Modified event: " + dc.getDocument().getData());
+                            updateEvent(event, attendeeEvents, attendeeEventsAdapter);
                             break;
                         case REMOVED:
-                            removeEvent(dc.getDocument().toObject(Event.class));
+                            removeEvent(event, attendeeEvents, attendeeEventsAdapter);
                             break;
                     }
                 }
@@ -112,7 +119,28 @@ public class AttendeePageActivity extends AppCompatActivity {
         });
     }
 
-    private void removeAttendeeEventsListener(){
-        attendeeEventsListener.remove();
+    private void addAllEventsListener(){
+        CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
+        System.out.println("Got till here");
+        allEventsListener = eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>(){
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                    Event event = dc.getDocument().toObject(Event.class);
+                    switch (dc.getType()) {
+                        case ADDED:
+                            addEvent(event, allEvents, allEventsAdapter);
+                            break;
+                        case MODIFIED:
+                            updateEvent(event, allEvents, allEventsAdapter);
+                            break;
+                        case REMOVED:
+                            removeEvent(event, allEvents, allEventsAdapter);
+                            break;
+                    }
+                }
+            }
+        });
     }
 }

@@ -14,16 +14,20 @@
         android:text="My Events"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/events_recycler_view"
+        android:id="@+id/attendeeEventsList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-    <Button
-        android:id="@+id/test_button"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/light"
-        android:text="button"/>
+        android:fontFamily="@font/bold1"
+        android:text="All Events"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/allEventsList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 
 </LinearLayout>
