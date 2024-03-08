@@ -139,7 +139,7 @@ public class Admin extends AppCompatActivity {
                 }
 
                 if (snapshots != null && !snapshots.isEmpty()) {
-                    // Clear existing views to avoid duplicates
+                   
                     LinearLayout imagesLayout = findViewById(R.id.imagesLayout);
                     imagesLayout.removeAllViews();
 
@@ -155,8 +155,6 @@ public class Admin extends AppCompatActivity {
             }
         });
     }
-
-
 
     private void addEventToScrollView(Event event) {
         View eventView = LayoutInflater.from(this).inflate(R.layout.event_widget, horizontalLayout, false);
@@ -182,12 +180,10 @@ public class Admin extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         Map<String, Object> docMap = document.getData();
-
-                        // Create a new Attendee object and set its fields from the map
                         Attendee attendee = new Attendee();
-                        attendee.setAttendeeId(document.getId()); // Assuming the document ID is the attendee ID
+                        attendee.setAttendeeId(document.getId());
                         attendee.setName((String) docMap.get("name"));
-                        // Set other fields of Attendee as needed
+
 
                         addAttendeeToScrollView(attendee);
                     }
