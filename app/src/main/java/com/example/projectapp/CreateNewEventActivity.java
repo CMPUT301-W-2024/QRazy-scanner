@@ -113,7 +113,9 @@ public class CreateNewEventActivity extends AppCompatActivity {
         Integer attendanceLimit = attendanceLimitStr.isEmpty() ? 0 : Integer.parseInt(attendanceLimitStr);
 
         // Set the event details to the newEvent object
+
         Event newEvent = new Event(eventName, eventDate, DataHandler.getInstance().getOrganizer().getOrganizerId(), attendanceLimit, eventDescription, encodedImage);
+
 
 
         // Upload the event details to Firebase

@@ -1,5 +1,6 @@
 package com.example.projectapp;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Base64;
@@ -61,6 +62,13 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
                 }
             }
         });
+        MaterialButton finishButton = findViewById(R.id.finishButton);
+        finishButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigateBackToCreateEvent();
+            }
+        });
     }
 
     /**
@@ -119,5 +127,14 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> Toast.makeText(GenerateQrCodeActivity.this, "QR Code stored successfully", Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toast.makeText(GenerateQrCodeActivity.this, "Failed to store QR Code", Toast.LENGTH_SHORT).show());
     }
+
+    /**
+     * Navigates back to the CreateEventActivity.
+     */
+    private void navigateBackToCreateEvent() {
+        Intent intent = new Intent(GenerateQrCodeActivity.this, OrganizerPageActivity.class);
+        startActivity(intent);
+    }
+
 }
 
