@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"> <!-- Added padding for overall spacing -->
+    android:padding="16dp">
 
     <!-- Events Section -->
     <TextView
@@ -28,7 +28,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/ProfileView"
-        app:layout_constraintHeight_percent="0.25"> <!-- Dynamic height using percent -->
+        app:layout_constraintHeight_percent="0.25">
 
         <LinearLayout
             android:id="@+id/horizontalLayout"
@@ -60,7 +60,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/textView2"
-        app:layout_constraintHeight_percent="0.25"> <!-- Dynamic height using percent -->
+        app:layout_constraintHeight_percent="0.25">
+        <LinearLayout
+            android:id="@+id/verticalLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
     </ScrollView>
 
     <!-- Images Section -->
@@ -85,7 +90,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHeight_percent="0.25"> <!-- Dynamic height using percent -->
+        app:layout_constraintHeight_percent="0.25">
     </HorizontalScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,6 +13,7 @@ import java.util.UUID;
  * Class for Attendee
  */
 public class Attendee {
+
     private String profilePic;
     private String name;
     private String homepage;
@@ -126,6 +127,9 @@ public class Attendee {
             DocumentReference attendeeRef = FirebaseFirestore.getInstance().collection("attendees").document(attendeeId);
             attendeeRef.update("events", events);
         }
+    }
+    public void setAttendeeId(String attendeeId) {
+        this.attendeeId = attendeeId;
     }
 
 }

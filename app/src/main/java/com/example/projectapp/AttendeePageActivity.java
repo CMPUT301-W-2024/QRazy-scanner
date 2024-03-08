@@ -42,6 +42,7 @@ public class AttendeePageActivity extends AppCompatActivity {
         DataHandler.getInstance().removeEventsListener();
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -56,6 +57,7 @@ public class AttendeePageActivity extends AppCompatActivity {
         }
         allEvents.add(event);
         eventAdapter.notifyDataSetChanged();
+
     }
 
     public void removeEvent(Event event){

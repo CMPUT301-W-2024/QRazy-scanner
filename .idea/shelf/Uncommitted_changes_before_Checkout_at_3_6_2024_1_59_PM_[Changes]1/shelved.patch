@@ -1,0 +1,74 @@
+Index: app/src/main/java/com/example/projectapp/Admin.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.projectapp;\r\n\r\nimport android.annotation.SuppressLint;\r\nimport android.os.Bundle;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport android.provider.Settings;\r\nimport android.widget.Toast;\r\n\r\n\r\npublic class Admin extends AppCompatActivity {\r\n\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_admin); // This should reference your admin layout\r\n\r\n        // Additional setup for the Admin activity...\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/projectapp/Admin.java b/app/src/main/java/com/example/projectapp/Admin.java
+--- a/app/src/main/java/com/example/projectapp/Admin.java	
++++ b/app/src/main/java/com/example/projectapp/Admin.java	
+@@ -4,15 +4,38 @@
+ import android.os.Bundle;
+ import androidx.appcompat.app.AppCompatActivity;
+ import android.provider.Settings;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.widget.LinearLayout;
+ import android.widget.Toast;
+ 
+ 
+ public class Admin extends AppCompatActivity {
+ 
++    LinearLayout horizontalLayout;
++
++    @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+-        setContentView(R.layout.activity_admin); // This should reference your admin layout
++        setContentView(R.layout.activity_admin);
++
++        horizontalLayout = findViewById(R.id.horizontalLayout);
+ 
+-        // Additional setup for the Admin activity...
++        loadEvents();
+     }
++
++    private void loadEvents() {
++        // Code to fetch data from Firebase
++        // For each event, call addEventToScrollView()
++        
++    }
++
++    private void addEventToScrollView(Event event) {
++        View eventView = LayoutInflater.from(this).inflate(R.layout.event_item, horizontalLayout, false);
++
++        // Set event details to eventView's components
++
++        horizontalLayout.addView(eventView);
++    }
+ }
++
+Index: app/src/main/res/layout/activity_admin.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\">\r\n\r\n\r\n    <TextView\r\n        android:id=\"@+id/EventsView\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"@string/events\"\r\n        android:textSize=\"34sp\"\r\n        android:textStyle=\"bold\"\r\n        app:layout_constraintBottom_toTopOf=\"@+id/horizontalScrollView\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.051\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.684\" />\r\n\r\n    <HorizontalScrollView\r\n        android:id=\"@+id/horizontalScrollView\"\r\n        android:layout_width=\"374dp\"\r\n        android:layout_height=\"194dp\"\r\n        android:contentDescription=\"@string/events_view\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.432\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.156\">\r\n\r\n    </HorizontalScrollView>\r\n\r\n    <TextView\r\n        android:id=\"@+id/ProfileView\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"@string/profiles\"\r\n        android:textSize=\"34sp\"\r\n        android:textStyle=\"bold\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.054\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/horizontalScrollView\"\r\n        app:layout_constraintVertical_bias=\"0.046\" />\r\n\r\n    <ScrollView\r\n        android:id=\"@+id/scrollView2\"\r\n        android:layout_width=\"377dp\"\r\n        android:layout_height=\"140dp\"\r\n        android:layout_marginTop=\"13dp\"\r\n        android:contentDescription=\"@string/profiles_view\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.515\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/ProfileView\"\r\n        app:layout_constraintVertical_bias=\"0.004\">\r\n\r\n    </ScrollView>\r\n\r\n    <HorizontalScrollView\r\n        android:id=\"@+id/horizontalScrollView2\"\r\n        android:layout_width=\"371dp\"\r\n        android:layout_height=\"115dp\"\r\n        android:layout_marginBottom=\"16dp\"\r\n        android:contentDescription=\"@string/images\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.45\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/scrollView2\"\r\n        app:layout_constraintVertical_bias=\"0.695\">\r\n\r\n\r\n    </HorizontalScrollView>\r\n\r\n    <TextView\r\n        android:id=\"@+id/textView2\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"8dp\"\r\n        android:text=\"@string/Images\"\r\n        android:textSize=\"34sp\"\r\n        android:textStyle=\"bold\"\r\n        app:layout_constraintBottom_toTopOf=\"@+id/horizontalScrollView2\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.053\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/scrollView2\"\r\n        app:layout_constraintVertical_bias=\"0.3\" />\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_admin.xml b/app/src/main/res/layout/activity_admin.xml
+--- a/app/src/main/res/layout/activity_admin.xml	
++++ b/app/src/main/res/layout/activity_admin.xml	
+@@ -32,6 +32,12 @@
+         app:layout_constraintTop_toTopOf="parent"
+         app:layout_constraintVertical_bias="0.156">
+ 
++        <LinearLayout
++            android:id="@+id/horizontalLayout"
++            android:layout_width="wrap_content"
++            android:layout_height="match_parent"
++            android:orientation="horizontal"/>
++
+     </HorizontalScrollView>
+ 
+     <TextView

@@ -18,8 +18,12 @@ public class Event {
     private String organizer;
     private String description;
     private HashMap<String, Integer> attendees;
-    private Integer attendanceLimit;
+
     private String poster;
+
+    private Integer attendanceLimit;
+
+
 
     public interface eventListener{
 
@@ -28,6 +32,7 @@ public class Event {
     /**
      * Event constructor
      */
+
     public Event(){
 /*        eventId = UUID.randomUUID().toString();
         attendees = new HashMap<>();*/
@@ -97,13 +102,15 @@ public class Event {
         return poster;
     }
 
-    /**
+  /**
      * Set Event's poster
      * @param poster a poster Image
      */
     public void setPoster(String poster) {
         this.poster = poster;
     }
+
+    
 
     /**
      * Get Attendence
@@ -129,6 +136,7 @@ public class Event {
         this.attendanceLimit = attendanceLimit;
     }
 
+
     /**
      * get event description
      * @return a description
@@ -149,6 +157,7 @@ public class Event {
      * Add an attendee
      * @param attendeeId
      */
+
     public void addAttendee(String attendeeId){
         if (!attendees.containsKey(attendeeId)){
             attendees.put(attendeeId, 0);

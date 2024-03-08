@@ -60,6 +60,11 @@
         <activity
             android:name=".CreateEventActivity"
             android:exported="false"/>
+
+        <activity
+            android:name=".GenerateQrCodeActivity"
+            android:exported="false"/>
+
     </application>
 
 </manifest>

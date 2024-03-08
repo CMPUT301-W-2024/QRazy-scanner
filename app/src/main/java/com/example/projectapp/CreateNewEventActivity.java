@@ -135,6 +135,11 @@ public class CreateNewEventActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     // Success handling
                     Toast.makeText(CreateNewEventActivity.this, "Event saved successfully", Toast.LENGTH_SHORT).show();
+
+                    // After showing the toast, start the GenerateQrCodeActivity
+                    Intent intent = new Intent(CreateNewEventActivity.this, GenerateQrCodeActivity.class);
+                    intent.putExtra("EVENT_ID", newEvent.getEventId()); // Pass the event ID to the next activity
+                    startActivity(intent);
                 })
                 .addOnFailureListener(e -> {
                     // Failure handling
