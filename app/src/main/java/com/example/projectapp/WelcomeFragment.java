@@ -78,11 +78,14 @@ public class WelcomeFragment extends Fragment {
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             Organizer organizer = documentSnapshot.toObject(Organizer.class);
                             dataHandler.setOrganizer(organizer);
+                            Intent intent = new Intent(getActivity(), OrganizerPageActivity.class);
+                            startActivity(intent);
                         }
                     });
+                }else {
+                    Intent intent = new Intent(getActivity(), OrganizerPageActivity.class);
+                    startActivity(intent);
                 }
-                Intent intent = new Intent(getActivity(), CreateEventActivity.class);
-                startActivity(intent);
             }
         });
 
