@@ -3,6 +3,7 @@ package com.example.projectapp;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
@@ -13,19 +14,22 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Admin extends AppCompatActivity {
 
     LinearLayout horizontalLayout;
     LinearLayout verticalLayout;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,27 +95,35 @@ public class Admin extends AppCompatActivity {
         TextView attendeeNameView = attendeeView.findViewById(R.id.attendee);
         attendeeNameView.setText(attendee.getName());
 
-
-
         verticalLayout.addView(attendeeView);
     }
 
 
-
     private void loadEventsFromFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("events").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("events").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("Admin", "Listen failed.", e);
+                    return;
+                }
+
+                if (snapshots != null && !snapshots.isEmpty()) {
+                    horizontalLayout.removeAllViews(); // Clear existing views
+                    for (DocumentSnapshot document : snapshots.getDocuments()) {
                         Event event = document.toObject(Event.class);
                         addEventToScrollView(event);
                     }
+                } else {
+                    Log.d("Admin", "Current data: null");
                 }
             }
         });
     }
+
+
 
     private void addEventToScrollView(Event event) {
         View eventView = LayoutInflater.from(this).inflate(R.layout.event_widget, horizontalLayout, false);
@@ -136,14 +148,20 @@ public class Admin extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        Attendee attendee = document.toObject(Attendee.class);
+                        Map<String, Object> docMap = document.getData();
+
+                        // Create a new Attendee object and set its fields from the map
+                        Attendee attendee = new Attendee();
+                        attendee.setAttendeeId(document.getId()); // Assuming the document ID is the attendee ID
+                        attendee.setName((String) docMap.get("name"));
+                        // Set other fields of Attendee as needed
+
                         addAttendeeToScrollView(attendee);
                     }
-                } else {
-                    Log.d("Admin", "Error getting documents: ", task.getException());
                 }
             }
         });
     }
+
 
 }
