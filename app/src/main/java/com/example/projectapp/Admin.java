@@ -37,6 +37,7 @@ public class Admin extends AppCompatActivity {
     LinearLayout horizontalLayout;
     LinearLayout verticalLayout;
 
+
     /**
      *  Handles activity creation; sets up layout and initializes data loading.
      *
@@ -50,11 +51,41 @@ public class Admin extends AppCompatActivity {
 
         horizontalLayout = findViewById(R.id.horizontalLayout);
         verticalLayout = findViewById(R.id.verticalLayout);
+
         loadEventsFromFirebase();
         //loadMockEvents();
         //loadMockProfiles();
         loadAttendeesFromFirebase();
-        loadImagesFromFirebase();
+        loadImagesFromFirebase("events", "poster", R.id.firstImagesLayout);
+        loadImagesFromFirebase("attendees", "profilePic", R.id.secondImagesLayout);
+
+        //        fetchDocumentById("05b586d8-b902-498f-ac88-31d6cc4c2d5b");
+    }
+
+    private void fetchDocumentById(String documentId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("attendees").document(documentId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document != null && document.exists()) {
+                        Log.d("Admin", "Document data: " + document.getData());
+                        String profilePic = document.getString("profilePic");
+                        if (profilePic != null) {
+                            Log.d("Admin", "Profile Pic: " + profilePic);
+                            // You can now use the profilePic string as needed
+                        } else {
+                            Log.d("Admin", "No profile pic found in the document");
+                        }
+                    } else {
+                        Log.d("Admin", "No such document");
+                    }
+                } else {
+                    Log.d("Admin", "get failed with ", task.getException());
+                }
+            }
+        });
     }
 
     private void loadMockProfiles() {
@@ -178,9 +209,9 @@ public class Admin extends AppCompatActivity {
 
 
 
-    private void loadImagesFromFirebase() {
+    private void loadImagesFromFirebase(String collection, String field, int layoutId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("events").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection(collection).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
@@ -189,14 +220,13 @@ public class Admin extends AppCompatActivity {
                 }
 
                 if (snapshots != null && !snapshots.isEmpty()) {
-                   
-                    LinearLayout imagesLayout = findViewById(R.id.imagesLayout);
+                    LinearLayout imagesLayout = findViewById(layoutId);
                     imagesLayout.removeAllViews();
 
                     for (DocumentSnapshot document : snapshots.getDocuments()) {
-                        String encodedImage = document.getString("poster");
+                        String encodedImage = document.getString(field);
                         if (encodedImage != null && !encodedImage.isEmpty()) {
-                            addImageToBottomScrollView(encodedImage);
+                            addImageToLayout(encodedImage, imagesLayout);
                         }
                     }
                 } else {
@@ -205,6 +235,20 @@ public class Admin extends AppCompatActivity {
             }
         });
     }
+
+
+    private void addImageToLayout(String encodedImageString, LinearLayout layout) {
+        View imageLayoutView = LayoutInflater.from(this).inflate(R.layout.image_layout, null, false);
+        ImageView imageView = imageLayoutView.findViewById(R.id.image_view);
+
+        Bitmap imageBitmap = stringToBitmap(encodedImageString);
+        if (imageBitmap != null) {
+            imageView.setImageBitmap(imageBitmap);
+        }
+
+        layout.addView(imageLayoutView);
+    }
+
 
     /**
      *  Handles adding an Event view to the horizontal scroll view.
@@ -234,7 +278,6 @@ public class Admin extends AppCompatActivity {
         horizontalLayout.addView(eventView);
     }
 
-
     private void loadAttendeesFromFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("attendees").addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -263,29 +306,20 @@ public class Admin extends AppCompatActivity {
 
 
     public Bitmap stringToBitmap(String encodedString) {
+        if (encodedString == null || encodedString.isEmpty()) {
+            Log.e("Admin", "Encoded string is null or empty");
+            return null;
+        }
         try {
             byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-            return bitmap;
+            return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("Admin", "Error decoding bitmap", e);
             return null;
         }
     }
 
 
-    private void addImageToBottomScrollView(String encodedImageString) {
-        View imageLayoutView = LayoutInflater.from(this).inflate(R.layout.image_layout, null, false);
-        ImageView imageView = imageLayoutView.findViewById(R.id.image_view);
-
-        Bitmap imageBitmap = stringToBitmap(encodedImageString);
-        if (imageBitmap != null) {
-            imageView.setImageBitmap(imageBitmap);
-        }
-
-        LinearLayout imagesLayout = findViewById(R.id.imagesLayout);
-        imagesLayout.addView(imageLayoutView);
-    }
 
     private void showDialogWithDetails(String attendeeId, String name, String contactInfo, String encodedImageString) {
         Dialog detailDialog = new Dialog(this);

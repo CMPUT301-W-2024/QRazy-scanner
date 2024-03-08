@@ -76,29 +76,47 @@
         android:text="@string/Images"
         android:fontFamily="@font/bold1"
         android:textSize="24sp"
-
         android:paddingTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scrollView2" />
 
-    <HorizontalScrollView
-        android:id="@+id/horizontalScrollView2"
+    <LinearLayout
+        android:id="@+id/imagesContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHeight_percent="0.25">
 
-        <LinearLayout
-            android:id="@+id/imagesLayout"
-            android:layout_width="wrap_content"
+
+        <ScrollView
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:orientation="horizontal"/>
-    </HorizontalScrollView>
+            android:layout_weight="1">
+            <LinearLayout
+                android:id="@+id/firstImagesLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+        </ScrollView>
+
+        <!-- Second Vertical ScrollView -->
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <LinearLayout
+                android:id="@+id/secondImagesLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+        </ScrollView>
+
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
