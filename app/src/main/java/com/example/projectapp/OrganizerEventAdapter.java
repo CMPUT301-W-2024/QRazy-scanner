@@ -20,6 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+/**
+ * Adapter for displaying an organizer's Events in a RecyclerView. Handles
+ * event details, showing attendance counts, and providing expandable sections to
+ * display QR codes.
+ */
 public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAdapter.ViewHolder> {
     private List<Event> events;
     private Context context;
@@ -86,6 +91,11 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
     }
 
 
+    /**
+     * Function to convert a Base64 encoded string to a Bitmap.
+     * @param encodedString The Base64 encoded string representation of an image.
+     * @return The Bitmap image or null if an error occurs.
+     */
     public Bitmap stringToBitmap(String encodedString) {
         try {
             byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);

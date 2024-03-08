@@ -16,6 +16,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
 
+/**
+ * Adapter for displaying a list of Events in a RecyclerView, specifically for an attendee's view.
+ * Fetches organizer data from Firebase and handles clicks on Event items.
+ */
 public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdapter.ViewHolder> {
 
     private List<Event> events;
@@ -25,6 +29,9 @@ public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdap
         void onItemClick(Event event);
     }
 
+    /**
+     * View Holder class to represent individual Event items within the RecyclerView.
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView nameText, organizerText, infoText;
 

@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+/**
+ * Setting up event class
+ */
 public class Event implements Serializable{
 
     private String eventId;
