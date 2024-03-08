@@ -48,8 +48,10 @@ public class ProfileFragment extends Fragment {
     private EditText emailEditText;
     private EditText phoneEditText;
     private ImageView avatar;
+    private String encodedImage;
     ActivityResultLauncher<Intent> resultLauncher;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private DataHandler dataHandler = DataHandler.getInstance();
 
 
     @Nullable
@@ -65,7 +67,9 @@ public class ProfileFragment extends Fragment {
         avatar= rootView.findViewById(R.id.avatarImage);
 
         // Load saved values from SharedPreferences
-        loadSavedValues();
+        if (dataHandler.getAttendee() != null){
+            loadSavedValues();
+        }
 
         // Save button click listener
         Button saveButton = rootView.findViewById(R.id.saveButton);
@@ -89,7 +93,7 @@ public class ProfileFragment extends Fragment {
      */
     private void loadSavedValues() {
         CollectionReference a = db.collection("attendees");
-        Query query = a.whereEqualTo("attendeeID",getAttendeeId());
+        Query query = a.whereEqualTo("attendeeId", dataHandler.getAttendee().getAttendeeId());
         query.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 // Query execution successful
@@ -128,15 +132,6 @@ public class ProfileFragment extends Fragment {
     }
 
     /**
-     * get attendee's Id
-     * @return
-     */
-    public String getAttendeeId(){
-        SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("AttendeePref", Context.MODE_PRIVATE);
-        return prefs.getString("attendeeId", null);
-    }
-
-    /**
      * get picture and set it
      */
     private void registerResult() {
@@ -149,7 +144,8 @@ public class ProfileFragment extends Fragment {
                             Uri imageUri = o.getData().getData();
                             avatar.setImageURI(imageUri);
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imageUri);
-                            db.collection("attendees").document(getAttendeeId()).update("profilePic", bitmapToString(bitmap));
+                            encodedImage = bitmapToString(bitmap);
+                            /*db.collection("attendees").document(MainActivity.getAttendee().getAttendeeId()).update("profilePic", bitmapToString(bitmap));*/
                         }catch(Exception e){
                             //
                         }
@@ -192,8 +188,23 @@ public class ProfileFragment extends Fragment {
      * save values to db
      */
     private void saveValues() {
-        db.collection("attendees").document(getAttendeeId()).update("name", userNameEditText.getText().toString());
+        Attendee attendee = new Attendee(encodedImage, userNameEditText.getText().toString(), emailEditText.getText().toString(), phoneEditText.getText().toString());
+        dataHandler.setAttendee(attendee);
+        saveAttendeeId();
+        dataHandler.addAttendee(attendee);
+        /*db.collection("attendees").document(getAttendeeId()).update("name", userNameEditText.getText().toString());
         db.collection("attendees").document(getAttendeeId()).update("contactInfo", emailEditText.getText().toString());
-        db.collection("attendees").document(getAttendeeId()).update("homepage", phoneEditText.getText().toString());
+        db.collection("attendees").document(getAttendeeId()).update("homepage", phoneEditText.getText().toString());*/
+    }
+
+
+    /**
+     * save attendee ID
+     */
+    public void saveAttendeeId(){
+        SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("AttendeePref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("attendeeId", dataHandler.getAttendee().getAttendeeId());
+        editor.apply();
     }
 }

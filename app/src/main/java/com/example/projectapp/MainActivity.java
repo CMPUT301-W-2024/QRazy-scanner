@@ -12,18 +12,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
 
-
-    private static Attendee attendee;
-    private static Organizer organizer;
-    private FirebaseFirestore db;
-    private DataHandler dataHandler;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        dataHandler = DataHandler.getInstance();
 
         // Load the WelcomeFragment initially
         String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -64,37 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Replace "SpecificAndroidID" with the actual Android ID of the admin device
         return androidId.equals("9acc249bfb633a8f");
-    }
-
-
-    /**
-     * Get the Attendee
-     * @return the Attendee
-     */
-    public static Attendee getAttendee() {
-        return attendee;
-    }
-
-    /**
-     * Set the attendee
-     * @param attendee an attendee
-     */
-    public static void setAttendee(Attendee attendee) {
-        MainActivity.attendee = attendee;
-    }
-
-    /**
-     * Get the organizer
-     * @return the organizer
-     */
-    public static Organizer getOrganizer() {return organizer;}
-
-    /**
-     * Set the organizer
-     * @param organizer a organizer
-     */
-    public static void setOrganizer(Organizer organizer) {
-        MainActivity.organizer = organizer;
     }
 
 }
