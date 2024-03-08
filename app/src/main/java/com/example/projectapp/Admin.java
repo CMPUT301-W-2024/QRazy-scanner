@@ -174,16 +174,22 @@ public class Admin extends AppCompatActivity {
 
     private void loadAttendeesFromFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("attendees").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("attendees").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("loadAttendees", "Listen failed.", e);
+                    return;
+                }
+
+                if (snapshots != null && !snapshots.isEmpty()) {
+                    verticalLayout.removeAllViews(); // Clear the layout before adding updated data
+
+                    for (DocumentSnapshot document : snapshots.getDocuments()) {
                         Map<String, Object> docMap = document.getData();
                         Attendee attendee = new Attendee();
                         attendee.setAttendeeId(document.getId());
                         attendee.setName((String) docMap.get("name"));
-
 
                         addAttendeeToScrollView(attendee);
                     }
@@ -191,6 +197,7 @@ public class Admin extends AppCompatActivity {
             }
         });
     }
+
     public Bitmap stringToBitmap(String encodedString) {
         try {
             byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
