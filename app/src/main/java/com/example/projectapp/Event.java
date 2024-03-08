@@ -21,9 +21,6 @@ public class Event implements Serializable{
     private String poster;
     private Integer attendanceLimit;
     private String qrCode;
-    public interface eventListener{
-
-    }
 
     /**
      * Event constructor
@@ -218,17 +215,25 @@ public class Event implements Serializable{
         this.qrCode = qrCode;
     }
 
+    /**
+     * get signed up attendees
+     * @return user's signed up for events
+     */
     public ArrayList<String> getSignedAttendees() {
         return signedAttendees;
     }
 
+    /**
+     * set checked in attendees
+     * @param  signedAttendees list of signed up attendees
+     */
     public void setSignedAttendees(ArrayList<String> signedAttendees) {
         this.signedAttendees = signedAttendees;
     }
 
     /**
-     * Add an attendee
-     * @param attendeeId
+     * Check in an attendee
+     * @param attendeeId the attendee who checked in
      */
     public void addCheckedAttendee(String attendeeId){
         if (!checkedAttendees.containsKey(attendeeId)){
@@ -242,6 +247,10 @@ public class Event implements Serializable{
         eventRef.update("checkedAttendees", checkedAttendees);
     }
 
+    /**
+     * Sign up an attendee
+     * @param attendeeId the attendee who signed
+     */
     public void addSignedAttendee(String attendeeId){
         if (!signedAttendees.contains(attendeeId)){
             signedAttendees.add(attendeeId);

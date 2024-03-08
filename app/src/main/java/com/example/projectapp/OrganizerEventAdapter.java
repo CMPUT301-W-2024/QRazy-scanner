@@ -1,5 +1,7 @@
 package com.example.projectapp;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.transition.TransitionManager;
@@ -20,9 +22,11 @@ import java.util.List;
 
 public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAdapter.ViewHolder> {
     private List<Event> events;
+    private Context context;
 
-    public OrganizerEventAdapter(List<Event> events) {
+    public OrganizerEventAdapter(List<Event> events, Context context) {
         this.events = events;
+        this.context = context;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -62,6 +66,12 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             Bitmap bitmap = stringToBitmap(event.getQrCode());
             holder.eventQrView.setImageBitmap(bitmap);
         }
+
+        holder.attendeeCountTextView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, EventAttendeesActvity.class);
+            intent.putExtra("EVENT", event);
+            context.startActivity(intent);
+        });
 
         holder.expandEventButton.setOnClickListener(v -> {
             View view = holder.expandEventLayout;

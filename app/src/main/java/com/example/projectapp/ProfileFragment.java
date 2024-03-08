@@ -78,7 +78,7 @@ public class ProfileFragment extends Fragment {
             if (fragmentManager.getBackStackEntryCount() > 0) {
                 Integer fulfill = saveValues();
                 if (fulfill == 1){
-                    startActivity(new Intent(getContext(), ScanActivity.class));
+                    startActivity(new Intent(getContext(), AttendeePageActivity.class));
                 }
             }
         });

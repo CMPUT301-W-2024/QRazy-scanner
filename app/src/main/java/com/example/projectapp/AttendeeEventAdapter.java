@@ -5,7 +5,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
 
@@ -59,12 +66,22 @@ public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdap
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        viewHolder.bind(events.get(position), listener);
+        Event event = events.get(position);
+        viewHolder.bind(event, listener);
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.nameText.setText(events.get(position).getName());
-        viewHolder.organizerText.setText(events.get(position).getOrganizer());
-        viewHolder.infoText.setText(events.get(position).getDescription());
+        viewHolder.nameText.setText(event.getName());
+        FirebaseFirestore.getInstance().collection("organizers").whereEqualTo("organizerId", event.getOrganizer()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        viewHolder.organizerText.setText(document.getString("name"));
+                    }
+                }
+            }
+        });
+        viewHolder.infoText.setText(event.getDescription());
     }
 
     // Return the size of your dataset (invoked by the layout manager)

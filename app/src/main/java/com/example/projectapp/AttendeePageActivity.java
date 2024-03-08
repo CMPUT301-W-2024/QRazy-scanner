@@ -198,6 +198,7 @@ public class AttendeePageActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     event.addSignedAttendee(dataHandler.getAttendee().getAttendeeId());
+                    dataHandler.getAttendee().addSignedEvent(event.getEventId());
                     eventDetailDialog.dismiss();
                 }
             });

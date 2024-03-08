@@ -46,6 +46,7 @@ public class ScanActivity extends AppCompatActivity {
                                 Event event = documentSnapshot.toObject(Event.class);
                                 if (event != null){
                                     event.addCheckedAttendee(dataHandler.getAttendee().getAttendeeId());
+                                    dataHandler.getAttendee().addCheckedEvent(event.getEventId());
                                     Intent intent = new Intent(ScanActivity.this, AttendeePageActivity.class);
                                     startActivity(intent);
                                 }
