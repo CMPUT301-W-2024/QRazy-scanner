@@ -18,14 +18,14 @@ public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdap
 
         public ViewHolder(View view) {
             super(view);
-            nameText = (TextView) view.findViewById(R.id.scroll_event_name_text);
-            organizerText = (TextView) view.findViewById(R.id.scroll_organizer_name_text);
-            infoText = (TextView) view.findViewById(R.id.scroll_info_text);
+            nameText = (TextView) view.findViewById(R.id.event_name_text);
+            organizerText = (TextView) view.findViewById(R.id.event_organizer_name_text);
+            infoText = (TextView) view.findViewById(R.id.event_info_text);
         }
     }
 
     /**
-     * Initialize the dataset of the Adapter
+     * Initialize the dataset of the Adapte
      *
      * @param events list containing the data to populate views to be used
      */
@@ -37,7 +37,7 @@ public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdap
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view, which defines the UI of the list item
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.event_scroll_view, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.event_widget, viewGroup, false);
 
         return new ViewHolder(view);
     }

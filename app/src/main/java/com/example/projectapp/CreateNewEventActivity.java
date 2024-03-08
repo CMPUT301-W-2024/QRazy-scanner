@@ -115,10 +115,6 @@ public class CreateNewEventActivity extends AppCompatActivity {
         // Set the event details to the newEvent object
 
         Event newEvent = new Event(eventName, eventDate, DataHandler.getInstance().getOrganizer().getOrganizerId(), attendanceLimit, eventDescription, encodedImage);
-/*        newEvent.setName(eventName);
-        newEvent.setDate(eventDate);
-        newEvent.setDescription(eventDescription);
-        newEvent.setAttendanceLimit(attendanceLimit);*/
 
 
 
