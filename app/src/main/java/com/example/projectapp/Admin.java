@@ -273,12 +273,7 @@ public class Admin extends AppCompatActivity {
         }
     }
 
-    /**
-     * Adds an image to the bottom scroll view.
-     *
-     * @param encodedImageString
-     *      The Base64 encoded string representation of an image.
-     */
+
     private void addImageToBottomScrollView(String encodedImageString) {
         View imageLayoutView = LayoutInflater.from(this).inflate(R.layout.image_layout, null, false);
         ImageView imageView = imageLayoutView.findViewById(R.id.image_view);
