@@ -12,8 +12,6 @@ import android.widget.EditText;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-
 public class CreateEventActivity extends AppCompatActivity {
 
     private EditText organizerNameEditText;
@@ -29,7 +27,7 @@ public class CreateEventActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_event);
+        setContentView(R.layout.activity_organizer_page);
         dataHandler = DataHandler.getInstance();
         organizerNameEditText = findViewById(R.id.organizerNameEditText);
 
