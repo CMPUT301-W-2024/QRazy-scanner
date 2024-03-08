@@ -1,7 +1,5 @@
 package com.example.projectapp;
 
-import static java.security.AccessController.getContext;
-
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -27,9 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class CreateNewEventActivity extends AppCompatActivity {
 
@@ -47,7 +43,7 @@ public class CreateNewEventActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.create_event_fragment);
+        setContentView(R.layout.activity_create_new_event);
 
         eventDateEditText = findViewById(R.id.eventDateEditText);
         eventNameEditText = findViewById(R.id.eventNameEditText);

@@ -81,7 +81,7 @@ public class WelcomeFragment extends Fragment {
                         }
                     });
                 }
-                Intent intent = new Intent(getActivity(), CreateEventActivity.class);
+                Intent intent = new Intent(getActivity(), OrganizerPageActivity.class);
                 startActivity(intent);
             }
         });
