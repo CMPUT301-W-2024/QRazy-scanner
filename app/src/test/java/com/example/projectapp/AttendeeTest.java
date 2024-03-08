@@ -52,7 +52,7 @@ class AttendeeTest {
         attendee.setAttendeeId(newAttendeeId);
         assertEquals(newAttendeeId, attendee.getAttendeeId(), "Attendee IDs do not match");
     }
-    
+
     @Test
     void testSignedEventsGetterAndSetter() {
         ArrayList<String> newEvents = new ArrayList<>();
