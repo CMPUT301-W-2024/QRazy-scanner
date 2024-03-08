@@ -152,8 +152,7 @@ public class Admin extends AppCompatActivity {
         });
     }
 
-<<<<<<< HEAD
-    // Method to show event details in a dialog
+
     private void showDialogWithEventDetails(String name, String organizer, String description) {
         Dialog eventDetailDialog = new Dialog(this);
         eventDetailDialog.setContentView(R.layout.event_dialog);
@@ -178,11 +177,7 @@ public class Admin extends AppCompatActivity {
     }
 
 
-=======
-    /**
-     * Loads images from Firebase, decodes them, and displays them in a bottom scroll view.
-     */
->>>>>>> origin/main
+
     private void loadImagesFromFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("events").addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -239,13 +234,7 @@ public class Admin extends AppCompatActivity {
         horizontalLayout.addView(eventView);
     }
 
-<<<<<<< HEAD
 
-=======
-    /**
-     * Loads attendees from Firebase and displays them in the vertical scroll view.
-     */
->>>>>>> origin/main
     private void loadAttendeesFromFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("attendees").addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -272,17 +261,7 @@ public class Admin extends AppCompatActivity {
         });
     }
 
-<<<<<<< HEAD
-=======
-    /**
-     * Converts a Base64 encoded String to a Bitmap.
-     *
-     * @param encodedString
-     *      The Base64 encoded string representation of an image.
-     * @return
-     *      The decoded Bitmap image, or null on error.
-     */
->>>>>>> origin/main
+
     public Bitmap stringToBitmap(String encodedString) {
         try {
             byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
