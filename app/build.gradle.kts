@@ -35,6 +35,7 @@ android {
 }
 
 dependencies {
+    implementation(files("C:\\Users\\joshl\\AppData\\Local\\Android\\Sdk\\platforms\\android-34\\android.jar"))
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.github.yuriy-budiyev:code-scanner:2.3.0")
