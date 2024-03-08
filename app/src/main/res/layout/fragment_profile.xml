@@ -9,6 +9,7 @@
         android:layout_height="200dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"
+        android:fontFamily="@font/bold1"
         android:contentDescription="Avatar Image" />
 
     <Button
@@ -19,6 +20,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:background="@null"
+        android:fontFamily="@font/bold1"
         android:text="Change and Save Avatar"
         android:onClick="showImageChangeDialog" />
 
@@ -28,6 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="User Name"
+        android:fontFamily="@font/light"
         android:layout_below="@id/avatarImageButton"
         android:layout_marginTop="16dp" />
 
@@ -37,6 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Email"
+        android:fontFamily="@font/light"
         android:layout_below="@id/userNameEditText"
         android:layout_marginTop="16dp" />
 
@@ -45,6 +49,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Phone"
+        android:fontFamily="@font/light"
         android:layout_below="@id/emailEditText"
         android:layout_marginTop="16dp" />
 
@@ -54,6 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save"
+        android:fontFamily="@font/bold1"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="24dp" />

@@ -20,6 +20,7 @@
         android:layout_above="@id/linear_buttons"
         android:layout_centerHorizontal="true"
         android:text="Scan QR Code"
+        android:fontFamily="@font/bold1"
         android:textSize="18sp" />
 
     <!-- User button (top left) -->
@@ -29,6 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
+        android:fontFamily="@font/bold1"
         android:text="User Profile" />
 
     <!-- Button for scan success (below QR code text) -->
@@ -48,12 +50,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:fontFamily="@font/bold1"
             android:text="Scan Successfully" />
         <Button
             android:id="@+id/scan_fragment_cancel_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:fontFamily="@font/bold1"
             android:text="CANCEL" />
 
     </LinearLayout>
