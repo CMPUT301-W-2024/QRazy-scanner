@@ -62,7 +62,7 @@ public class Admin extends AppCompatActivity {
         loadImagesFromFirebase("events", "poster", R.id.firstImagesLayout);
         loadImagesFromFirebase("attendees", "profilePic", R.id.secondImagesLayout);
 
-        //        fetchDocumentById("05b586d8-b902-498f-ac88-31d6cc4c2d5b");
+        //fetchDocumentById("05b586d8-b902-498f-ac88-31d6cc4c2d5b");
     }
 
     private void fetchDocumentById(String documentId) {
@@ -354,4 +354,6 @@ public class Admin extends AppCompatActivity {
 
         detailDialog.show();
     }
+
+
 }
