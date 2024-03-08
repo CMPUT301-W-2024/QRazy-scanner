@@ -15,6 +15,5 @@ Reference:
    - how to use linearlayout with cardview in xml
    - how to load images from two different documents in firebase and dispaly on one imageview
    - write me bitmap converter for string to image
-   - 
 3. For scanning QR-code
    - https://github.com/yuriy-budiyev/code-scanner
