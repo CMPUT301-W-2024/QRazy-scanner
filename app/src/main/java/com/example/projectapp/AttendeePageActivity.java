@@ -1,5 +1,6 @@
 package com.example.projectapp;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -7,15 +8,24 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class AttendeePageActivity extends AppCompatActivity {
     private static AttendeePageActivity instance;
-    RecyclerView recyclerView;
-    ArrayList<Event> allEvents;
-    ArrayList<Event> attendeeEvents;
-    AttendeeEventAdapter eventAdapter;
+    private RecyclerView recyclerView;
+    private ArrayList<Event> allEvents;
+    private ArrayList<Event> attendeeEvents;
+    private AttendeeEventAdapter eventAdapter;
+    private ListenerRegistration attendeeEventsListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,14 +49,14 @@ public class AttendeePageActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        DataHandler.getInstance().removeEventsListener();
+        removeAttendeeEventsListener();
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        DataHandler.getInstance().addEventsListener();
+        addAttendeeEventsListener();
     }
 
     public void addEvent(Event event){
@@ -57,7 +67,14 @@ public class AttendeePageActivity extends AppCompatActivity {
         }
         allEvents.add(event);
         eventAdapter.notifyDataSetChanged();
+    }
 
+    public void updateEvent(Event event){
+        for (int i=0; i<allEvents.size(); i++){
+            if (event.getEventId() != null && (event.getEventId()).equals(allEvents.get(i).getEventId())){
+
+            }
+        }
     }
 
     public void removeEvent(Event event){
@@ -71,7 +88,31 @@ public class AttendeePageActivity extends AppCompatActivity {
         eventAdapter.notifyDataSetChanged();
     }
 
-    public static AttendeePageActivity getInstance(){
-        return instance;
+    private void addAttendeeEventsListener(){
+        CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
+
+        attendeeEventsListener = eventsRef.orderBy("attendees."+ DataHandler.getInstance().getAttendee().getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                    switch (dc.getType()) {
+                        case ADDED:
+                            addEvent(dc.getDocument().toObject(Event.class));
+                            break;
+                        case MODIFIED:
+                            System.out.println("Modified event: " + dc.getDocument().getData());
+                            break;
+                        case REMOVED:
+                            removeEvent(dc.getDocument().toObject(Event.class));
+                            break;
+                    }
+                }
+            }
+        });
+    }
+
+    private void removeAttendeeEventsListener(){
+        attendeeEventsListener.remove();
     }
 }
