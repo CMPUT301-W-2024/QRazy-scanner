@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isSpecificDevice(String androidId) {
 
         // Replace "SpecificAndroidID" with the actual Android ID of the admin device
-        return androidId.equals("c34042c970364e57");
+        return androidId.equals("c34042c970364e5");
     }
 
 }
