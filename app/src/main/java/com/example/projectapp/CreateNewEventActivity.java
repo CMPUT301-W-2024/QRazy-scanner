@@ -31,6 +31,11 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * This activity handles the creation of new events within the application.
+ * It allows users to set event information, upload an image, and save the
+ * event to Firebase.
+ */
 public class CreateNewEventActivity extends AppCompatActivity {
 
     private TextInputEditText eventDateEditText;
@@ -44,6 +49,12 @@ public class CreateNewEventActivity extends AppCompatActivity {
     private Event newEvent;
     private TextInputEditText eventNameEditText, eventDescriptionEditText, attendanceLimitEditText;
 
+    /**
+     * Initializes the activity, sets up UI elements, and prepares date picker functionality.
+     *
+     * @param savedInstanceState
+     *      The saved instance state of the activity.
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,8 +65,6 @@ public class CreateNewEventActivity extends AppCompatActivity {
         eventDescriptionEditText = findViewById(R.id.eventDescriptionEditText);
         attendanceLimitEditText = findViewById(R.id.attendanceLimitEditText);
         calendar = Calendar.getInstance();
-/*        db.collection("events").document(newEvent.getEventId()).set(newEvent);*/
-
 
 
         eventDateEditText.setOnClickListener(new View.OnClickListener() {
@@ -74,12 +83,10 @@ public class CreateNewEventActivity extends AppCompatActivity {
                                 // Set the chosen date to the EditText
                                 String selectedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
                                 eventDateEditText.setText(selectedDate);
-    /*                            db.collection("events").document(newEvent.getEventId()).update("date", selectedDate);*/
+
                             }
                         }, year, month, day);
                 datePickerDialog.show();
-/*                db.collection("events").document(newEvent.getEventId()).update("date", eventDateEditText.getText().toString());*/
-
             }
         });
 
@@ -91,16 +98,16 @@ public class CreateNewEventActivity extends AppCompatActivity {
             }
         });
 
-
-
         uploadButton = findViewById(R.id.upload);
         poster = findViewById(R.id.eventPosterImageView);
         registerResult();
         uploadButton.setOnClickListener(v -> pickImage());
-
-
     }
 
+    /**
+     * Extracts entered event information, creates a new Event object,
+     * and saves the event data to Firebase.
+     */
     private void saveEvent() {
         // Get the event details from the input fields
         String eventName = eventNameEditText.getText().toString().trim();
@@ -111,23 +118,7 @@ public class CreateNewEventActivity extends AppCompatActivity {
 
         // Set the event details to the newEvent object
         Event newEvent = new Event(eventName, eventDate, DataHandler.getInstance().getOrganizer().getName(), attendanceLimit, eventDescription, encodedImage);
-/*        newEvent.setName(eventName);
-        newEvent.setDate(eventDate);
-        newEvent.setDescription(eventDescription);
-        newEvent.setAttendanceLimit(attendanceLimit);*/
 
-        // Convert the Event object to a Map to save to Firebase
-/*        Map<String, Object> eventMap = new HashMap<>();
-        eventMap.put("event id", newEvent.getEventId());
-        eventMap.put("name", newEvent.getName());
-        eventMap.put("date", newEvent.getDate());
-        eventMap.put("description", newEvent.getDescription());
-        eventMap.put("attendanceLimit", newEvent.getAttendanceLimit());*/
-
-        // Add the image string to the map if it's not null
-/*        if (encodedImage != null && !encodedImage.isEmpty()) {
-            eventMap.put("poster", encodedImage);
-        }*/
 
         // Upload the event details to Firebase
         db.collection("events").document(newEvent.getEventId())
@@ -148,6 +139,9 @@ public class CreateNewEventActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Launches an image picker intent to allow users to select an image for the event poster.
+     */
     private void pickImage(){
         Intent intent = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R && android.os.ext.SdkExtensions.getExtensionVersion(android.os.Build.VERSION_CODES.R) >= 2) {
@@ -157,7 +151,8 @@ public class CreateNewEventActivity extends AppCompatActivity {
     }
 
     /**
-     * Update view and poster field in firestore
+     * Registers an ActivityResultLauncher to handle the result of the image selection process.
+     * Within this, updates the ImageView and encodes the selected image for storage.
      */
     private void registerResult() {
         resultLauncher = registerForActivityResult(
@@ -185,9 +180,12 @@ public class CreateNewEventActivity extends AppCompatActivity {
     }
 
     /**
-     * Convert Bitmap to String
-     * @param bitmap the bitmap for converting
-     * @return Bitmap in String
+     * Converts a bitmap image into a Base64 encoded string representation.
+     *
+     * @param bitmap
+     *      The bitmap to be encoded.
+     * @return
+     *      Base64 encoded string of the bitmap.
      */
     public String bitmapToString(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
