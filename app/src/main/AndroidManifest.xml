@@ -71,6 +71,7 @@
             android:name=".GenerateQrCodeActivity"
             android:exported="false"/>
 
+
     </application>
 
 </manifest>
