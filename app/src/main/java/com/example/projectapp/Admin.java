@@ -31,7 +31,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * Admin activity for managing events and attendees.
+ * This activity provides functionalities to load and display event and attendee data from Firebase,
+ * and handle image display and details dialog for both events and attendees.
+ */
 public class Admin extends AppCompatActivity {
 
     LinearLayout horizontalLayout;
@@ -303,7 +307,11 @@ public class Admin extends AppCompatActivity {
         });
     }
 
-
+    /**
+     * Converts a Base64 encoded string to a Bitmap object.
+     * @param encodedString The Base64 encoded string representing an image.
+     * @return A Bitmap object or null if the conversion fails.
+     */
     public Bitmap stringToBitmap(String encodedString) {
         if (encodedString == null || encodedString.isEmpty()) {
             Log.e("Admin", "Encoded string is null or empty");

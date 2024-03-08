@@ -192,5 +192,9 @@ public class CreateNewEventActivity extends AppCompatActivity {
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 
+    // Method to set a custom Firebase instance (for testing)
+    public void setFirestore(FirebaseFirestore firestore) {
+        this.db = firestore;
+    }
 }
 

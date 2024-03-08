@@ -25,7 +25,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
+/**
+ * Activity to display events to attendees.
+ * It provides functionality to view events the attendee is participating in, and to view all available events.
+ * Attendees can interact with the events, such as signing up for them.
+ */
 public class AttendeePageActivity extends AppCompatActivity {
     private ArrayList<Event> allEvents;
     private ArrayList<Event> attendeeEvents;
@@ -33,7 +37,11 @@ public class AttendeePageActivity extends AppCompatActivity {
     private AttendeeEventAdapter allEventsAdapter;
     private ListenerRegistration attendeeEventsListener;
     private ListenerRegistration allEventsListener;
-    private DataHandler dataHandler = DataHandler.getInstance();
+  
+    /**
+     * Initializes the activity, sets up RecyclerViews for displaying events.
+     * @param savedInstanceState If the activity is being re-initialized after being shut down, this Bundle contains the data most recently supplied in onSaveInstanceState.
+     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +80,9 @@ public class AttendeePageActivity extends AppCompatActivity {
         });
 
     }
-
+    /**
+     * Removes event listeners when the activity is paused to avoid unnecessary background processing.
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -80,7 +90,9 @@ public class AttendeePageActivity extends AppCompatActivity {
         allEventsListener.remove();
     }
 
-
+    /**
+     * Re-registers the event listeners when the activity resumes to keep the event lists up-to-date.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -170,7 +182,12 @@ public class AttendeePageActivity extends AppCompatActivity {
             }
         });
     }
-
+    /**
+     * Displays a dialog with details of an event. Allows the user to view more information about the event.
+     * If the event is available for sign-up, it displays a sign-up button.
+     * @param event The Event object containing details to be displayed.
+     * @param canSignUp Boolean to indicate if the sign-up option should be available for this event.
+     */
     private void showDialogWithEventDetails(Event event, boolean canSignUp) {
         Dialog eventDetailDialog = new Dialog(this);
         eventDetailDialog.setContentView(R.layout.event_dialog);

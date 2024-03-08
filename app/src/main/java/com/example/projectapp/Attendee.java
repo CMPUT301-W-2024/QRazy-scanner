@@ -160,6 +160,7 @@ public class Attendee {
 
     /**
      * Add checked into event
+
      * @param eventId the event added
      */
     public void addCheckedEvent(String eventId){
