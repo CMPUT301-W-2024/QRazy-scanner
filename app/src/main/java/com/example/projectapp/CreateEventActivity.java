@@ -12,6 +12,12 @@ import android.widget.EditText;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+
+/**
+ * Activity for setting up a new event creation process. Handles collecting the
+ * organizer's name, saving the organizer's ID, and transitioning the user to the
+ * detailed event creation screen.
+ */
 public class CreateEventActivity extends AppCompatActivity {
 
     private EditText organizerNameEditText;

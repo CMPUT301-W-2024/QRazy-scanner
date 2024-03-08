@@ -19,6 +19,10 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+/**
+ * Data handler. Handles interactions with Firebase,
+ * stores attendee and organizer data, and sets up listeners for data changes.
+ */
 public class DataHandler {
 
     private static DataHandler instance;
@@ -94,18 +98,33 @@ public class DataHandler {
         });
     }
 
+    /**
+     * Adds an Attendee document to the "attendees" collection in Firebase.
+     * @param attendee
+     *      The Attendee object representing the data to add.
+     */
     public void addAttendee(Attendee attendee){
         CollectionReference attendeesRef = db.collection("attendees");
 
         attendeesRef.document(attendee.getAttendeeId()).set(attendee);
     }
 
+    /**
+     * Adds an Event document to the "events" collection in Firebase.
+     * @param event
+     *      The Event object representing the data to add.
+     */
     public void addEvent(Event event){
         CollectionReference attendeesRef = db.collection("events");
 
         attendeesRef.document(event.getEventId()).set(event);
     }
 
+    /**
+     * Adds an Organizer document to the "organizers" collection in Firebase.
+     * @param organizer
+     *      The Organizer object representing the data to add.
+     */
     public void addOrganizer(Organizer organizer){
         CollectionReference organizersRef = db.collection("organizers");
 

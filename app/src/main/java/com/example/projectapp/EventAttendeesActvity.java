@@ -20,6 +20,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * Activity responsible for displaying lists of attendees for an Event.
+ * Handles separating attendees into lists based on check-in status and
+ * sync with Firebase data.
+ */
 public class EventAttendeesActvity extends AppCompatActivity {
 
     private ArrayList<Attendee> checkedInAttendees;
@@ -67,6 +72,13 @@ public class EventAttendeesActvity extends AppCompatActivity {
         signedUpAttendeeListener.remove();
     }
 
+    /**
+     * Adds a new Attendee to the specified list and updates the adapter.
+     * Prevents duplicates based on attendeeId.
+     * @param attendee The Attendee to add.
+     * @param list The list to modify.
+     * @param adapter The adapter to notify of changes.
+     */
     public void addAttendee(Attendee attendee, ArrayList<Attendee> list, EventAttendeeAdapter adapter){
         for (int i=0; i<list.size(); i++){
             if (attendee.getAttendeeId() != null && list.get(i).getAttendeeId() != null && (attendee.getAttendeeId()).equals(list.get(i).getAttendeeId())){
@@ -77,6 +89,12 @@ public class EventAttendeesActvity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * Updates an existing Attendee in the specified list and updates the adapter.
+     * @param attendee The updated Attendee.
+     * @param list The list to modify.
+     * @param adapter The adapter to notify of changes.
+     */
     public void updateAttendee(Attendee attendee, ArrayList<Attendee> list, EventAttendeeAdapter adapter){
         for (int i=0; i<list.size(); i++){
             if (attendee.getAttendeeId() != null && (attendee.getAttendeeId()).equals(list.get(i).getAttendeeId())){
@@ -86,6 +104,12 @@ public class EventAttendeesActvity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * Removes an Attendee from the specified list and updates the adapter.
+     * @param attendee The Attendee to remove.
+     * @param list The list to modify.
+     * @param adapter The adapter to notify of changes.
+     */
     public void removeAttendee(Attendee attendee, ArrayList<Attendee> list, EventAttendeeAdapter adapter){
         Iterator<Attendee> i = list.iterator();
         while(i.hasNext()){

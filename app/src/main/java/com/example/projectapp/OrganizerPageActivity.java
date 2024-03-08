@@ -28,6 +28,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * Activity for an organizer to manage their events. Provides action to set an
+ * organizer name, create new events, and displays a list of existing events.
+ * Sync with Firebase for real-time updates.
+ */
 public class OrganizerPageActivity extends AppCompatActivity {
 
     private EditText organizerNameEditText;
@@ -105,6 +110,11 @@ public class OrganizerPageActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    /**
+     * Adds a new Event to the UI and updates the RecyclerView's adapter.
+     * Prevents duplicates based on event ID.
+     * @param event The Event object to add.
+     */
     public void addEvent(Event event){
         for (int i=0; i<events.size(); i++){
             if (event.getEventId().equals(events.get(i).getEventId())){
@@ -116,6 +126,11 @@ public class OrganizerPageActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Updates an existing Event in the UI and updates the RecyclerView's adapter.
+     * Checks if the updated attendance count reached a milestone.
+     * @param event The updated Event object.
+     */
     public void updateEvent(Event event){
         for (int i=0; i<events.size(); i++){
             if (event.getEventId().equals(events.get(i).getEventId())){
@@ -126,6 +141,10 @@ public class OrganizerPageActivity extends AppCompatActivity {
         eventAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Removes an Event from the UI list and updates the RecyclerView's adapter.
+     * @param event The Event object to remove.
+     */
     public void removeEvent(Event event){
         Iterator<Event> i = events.iterator();
         while(i.hasNext()){
@@ -137,6 +156,11 @@ public class OrganizerPageActivity extends AppCompatActivity {
         eventAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Checks if an Event's attendance count has reached one of the predefined milestones.
+     * Displays a Toast message if a milestone has been reached.
+     * @param event The Event to check.
+     */
     private void checkMilestone(Event event){
         if (mileStones.contains(event.getAttendance())){
             Toast.makeText(OrganizerPageActivity.this, "Milestone Reached!! " + event.getAttendance() + " attendees in " + event.getName(), Toast.LENGTH_LONG).show();

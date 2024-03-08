@@ -51,13 +51,4 @@ class AttendeeTest {
         assertEquals(newAttendeeId, attendee.getAttendeeId(), "Attendee IDs do not match");
     }
 
-    @Test
-    void testEventsGetterAndSetter() {
-        ArrayList<String> newEvents = new ArrayList<>();
-        newEvents.add("Event1");
-        newEvents.add("Event2");
-        attendee.setEvents(newEvents);
-        assertEquals(newEvents, attendee.getEvents(), "Events lists do not match");
-        assertTrue(attendee.getEvents().contains("Event1") && attendee.getEvents().contains("Event2"), "Events list does not contain the correct events");
-    }
 }

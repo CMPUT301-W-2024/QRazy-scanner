@@ -9,6 +9,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+/**
+ * Adapter responsible for displaying a list of Attendees associated with a specific Event.
+ * Handles populating Attendee data into the RecyclerView items and displays check-in
+ * information related to the Event.
+ */
 public class EventAttendeeAdapter extends RecyclerView.Adapter<EventAttendeeAdapter.ViewHolder>{
 
     private List<Attendee> attendees;

@@ -27,7 +27,7 @@ public class AttendeeEventsFragment extends Fragment {
         notificationsRecyclerView.setLayoutManager(notificationsLayoutManager);
 
         // TODO: Set up adapters for events and notifications RecyclerViews
-        // You'll need to create custom adapters for your data.
+
 
         return view;
     }

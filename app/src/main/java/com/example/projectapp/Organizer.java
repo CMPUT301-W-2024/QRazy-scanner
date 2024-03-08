@@ -6,6 +6,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.UUID;
 
+/**
+ * Setting up Organizer
+ */
 public class Organizer {
     private String organizerId;
     private ArrayList<String> events;

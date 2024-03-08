@@ -10,6 +10,9 @@ import android.os.Bundle;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * Main Activity
+ */
 public class MainActivity extends AppCompatActivity {
 
     @Override

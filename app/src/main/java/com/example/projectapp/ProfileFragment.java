@@ -42,6 +42,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
 
+/**
+ * Store save value of a profile
+ */
 public class ProfileFragment extends Fragment {
 
     private EditText userNameEditText;
