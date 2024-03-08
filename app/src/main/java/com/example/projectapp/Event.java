@@ -22,23 +22,11 @@ public class Event {
     private String poster;
 
     private Integer attendanceLimit;
-    
-    private String Description;
 
-    /**
-     * get event description
-     * @return a description
-     */
-    public String getDescription() {
-        return Description;
-    }
 
-    /**
-     * set event's description
-     * @param description a description
-     */
-    public void setDescription(String description) {
-        Description = description;
+
+    public interface eventListener{
+
     }
 
     /**
@@ -46,6 +34,17 @@ public class Event {
      */
 
     public Event(){
+/*        eventId = UUID.randomUUID().toString();
+        attendees = new HashMap<>();*/
+    }
+
+    public Event(String name, String date, String organizer, Integer attendanceLimit, String description, String poster) {
+        this.name = name;
+        this.date = date;
+        this.organizer = organizer;
+        this.attendanceLimit = attendanceLimit;
+        this.description = description;
+        this.poster = poster;
         eventId = UUID.randomUUID().toString();
         attendees = new HashMap<>();
     }
@@ -137,7 +136,28 @@ public class Event {
         this.attendanceLimit = attendanceLimit;
     }
 
-    
+
+    /**
+     * get event description
+     * @return a description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * set event's description
+     * @param description a description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * Add an attendee
+     * @param attendeeId
+     */
+
     public void addAttendee(String attendeeId){
         if (!attendees.containsKey(attendeeId)){
             attendees.put(attendeeId, 0);

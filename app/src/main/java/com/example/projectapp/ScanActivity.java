@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
@@ -23,6 +24,7 @@ public class ScanActivity extends AppCompatActivity {
     private final int CAMERA_PERMISSION_CODE = 100;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private DataHandler dataHandler = DataHandler.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,15 +40,15 @@ public class ScanActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(ScanActivity.this, result.getText(), Toast.LENGTH_SHORT).show();
-
-                        MainActivity.getAttendee().addEvent(result.getText());
                         db.collection("events").document(result.getText()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                 Event event = documentSnapshot.toObject(Event.class);
-                                event.addAttendee(MainActivity.getAttendee().getAttendeeId());
+                                event.addAttendee(dataHandler.getAttendee().getAttendeeId());
+                                Intent intent = new Intent(ScanActivity.this, AttendeePageActivity.class);
+                                startActivity(intent);
                             }
-                        });;
+                        });
                     }
                 });
             }
