@@ -1,14 +1,18 @@
 package com.example.projectapp;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -42,6 +46,7 @@ public class Admin extends AppCompatActivity {
         //loadMockEvents();
         //loadMockProfiles();
         loadAttendeesFromFirebase();
+        loadImagesFromFirebase();
     }
 
     private void loadMockProfiles() {
@@ -123,7 +128,33 @@ public class Admin extends AppCompatActivity {
         });
     }
 
+    private void loadImagesFromFirebase() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("events").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("Admin", "Listen failed.", e);
+                    return;
+                }
 
+                if (snapshots != null && !snapshots.isEmpty()) {
+                   
+                    LinearLayout imagesLayout = findViewById(R.id.imagesLayout);
+                    imagesLayout.removeAllViews();
+
+                    for (DocumentSnapshot document : snapshots.getDocuments()) {
+                        String encodedImage = document.getString("poster");
+                        if (encodedImage != null && !encodedImage.isEmpty()) {
+                            addImageToBottomScrollView(encodedImage);
+                        }
+                    }
+                } else {
+                    Log.d("Admin", "No data found");
+                }
+            }
+        });
+    }
 
     private void addEventToScrollView(Event event) {
         View eventView = LayoutInflater.from(this).inflate(R.layout.event_widget, horizontalLayout, false);
@@ -149,18 +180,39 @@ public class Admin extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         Map<String, Object> docMap = document.getData();
-
-                        // Create a new Attendee object and set its fields from the map
                         Attendee attendee = new Attendee();
-                        attendee.setAttendeeId(document.getId()); // Assuming the document ID is the attendee ID
+                        attendee.setAttendeeId(document.getId());
                         attendee.setName((String) docMap.get("name"));
-                        // Set other fields of Attendee as needed
+
 
                         addAttendeeToScrollView(attendee);
                     }
                 }
             }
         });
+    }
+    public Bitmap stringToBitmap(String encodedString) {
+        try {
+            byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+            return bitmap;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void addImageToBottomScrollView(String encodedImageString) {
+        View imageLayoutView = LayoutInflater.from(this).inflate(R.layout.image_layout, null, false);
+        ImageView imageView = imageLayoutView.findViewById(R.id.image_view);
+
+        Bitmap imageBitmap = stringToBitmap(encodedImageString);
+        if (imageBitmap != null) {
+            imageView.setImageBitmap(imageBitmap);
+        }
+
+        LinearLayout imagesLayout = findViewById(R.id.imagesLayout);
+        imagesLayout.addView(imageLayoutView);
     }
 
 
