@@ -25,16 +25,12 @@
           <theme>@style/Theme.ProjectApp</theme>
         </config>
       </layout>
-<<<<<<< HEAD
-      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_create_new_event.xml">
-=======
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_generate_qrcode.xml">
         <config>
           <theme>@style/Theme.ProjectApp</theme>
         </config>
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
->>>>>>> main
         <config>
           <theme>@style/Theme.ProjectApp</theme>
         </config>
@@ -49,8 +45,6 @@
           <theme>@style/Theme.ProjectApp</theme>
         </config>
       </layout>
-<<<<<<< HEAD
-=======
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/attendee_dialog.xml">
         <config>
           <theme>@style/Theme.ProjectApp</theme>
@@ -61,17 +55,11 @@
           <theme>@style/Theme.ProjectApp</theme>
         </config>
       </layout>
-      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/drawable_dialog.xml">
-        <config>
-          <theme>@style/Theme.ProjectApp</theme>
-        </config>
-      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/event_dialog.xml">
         <config>
           <theme>@style/Theme.ProjectApp</theme>
         </config>
       </layout>
->>>>>>> main
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/event_info_attendee_fragment.xml">
         <config>
           <theme>@style/Theme.ProjectApp</theme>
@@ -129,19 +117,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33141556-d996-4518-8004-cbe4367a9bf8" name="Changes" comment="">
-<<<<<<< HEAD
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/AttendeePageActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/AttendeePageActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/CreateNewEventActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/CreateNewEventActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/DataHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/DataHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/Event.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/Event.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/OrganizerPageActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/OrganizerPageActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/WelcomeFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/WelcomeFragment.java" afterDir="false" />
-=======
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/Admin.java" afterDir="false" />
->>>>>>> main
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -151,7 +127,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\kodya\.android\avd\Pixel_2_API_34.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\giaso\.android\avd\Medium_Phone_API_34.avd]" />
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>

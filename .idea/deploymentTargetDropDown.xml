@@ -2,6 +2,7 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+
       <entry key="MainActivity">
         <State>
           <runningDeviceTargetsSelectedWithDialog>
@@ -27,6 +28,7 @@
             </Target>
           </targetsSelectedWithDialog>
         </State>
+
       </entry>
     </value>
   </component>
