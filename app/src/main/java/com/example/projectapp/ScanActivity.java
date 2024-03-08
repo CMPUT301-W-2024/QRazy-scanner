@@ -44,9 +44,15 @@ public class ScanActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                 Event event = documentSnapshot.toObject(Event.class);
-                                event.addAttendee(dataHandler.getAttendee().getAttendeeId());
-                                Intent intent = new Intent(ScanActivity.this, AttendeePageActivity.class);
-                                startActivity(intent);
+                                if (event != null){
+                                    event.addAttendee(dataHandler.getAttendee().getAttendeeId());
+                                    Intent intent = new Intent(ScanActivity.this, AttendeePageActivity.class);
+                                    startActivity(intent);
+                                }
+                                else {
+                                    Toast.makeText(ScanActivity.this, "Could not get event", Toast.LENGTH_SHORT).show();
+                                }
+
                             }
                         });
                     }

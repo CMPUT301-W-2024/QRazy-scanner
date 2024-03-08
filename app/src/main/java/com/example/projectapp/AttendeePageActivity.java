@@ -66,7 +66,7 @@ public class AttendeePageActivity extends AppCompatActivity {
 
     public void addEvent(Event event, ArrayList<Event> list, AttendeeEventAdapter adapter){
         for (int i=0; i<list.size(); i++){
-            if (event.getEventId() != null && (event.getEventId()).equals(list.get(i).getEventId())){
+            if (event.getEventId() != null && list.get(i).getEventId() != null && (event.getEventId()).equals(list.get(i).getEventId())){
                 return;
             }
         }
@@ -87,7 +87,8 @@ public class AttendeePageActivity extends AppCompatActivity {
         Iterator<Event> i = list.iterator();
         while(i.hasNext()){
             Event e = i.next();
-            if ((e.getEventId()).equals(event.getEventId())){
+            System.out.println("got till here: " + e);
+            if (event.getEventId() != null && e.getEventId() != null && (e.getEventId()).equals(event.getEventId())){
                 i.remove();
             }
         }
@@ -101,18 +102,21 @@ public class AttendeePageActivity extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
-                for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                    Event event = dc.getDocument().toObject(Event.class);
-                    switch (dc.getType()) {
-                        case ADDED:
-                            addEvent(event, attendeeEvents, attendeeEventsAdapter);
-                            break;
-                        case MODIFIED:
-                            updateEvent(event, attendeeEvents, attendeeEventsAdapter);
-                            break;
-                        case REMOVED:
-                            removeEvent(event, attendeeEvents, attendeeEventsAdapter);
-                            break;
+                if (snapshots != null) {
+                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                        Event event = dc.getDocument().toObject(Event.class);
+                        switch (dc.getType()) {
+                            case ADDED:
+                                addEvent(event, attendeeEvents, attendeeEventsAdapter);
+                                break;
+                            case MODIFIED:
+                                updateEvent(event, attendeeEvents, attendeeEventsAdapter);
+                                break;
+                            case REMOVED:
+                                System.out.println("got till here: " + dc.getDocument().getData());
+                                removeEvent(event, attendeeEvents, attendeeEventsAdapter);
+                                break;
+                        }
                     }
                 }
             }
@@ -121,23 +125,25 @@ public class AttendeePageActivity extends AppCompatActivity {
 
     private void addAllEventsListener(){
         CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
-        System.out.println("Got till here");
         allEventsListener = eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>(){
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
-                for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                    Event event = dc.getDocument().toObject(Event.class);
-                    switch (dc.getType()) {
-                        case ADDED:
-                            addEvent(event, allEvents, allEventsAdapter);
-                            break;
-                        case MODIFIED:
-                            updateEvent(event, allEvents, allEventsAdapter);
-                            break;
-                        case REMOVED:
-                            removeEvent(event, allEvents, allEventsAdapter);
-                            break;
+                if (snapshots != null){
+                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                        Event event = dc.getDocument().toObject(Event.class);
+                        switch (dc.getType()) {
+                            case ADDED:
+                                addEvent(event, allEvents, allEventsAdapter);
+                                break;
+                            case MODIFIED:
+                                updateEvent(event, allEvents, allEventsAdapter);
+                                break;
+                            case REMOVED:
+                                System.out.println("got till here: too" + dc.getDocument().getData());
+                                removeEvent(event, allEvents, allEventsAdapter);
+                                break;
+                        }
                     }
                 }
             }
