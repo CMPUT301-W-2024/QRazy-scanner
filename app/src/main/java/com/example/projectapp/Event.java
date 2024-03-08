@@ -208,7 +208,7 @@ public class Event {
      */
     public void addAttendee(String attendeeId){
         if (!attendees.containsKey(attendeeId)){
-            attendees.put(attendeeId, 0);
+            attendees.put(attendeeId, 1);
         }
         else{
             Integer checkIns = attendees.get(attendeeId) + 1;
