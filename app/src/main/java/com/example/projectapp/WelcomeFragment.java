@@ -50,7 +50,7 @@ public class WelcomeFragment extends Fragment {
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             Attendee attendee = documentSnapshot.toObject(Attendee.class);
                             dataHandler.setAttendee(attendee);
-                            Intent intent = new Intent(getActivity(), ScanActivity.class);
+                            Intent intent = new Intent(getActivity(), AttendeePageActivity.class);
                             startActivity(intent);
                         }
                     });
