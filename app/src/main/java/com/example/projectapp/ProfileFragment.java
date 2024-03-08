@@ -187,7 +187,8 @@ public class ProfileFragment extends Fragment {
 
 
     /**
-     * save values to db
+     * save values, make sure the attendee have enough information
+     * @return 0 if not enough fields, 1 if it is.
      */
     private Integer saveValues() {
         String name = userNameEditText.getText().toString().trim();
