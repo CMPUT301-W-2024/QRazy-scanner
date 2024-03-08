@@ -2,20 +2,26 @@ package com.example.projectapp;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.qrcode.QRCodeWriter;
+
+import java.io.ByteArrayOutputStream;
 
 public class GenerateQrCodeActivity extends AppCompatActivity {
 
     private ImageView qrCodeImageView;
     private String eventId;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +31,8 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
         qrCodeImageView = findViewById(R.id.qrCodeImageView);
         eventId = getIntent().getStringExtra("EVENT_ID"); // Retrieve the event ID
 
-        // Find the generate qr button and set its click listener
-        findViewById(R.id.generateQrCodeButton).setOnClickListener(new View.OnClickListener() {
+        MaterialButton generateQrCodeButton = findViewById(R.id.generateQrCodeButton); // Find the button by its ID
+        generateQrCodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (eventId != null && !eventId.isEmpty()) {
@@ -34,6 +40,7 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
                     try {
                         Bitmap qrCodeBitmap = generateQRCode(eventId);
                         qrCodeImageView.setImageBitmap(qrCodeBitmap);
+                        storeQRCodeInFirestore(qrCodeBitmap); // Store the QR code in Firebase
                     } catch (WriterException e) {
                         e.printStackTrace();
                         Toast.makeText(GenerateQrCodeActivity.this, "Error generating QR Code", Toast.LENGTH_SHORT).show();
@@ -62,6 +69,20 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return bmp;
+    }
+    private String bitmapToString(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] byteArray = baos.toByteArray();
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }
+
+    private void storeQRCodeInFirestore(Bitmap qrCodeBitmap) {
+        String qrCodeString = bitmapToString(qrCodeBitmap);
+        db.collection("events").document(eventId)
+                .update("qrCode", qrCodeString)
+                .addOnSuccessListener(aVoid -> Toast.makeText(GenerateQrCodeActivity.this, "QR Code stored successfully", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(GenerateQrCodeActivity.this, "Failed to store QR Code", Toast.LENGTH_SHORT).show());
     }
 }
 
