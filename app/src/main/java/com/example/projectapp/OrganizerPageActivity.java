@@ -6,11 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -36,15 +34,24 @@ public class OrganizerPageActivity extends AppCompatActivity {
     private ArrayList<Event> events;
     private OrganizerEventAdapter eventAdapter;
     private ListenerRegistration organizerEventsListener;
+    private ArrayList<Integer> mileStones;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_event);
+        setContentView(R.layout.activity_organizer_page);
 
         dataHandler = DataHandler.getInstance();
         organizerNameEditText = findViewById(R.id.organizerNameEditText);
-        organizerNameEditText.setText(dataHandler.getOrganizer().getName());
+
+        if (dataHandler.getOrganizer() != null){
+            organizerNameEditText.setText(dataHandler.getOrganizer().getName());
+        }
+
+        mileStones = new ArrayList<>();
+        mileStones.add(1);
+        mileStones.add(3);
+        mileStones.add(7);
 
         RecyclerView recyclerView = findViewById(R.id.eventListRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -75,13 +82,17 @@ public class OrganizerPageActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        addOrganizerEventsListener();
+        if (dataHandler.getOrganizer() != null){
+            addOrganizerEventsListener();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        removeOrganizerEventsListener();
+        if (organizerEventsListener != null){
+            organizerEventsListener.remove();
+        }
     }
 
     /**
@@ -111,6 +122,7 @@ public class OrganizerPageActivity extends AppCompatActivity {
                 events.set(i, event);
             }
         }
+        checkMilestone(event);
         eventAdapter.notifyDataSetChanged();
     }
 
@@ -125,10 +137,18 @@ public class OrganizerPageActivity extends AppCompatActivity {
         eventAdapter.notifyDataSetChanged();
     }
 
+    private void checkMilestone(Event event){
+        System.out.println("Got till here: " + event.getAttendance());
+        if (mileStones.contains(event.getAttendance())){
+            System.out.println("Got till here: " + event.getAttendance());
+            Toast.makeText(OrganizerPageActivity.this, "Milestone Reached!! " + event.getAttendance() + " attendees in " + event.getName(), Toast.LENGTH_LONG).show();
+        }
+    }
+
     private void addOrganizerEventsListener(){
         CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
 
-        organizerEventsListener = eventsRef.whereEqualTo("organizer", DataHandler.getInstance().getOrganizer().getOrganizerId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        organizerEventsListener = eventsRef.whereEqualTo("organizer", dataHandler.getOrganizer().getOrganizerId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
@@ -148,10 +168,6 @@ public class OrganizerPageActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private void removeOrganizerEventsListener(){
-        organizerEventsListener.remove();
     }
 }
 

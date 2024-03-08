@@ -20,6 +20,8 @@ import androidx.fragment.app.Fragment;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.MemoryCacheSettings;
 
 public class WelcomeFragment extends Fragment {
 
@@ -31,6 +33,10 @@ public class WelcomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.welcome_fragment, container, false);
         dataHandler = DataHandler.getInstance();
+
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder().setLocalCacheSettings(MemoryCacheSettings.newBuilder().build()).build();
+        db.setFirestoreSettings(settings);
+
         // Find the "Join Event" button
         Button joinEventButton = rootView.findViewById(R.id.joinEventButton);
         Button createEventButton = rootView.findViewById(R.id.createEventButton);
