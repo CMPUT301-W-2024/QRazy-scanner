@@ -64,5 +64,4 @@
         android:background="#0000"
         android:src="@drawable/down_arrow_icon"/>
 
-
 </LinearLayout>
