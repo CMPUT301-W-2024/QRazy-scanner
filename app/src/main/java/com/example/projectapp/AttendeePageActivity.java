@@ -9,10 +9,12 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.firebase.firestore.CollectionReference;
@@ -80,6 +82,7 @@ public class AttendeePageActivity extends AppCompatActivity {
             startActivity(new Intent(this, ScanActivity.class));
         });
 
+        addAnouncmentToScrollView();
     }
     /**
      * Removes event listeners when the activity is paused to avoid unnecessary background processing.
@@ -223,5 +226,18 @@ public class AttendeePageActivity extends AppCompatActivity {
         }
 
         eventDetailDialog.show();
+    }
+
+    /**
+     * Adds announcment to scroll view, currently hard coded since we haven't added the functionality for organizer to push announcments
+     */
+    private void addAnouncmentToScrollView() {
+        View anouncmentView = LayoutInflater.from(this).inflate(R.layout.announcement_scroll_view, findViewById(R.id.announcementView), false);
+        TextView announcment = anouncmentView.findViewById(R.id.announcement_content);
+        TextView announcer = anouncmentView.findViewById(R.id.announcer);
+        announcment.setText("This is an announcment");
+        announcer.setText("Announcer");
+        ScrollView announcmentView = findViewById(R.id.announcementView);
+        announcmentView.addView(anouncmentView);
     }
 }
