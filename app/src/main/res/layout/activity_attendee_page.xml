@@ -33,7 +33,13 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:orientation="vertical"
         android:gravity="center|bottom">
+
+        <ScrollView
+            android:id="@+id/announcementView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
 
         <Button
