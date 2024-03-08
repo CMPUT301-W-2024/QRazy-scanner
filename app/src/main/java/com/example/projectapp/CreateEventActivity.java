@@ -30,10 +30,12 @@ public class CreateEventActivity extends AppCompatActivity {
         createNewEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Organizer organizer = new Organizer(organizerNameEditText.getText().toString().trim());
-                dataHandler.setOrganizer(organizer);
-                saveOrganizerId();
-                dataHandler.addOrganizer(organizer);
+                if (dataHandler.getOrganizer() == null){
+                    Organizer organizer = new Organizer(organizerNameEditText.getText().toString().trim());
+                    dataHandler.setOrganizer(organizer);
+                    saveOrganizerId();
+                    dataHandler.addOrganizer(organizer);
+                }
                 Intent intent = new Intent(CreateEventActivity.this, CreateNewEventActivity.class);
                 startActivity(intent);
             }

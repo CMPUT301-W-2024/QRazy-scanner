@@ -38,9 +38,16 @@ public class WelcomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // User has logged in before, get their info
-                if (getAttendeeId() != null){
-                    Intent i = new Intent(getActivity(), AttendeePageActivity.class);
-                    startActivity(i);
+                if (getAttendeeId() != null) {
+                    db.collection("attendees").document(getAttendeeId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            Attendee attendee = documentSnapshot.toObject(Attendee.class);
+                            dataHandler.setAttendee(attendee);
+                            Intent intent = new Intent(getActivity(), ScanActivity.class);
+                            startActivity(intent);
+                        }
+                    });
                 }
                 else {
                     ProfileFragment profileFragment = new ProfileFragment();
@@ -71,14 +78,11 @@ public class WelcomeFragment extends Fragment {
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             Organizer organizer = documentSnapshot.toObject(Organizer.class);
                             dataHandler.setOrganizer(organizer);
-                            Intent intent = new Intent(getActivity(), CreateNewEventActivity.class);
-                            startActivity(intent);
                         }
                     });
-                } else {
-                    Intent intent = new Intent(getActivity(), CreateEventActivity.class);
-                    startActivity(intent);
                 }
+                Intent intent = new Intent(getActivity(), CreateEventActivity.class);
+                startActivity(intent);
             }
         });
 
