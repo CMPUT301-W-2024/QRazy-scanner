@@ -13,8 +13,9 @@ import java.util.Iterator;
 public class AttendeePageActivity extends AppCompatActivity {
     private static AttendeePageActivity instance;
     RecyclerView recyclerView;
-    ArrayList<Event> events;
-    EventAdapter eventAdapter;
+    ArrayList<Event> allEvents;
+    ArrayList<Event> attendeeEvents;
+    AttendeeEventAdapter eventAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +26,9 @@ public class AttendeePageActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.events_recycler_view);
 
-        events = new ArrayList<>();
+        allEvents = new ArrayList<>();
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        eventAdapter = new EventAdapter(events);
+        eventAdapter = new AttendeeEventAdapter(allEvents);
         recyclerView.setAdapter(eventAdapter);
 
         findViewById(R.id.test_button).setOnClickListener(v -> {
@@ -48,22 +49,20 @@ public class AttendeePageActivity extends AppCompatActivity {
     }
 
     public void addEvent(Event event){
-        System.out.println(event.getEventId() + " Event sdded here");
-        for (int i=0; i<events.size(); i++){
-            if (event.getEventId() != null && event.getEventId().equals(events.get(i).getEventId())){
-                System.out.println("same here letsgooo  " + event.getName());
+        for (int i=0; i<allEvents.size(); i++){
+            if (event.getEventId() != null && (event.getEventId()).equals(allEvents.get(i).getEventId())){
                 return;
             }
         }
-        events.add(event);
+        allEvents.add(event);
         eventAdapter.notifyDataSetChanged();
     }
 
     public void removeEvent(Event event){
-        Iterator<Event> i = events.iterator();
+        Iterator<Event> i = allEvents.iterator();
         while(i.hasNext()){
             Event e = i.next();
-            if (e.getEventId().equals(event.getEventId())){
+            if ((e.getEventId()).equals(event.getEventId())){
                 i.remove();
             }
         }

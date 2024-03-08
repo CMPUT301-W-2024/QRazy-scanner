@@ -19,7 +19,7 @@ public class Event {
     private String description;
     private HashMap<String, Integer> attendees;
     private Integer attendanceLimit;
-    private Image poster;
+    private String poster;
 
     public interface eventListener{
 
@@ -33,12 +33,13 @@ public class Event {
         attendees = new HashMap<>();*/
     }
 
-    public Event(String name, String date, String organizer, Integer attendanceLimit, String description) {
+    public Event(String name, String date, String organizer, Integer attendanceLimit, String description, String poster) {
         this.name = name;
         this.date = date;
         this.organizer = organizer;
         this.attendanceLimit = attendanceLimit;
         this.description = description;
+        this.poster = poster;
         eventId = UUID.randomUUID().toString();
         attendees = new HashMap<>();
     }
@@ -92,7 +93,7 @@ public class Event {
      * get the Poster
      * @return poster
      */
-    public Image getPoster() {
+    public String getPoster() {
         return poster;
     }
 
@@ -100,7 +101,7 @@ public class Event {
      * Set Event's poster
      * @param poster a poster Image
      */
-    public void setPoster(Image poster) {
+    public void setPoster(String poster) {
         this.poster = poster;
     }
 

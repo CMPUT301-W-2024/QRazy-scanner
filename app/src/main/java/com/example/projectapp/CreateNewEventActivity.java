@@ -54,8 +54,7 @@ public class CreateNewEventActivity extends AppCompatActivity {
         eventDescriptionEditText = findViewById(R.id.eventDescriptionEditText);
         attendanceLimitEditText = findViewById(R.id.attendanceLimitEditText);
         calendar = Calendar.getInstance();
-        newEvent = new Event();
-        db.collection("events").document(newEvent.getEventId()).set(newEvent);
+/*        db.collection("events").document(newEvent.getEventId()).set(newEvent);*/
 
 
 
@@ -75,11 +74,11 @@ public class CreateNewEventActivity extends AppCompatActivity {
                                 // Set the chosen date to the EditText
                                 String selectedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
                                 eventDateEditText.setText(selectedDate);
-                                db.collection("events").document(newEvent.getEventId()).update("date", selectedDate);
+    /*                            db.collection("events").document(newEvent.getEventId()).update("date", selectedDate);*/
                             }
                         }, year, month, day);
                 datePickerDialog.show();
-                db.collection("events").document(newEvent.getEventId()).update("date", eventDateEditText.getText().toString());
+/*                db.collection("events").document(newEvent.getEventId()).update("date", eventDateEditText.getText().toString());*/
 
             }
         });
@@ -88,7 +87,6 @@ public class CreateNewEventActivity extends AppCompatActivity {
         saveEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
                 saveEvent();
             }
         });
@@ -109,30 +107,31 @@ public class CreateNewEventActivity extends AppCompatActivity {
         String eventDate = eventDateEditText.getText().toString().trim();
         String eventDescription = eventDescriptionEditText.getText().toString().trim();
         String attendanceLimitStr = attendanceLimitEditText.getText().toString().trim();
-        int attendanceLimit = attendanceLimitStr.isEmpty() ? 0 : Integer.parseInt(attendanceLimitStr);
+        Integer attendanceLimit = attendanceLimitStr.isEmpty() ? 0 : Integer.parseInt(attendanceLimitStr);
 
         // Set the event details to the newEvent object
-        newEvent.setName(eventName);
+        Event newEvent = new Event(eventName, eventDate, DataHandler.getInstance().getOrganizer().getName(), attendanceLimit, eventDescription, encodedImage);
+/*        newEvent.setName(eventName);
         newEvent.setDate(eventDate);
         newEvent.setDescription(eventDescription);
-        newEvent.setAttendanceLimit(attendanceLimit);
+        newEvent.setAttendanceLimit(attendanceLimit);*/
 
         // Convert the Event object to a Map to save to Firebase
-        Map<String, Object> eventMap = new HashMap<>();
+/*        Map<String, Object> eventMap = new HashMap<>();
         eventMap.put("event id", newEvent.getEventId());
         eventMap.put("name", newEvent.getName());
         eventMap.put("date", newEvent.getDate());
         eventMap.put("description", newEvent.getDescription());
-        eventMap.put("attendanceLimit", newEvent.getAttendanceLimit());
+        eventMap.put("attendanceLimit", newEvent.getAttendanceLimit());*/
 
         // Add the image string to the map if it's not null
-        if (encodedImage != null && !encodedImage.isEmpty()) {
+/*        if (encodedImage != null && !encodedImage.isEmpty()) {
             eventMap.put("poster", encodedImage);
-        }
+        }*/
 
         // Upload the event details to Firebase
         db.collection("events").document(newEvent.getEventId())
-                .set(eventMap)
+                .set(newEvent)
                 .addOnSuccessListener(aVoid -> {
                     // Success handling
                     Toast.makeText(CreateNewEventActivity.this, "Event saved successfully", Toast.LENGTH_SHORT).show();
@@ -169,8 +168,6 @@ public class CreateNewEventActivity extends AppCompatActivity {
                                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                                     // Set the encodedImage string here
                                     encodedImage = bitmapToString(bitmap);
-                                    // Now we can save the event details including the image string
-                                    saveEvent();
                                 } catch (Exception e) {
                                     Toast.makeText(CreateNewEventActivity.this, "Failed to load image.", Toast.LENGTH_SHORT).show();
                                     e.printStackTrace();

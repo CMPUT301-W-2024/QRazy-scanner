@@ -9,11 +9,17 @@ import java.util.UUID;
 public class Organizer {
     private String organizerId;
     private ArrayList<String> events;
+    private String name;
 
     /**
      * constructor
      */
     public Organizer() {
+
+    }
+
+    public Organizer(String name){
+        this.name = name;
         organizerId = UUID.randomUUID().toString();
         events = new ArrayList<>();
     }
@@ -48,6 +54,14 @@ public class Organizer {
      */
     public void setEvents(ArrayList<String> events) {
         this.events = events;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**

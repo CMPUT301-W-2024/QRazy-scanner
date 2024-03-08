@@ -5,6 +5,7 @@ import android.media.Image;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -17,14 +18,21 @@ public class Attendee {
     private String homepage;
     private String contactInfo;
     private String attendeeId;
-    private HashMap<String, Integer> events;
+    private ArrayList<String> events;
 
     /**
      * Attendee Constructor
      */
     public Attendee(){
+    }
+
+    public Attendee(String profilePic, String name, String homepage, String contactInfo) {
+        this.profilePic = profilePic;
+        this.name = name;
+        this.homepage = homepage;
+        this.contactInfo = contactInfo;
         attendeeId = UUID.randomUUID().toString();
-        events = new HashMap<>();
+        events = new ArrayList<>();
     }
 
     /**
@@ -104,7 +112,7 @@ public class Attendee {
      * get Events
      * @return user's events
      */
-    public HashMap<String, Integer> getEvents() {
+    public ArrayList<String> getEvents() {
         return events;
     }
 
@@ -113,15 +121,11 @@ public class Attendee {
      * @param eventId the event added
      */
     public void addEvent(String eventId){
-        if (!events.containsKey(eventId)){
-            events.put(eventId, 0);
+        if (!events.contains(eventId)){
+            events.add(eventId);
+            DocumentReference attendeeRef = FirebaseFirestore.getInstance().collection("attendees").document(attendeeId);
+            attendeeRef.update("events", events);
         }
-        else{
-            Integer checkIns = events.get(eventId) + 1;
-            events.put(eventId, checkIns);
-        }
-        DocumentReference attendeeRef = FirebaseFirestore.getInstance().collection("attendees").document(attendeeId);
-        attendeeRef.update("events", events);
     }
 
 }
