@@ -37,7 +37,6 @@ public class Admin extends AppCompatActivity {
     LinearLayout horizontalLayout;
     LinearLayout verticalLayout;
 
-
     /**
      *  Handles activity creation; sets up layout and initializes data loading.
      *
