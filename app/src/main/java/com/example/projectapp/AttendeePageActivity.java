@@ -37,6 +37,7 @@ public class AttendeePageActivity extends AppCompatActivity {
     private AttendeeEventAdapter allEventsAdapter;
     private ListenerRegistration attendeeEventsListener;
     private ListenerRegistration allEventsListener;
+    private DataHandler dataHandler = DataHandler.getInstance();
   
     /**
      * Initializes the activity, sets up RecyclerViews for displaying events.
