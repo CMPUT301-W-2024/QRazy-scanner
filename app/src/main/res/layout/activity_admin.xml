@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:text="@string/profiles"
         android:textSize="24sp"
-        android:fontFamily="@font/bold1"
+        android:fontFamily="@font/bold"
         android:paddingTop="16dp"
         android:paddingBottom="8dp"
         app:layout_constraintStart_toStartOf="parent"
