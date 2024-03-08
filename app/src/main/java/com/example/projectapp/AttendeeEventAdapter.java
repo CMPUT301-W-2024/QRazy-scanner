@@ -12,6 +12,11 @@ import java.util.List;
 public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdapter.ViewHolder> {
 
     private List<Event> events;
+    private OnItemClickListener listener;
+
+    public interface OnItemClickListener {
+        void onItemClick(Event event);
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView nameText, organizerText, infoText;
@@ -22,6 +27,14 @@ public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdap
             organizerText = (TextView) view.findViewById(R.id.event_organizer_name_text);
             infoText = (TextView) view.findViewById(R.id.event_info_text);
         }
+
+        public void bind(final Event event,final OnItemClickListener listener) {
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    listener.onItemClick(event);
+                }
+            });
+        }
     }
 
     /**
@@ -29,8 +42,9 @@ public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdap
      *
      * @param events list containing the data to populate views to be used
      */
-    public AttendeeEventAdapter(List<Event> events) {
+    public AttendeeEventAdapter(List<Event> events, OnItemClickListener listener) {
         this.events = events;
+        this.listener = listener;
     }
 
     // Create new views (invoked by the layout manager)
@@ -45,7 +59,7 @@ public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdap
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-
+        viewHolder.bind(events.get(position), listener);
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         viewHolder.nameText.setText(events.get(position).getName());
