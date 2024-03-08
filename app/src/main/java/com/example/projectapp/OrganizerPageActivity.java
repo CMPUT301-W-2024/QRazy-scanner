@@ -43,7 +43,10 @@ public class OrganizerPageActivity extends AppCompatActivity {
 
         dataHandler = DataHandler.getInstance();
         organizerNameEditText = findViewById(R.id.organizerNameEditText);
-        organizerNameEditText.setText(dataHandler.getOrganizer().getName());
+
+        if (dataHandler.getOrganizer() != null){
+            organizerNameEditText.setText(dataHandler.getOrganizer().getName());
+        }
 
         mileStones = new ArrayList<>();
         mileStones.add(1);
@@ -79,13 +82,17 @@ public class OrganizerPageActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        addOrganizerEventsListener();
+        if (dataHandler.getOrganizer() != null){
+            addOrganizerEventsListener();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        removeOrganizerEventsListener();
+        if (organizerEventsListener != null){
+            organizerEventsListener.remove();
+        }
     }
 
     /**
@@ -141,7 +148,7 @@ public class OrganizerPageActivity extends AppCompatActivity {
     private void addOrganizerEventsListener(){
         CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
 
-        organizerEventsListener = eventsRef.whereEqualTo("organizer", DataHandler.getInstance().getOrganizer().getOrganizerId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        organizerEventsListener = eventsRef.whereEqualTo("organizer", dataHandler.getOrganizer().getOrganizerId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
@@ -161,10 +168,6 @@ public class OrganizerPageActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private void removeOrganizerEventsListener(){
-        organizerEventsListener.remove();
     }
 }
 

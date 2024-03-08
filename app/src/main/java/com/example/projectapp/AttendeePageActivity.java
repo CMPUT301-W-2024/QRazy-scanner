@@ -5,9 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
@@ -42,11 +48,23 @@ public class AttendeePageActivity extends AppCompatActivity {
         attendeeEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         allEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        attendeeEventsAdapter = new AttendeeEventAdapter(attendeeEvents);
-        allEventsAdapter = new AttendeeEventAdapter(allEvents);
+        attendeeEventsAdapter = new AttendeeEventAdapter(attendeeEvents, new AttendeeEventAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Event event) {
+                showDialogWithEventDetails(event, false);
+            }
+        });
+
+        allEventsAdapter = new AttendeeEventAdapter(allEvents, new AttendeeEventAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Event event) {
+                showDialogWithEventDetails(event,true);
+            }
+        });
 
         attendeeEventsList.setAdapter(attendeeEventsAdapter);
         allEventsList.setAdapter(allEventsAdapter);
+
     }
 
     @Override
@@ -87,7 +105,6 @@ public class AttendeePageActivity extends AppCompatActivity {
         Iterator<Event> i = list.iterator();
         while(i.hasNext()){
             Event e = i.next();
-            System.out.println("got till here: " + e);
             if (event.getEventId() != null && e.getEventId() != null && (e.getEventId()).equals(event.getEventId())){
                 i.remove();
             }
@@ -113,7 +130,6 @@ public class AttendeePageActivity extends AppCompatActivity {
                                 updateEvent(event, attendeeEvents, attendeeEventsAdapter);
                                 break;
                             case REMOVED:
-                                System.out.println("got till here: " + dc.getDocument().getData());
                                 removeEvent(event, attendeeEvents, attendeeEventsAdapter);
                                 break;
                         }
@@ -140,7 +156,6 @@ public class AttendeePageActivity extends AppCompatActivity {
                                 updateEvent(event, allEvents, allEventsAdapter);
                                 break;
                             case REMOVED:
-                                System.out.println("got till here: too" + dc.getDocument().getData());
                                 removeEvent(event, allEvents, allEventsAdapter);
                                 break;
                         }
@@ -148,5 +163,40 @@ public class AttendeePageActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void showDialogWithEventDetails(Event event, boolean canSignUp) {
+        Dialog eventDetailDialog = new Dialog(this);
+        eventDetailDialog.setContentView(R.layout.event_dialog);
+
+        TextView eventNameView = eventDetailDialog.findViewById(R.id.dialog_event_name);
+        TextView eventOrganizerView = eventDetailDialog.findViewById(R.id.dialog_event_organizer);
+        TextView eventDescriptionView = eventDetailDialog.findViewById(R.id.dialog_event_description);
+        Button closeButton = eventDetailDialog.findViewById(R.id.dialog_event_close_button);
+        Button signUpButton = eventDetailDialog.findViewById(R.id.dialog_event_sign_button);
+
+        eventNameView.setText(event.getName());
+        eventOrganizerView.setText(event.getOrganizer());
+        eventDescriptionView.setText(event.getDescription());
+
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                eventDetailDialog.dismiss();
+            }
+        });
+
+        if (canSignUp){
+            signUpButton.setVisibility(View.VISIBLE);
+            signUpButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    event.addAttendee(DataHandler.getInstance().getAttendee().getAttendeeId());
+                    eventDetailDialog.dismiss();
+                }
+            });
+        }
+
+        eventDetailDialog.show();
     }
 }
