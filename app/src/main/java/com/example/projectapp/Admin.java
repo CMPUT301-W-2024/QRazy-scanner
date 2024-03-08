@@ -1,6 +1,7 @@
 package com.example.projectapp;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -99,7 +101,13 @@ public class Admin extends AppCompatActivity {
 
         TextView attendeeNameView = attendeeView.findViewById(R.id.attendee);
         attendeeNameView.setText(attendee.getName());
+        attendeeView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                showDialogWithDetails(attendee.getAttendeeId(), attendee.getName(), attendee.getContactInfo(), attendee.getProfilePic());
+            }
+        });
         verticalLayout.addView(attendeeView);
     }
 
@@ -127,6 +135,31 @@ public class Admin extends AppCompatActivity {
             }
         });
     }
+
+    // Method to show event details in a dialog
+    private void showDialogWithEventDetails(String name, String organizer, String description) {
+        Dialog eventDetailDialog = new Dialog(this);
+        eventDetailDialog.setContentView(R.layout.event_dialog);
+
+        TextView eventNameView = eventDetailDialog.findViewById(R.id.dialog_event_name);
+        TextView eventOrganizerView = eventDetailDialog.findViewById(R.id.dialog_event_organizer);
+        TextView eventDescriptionView = eventDetailDialog.findViewById(R.id.dialog_event_description);
+        Button closeButton = eventDetailDialog.findViewById(R.id.dialog_event_close_button);
+
+        eventNameView.setText(name);
+        eventOrganizerView.setText(organizer);
+        eventDescriptionView.setText(description);
+
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                eventDetailDialog.dismiss();
+            }
+        });
+
+        eventDetailDialog.show();
+    }
+
 
     private void loadImagesFromFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -168,9 +201,17 @@ public class Admin extends AppCompatActivity {
         TextView eventInfoView = eventView.findViewById(R.id.event_info_text);
         eventInfoView.setText(event.getDescription());
 
+        // Set OnClickListener for the event view
+        eventView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialogWithEventDetails(event.getName(), event.getOrganizer(), event.getDescription());
+            }
+        });
 
         horizontalLayout.addView(eventView);
     }
+
 
     private void loadAttendeesFromFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -222,5 +263,30 @@ public class Admin extends AppCompatActivity {
         imagesLayout.addView(imageLayoutView);
     }
 
+    private void showDialogWithDetails(String attendeeId, String name, String contactInfo, String encodedImageString) {
+        Dialog detailDialog = new Dialog(this);
+        detailDialog.setContentView(R.layout.attendee_dialog);
 
+        TextView attendeeIdView = detailDialog.findViewById(R.id.dialog_attendee_id);
+        TextView nameView = detailDialog.findViewById(R.id.dialog_name);
+        TextView contactInfoView = detailDialog.findViewById(R.id.dialog_contact_info);
+        ImageView profilePicView = detailDialog.findViewById(R.id.dialog_profile_pic);
+        Button closeButton = detailDialog.findViewById(R.id.dialog_close_button);
+        nameView.setText(name);
+        contactInfoView.setText(contactInfo);
+
+        Bitmap imageBitmap = stringToBitmap(encodedImageString);
+        if (imageBitmap != null) {
+            profilePicView.setImageBitmap(imageBitmap);
+        }
+
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                detailDialog.dismiss();
+            }
+        });
+
+        detailDialog.show();
+    }
 }

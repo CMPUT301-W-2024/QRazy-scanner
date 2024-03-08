@@ -45,7 +45,22 @@
           <theme>@style/Theme.ProjectApp</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/attendee_dialog.xml">
+        <config>
+          <theme>@style/Theme.ProjectApp</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/create_event_fragment.xml">
+        <config>
+          <theme>@style/Theme.ProjectApp</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/drawable_dialog.xml">
+        <config>
+          <theme>@style/Theme.ProjectApp</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/event_dialog.xml">
         <config>
           <theme>@style/Theme.ProjectApp</theme>
         </config>
@@ -107,9 +122,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33141556-d996-4518-8004-cbe4367a9bf8" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/attendee_dialog.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/event_dialog.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/Admin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/event_widget.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/event_widget.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
