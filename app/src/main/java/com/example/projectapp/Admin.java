@@ -35,6 +35,12 @@ public class Admin extends AppCompatActivity {
     LinearLayout horizontalLayout;
     LinearLayout verticalLayout;
 
+    /**
+     *  Handles activity creation; sets up layout and initializes data loading.
+     *
+     *  @param savedInstanceState
+     *      The saved instance state of the activity.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +100,12 @@ public class Admin extends AppCompatActivity {
         return mockProfiles;
     }
 
+    /**
+     *  Handles adding an Attendee view to the vertical scroll view.
+     *
+     *  @param attendee
+     *      The Attendee object to be displayed.
+     */
     private void addAttendeeToScrollView(Attendee attendee) {
         View attendeeView = LayoutInflater.from(this).inflate(R.layout.profile_widget, verticalLayout, false);
 
@@ -104,6 +116,10 @@ public class Admin extends AppCompatActivity {
     }
 
 
+    /**
+     * Loads events from Firebase and displays them in the horizontal scroll view.
+     * Sets up a real-time listener for updates to the 'events' collection.
+     */
     private void loadEventsFromFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("events").addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -128,6 +144,9 @@ public class Admin extends AppCompatActivity {
         });
     }
 
+    /**
+     * Loads images from Firebase, decodes them, and displays them in a bottom scroll view.
+     */
     private void loadImagesFromFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("events").addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -156,6 +175,11 @@ public class Admin extends AppCompatActivity {
         });
     }
 
+    /**
+     *  Handles adding an Event view to the horizontal scroll view.
+     *
+     *  @param event The Event object to be displayed.
+     */
     private void addEventToScrollView(Event event) {
         View eventView = LayoutInflater.from(this).inflate(R.layout.event_widget, horizontalLayout, false);
 
@@ -172,6 +196,9 @@ public class Admin extends AppCompatActivity {
         horizontalLayout.addView(eventView);
     }
 
+    /**
+     * Loads attendees from Firebase and displays them in the vertical scroll view.
+     */
     private void loadAttendeesFromFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("attendees").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -191,6 +218,15 @@ public class Admin extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * Converts a Base64 encoded String to a Bitmap.
+     *
+     * @param encodedString
+     *      The Base64 encoded string representation of an image.
+     * @return
+     *      The decoded Bitmap image, or null on error.
+     */
     public Bitmap stringToBitmap(String encodedString) {
         try {
             byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
@@ -202,6 +238,12 @@ public class Admin extends AppCompatActivity {
         }
     }
 
+    /**
+     * Adds an image to the bottom scroll view.
+     *
+     * @param encodedImageString
+     *      The Base64 encoded string representation of an image.
+     */
     private void addImageToBottomScrollView(String encodedImageString) {
         View imageLayoutView = LayoutInflater.from(this).inflate(R.layout.image_layout, null, false);
         ImageView imageView = imageLayoutView.findViewById(R.id.image_view);

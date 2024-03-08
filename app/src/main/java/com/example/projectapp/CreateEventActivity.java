@@ -19,6 +19,13 @@ public class CreateEventActivity extends AppCompatActivity {
     private EditText organizerNameEditText;
     private DataHandler dataHandler;
 
+    /**
+     * Handles activity initialization. Sets up UI elements, retrieves the DataHandler instance,
+     * and sets up the "Create New Event" button functionality.
+     *
+     * @param savedInstanceState
+     *      The saved instance state of the activity.
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,11 +47,6 @@ public class CreateEventActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
-    }
-
-    private void createEvent(String organizerName) {
     }
 
     /**

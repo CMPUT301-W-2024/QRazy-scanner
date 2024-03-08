@@ -8,6 +8,9 @@ import android.widget.Button;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+/**
+ * This fragment displays information about an event from the perspective of an attendee.
+ */
 public class EventInfoFragment extends Fragment {
 
     @Override

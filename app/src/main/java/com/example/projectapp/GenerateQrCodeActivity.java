@@ -17,12 +17,22 @@ import com.google.zxing.qrcode.QRCodeWriter;
 
 import java.io.ByteArrayOutputStream;
 
+/**
+ * Activity for generating and storing a QR code associated with an event.
+ */
 public class GenerateQrCodeActivity extends AppCompatActivity {
 
     private ImageView qrCodeImageView;
     private String eventId;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+    /**
+     *  Handles the activity creation. Extracts the event ID from the intent
+     *  and sets up the UI.
+     *
+     *  @param savedInstanceState
+     *      The saved instance state of the activity.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +63,16 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Generates a bitmap representation of a QR code for the given input text.
+     *
+     * @param text
+     *      The text to be encoded into the QR code.
+     * @return
+     *      Bitmap object containing the QR code image.
+     * @throws WriterException
+     *      If there's an error during QR code creation.
+     */
     private Bitmap generateQRCode(String text) throws WriterException {
         QRCodeWriter writer = new QRCodeWriter();
         final int width = 500; // Width in pixels
@@ -70,6 +90,15 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
         }
         return bmp;
     }
+
+    /**
+     * Converts a bitmap image into a Base64 encoded string representation.
+     *
+     * @param bitmap
+     *      The bitmap to be encoded.
+     * @return
+     *      Base64 encoded string of the bitmap.
+     */
     private String bitmapToString(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
@@ -77,6 +106,12 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 
+    /**
+     * Stores a QR code bitmap string in Firebase, associated with the event.
+     *
+     * @param qrCodeBitmap
+     *      The bitmap string of the QR code to store.
+     */
     private void storeQRCodeInFirestore(Bitmap qrCodeBitmap) {
         String qrCodeString = bitmapToString(qrCodeBitmap);
         db.collection("events").document(eventId)
