@@ -1,6 +1,7 @@
 package com.example.projectapp;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -111,7 +113,13 @@ public class Admin extends AppCompatActivity {
 
         TextView attendeeNameView = attendeeView.findViewById(R.id.attendee);
         attendeeNameView.setText(attendee.getName());
+        attendeeView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                showDialogWithDetails(attendee.getAttendeeId(), attendee.getName(), attendee.getContactInfo(), attendee.getProfilePic());
+            }
+        });
         verticalLayout.addView(attendeeView);
     }
 
@@ -144,9 +152,32 @@ public class Admin extends AppCompatActivity {
         });
     }
 
-    /**
-     * Loads images from Firebase, decodes them, and displays them in a bottom scroll view.
-     */
+
+    private void showDialogWithEventDetails(String name, String organizer, String description) {
+        Dialog eventDetailDialog = new Dialog(this);
+        eventDetailDialog.setContentView(R.layout.event_dialog);
+
+        TextView eventNameView = eventDetailDialog.findViewById(R.id.dialog_event_name);
+        TextView eventOrganizerView = eventDetailDialog.findViewById(R.id.dialog_event_organizer);
+        TextView eventDescriptionView = eventDetailDialog.findViewById(R.id.dialog_event_description);
+        Button closeButton = eventDetailDialog.findViewById(R.id.dialog_event_close_button);
+
+        eventNameView.setText(name);
+        eventOrganizerView.setText(organizer);
+        eventDescriptionView.setText(description);
+
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                eventDetailDialog.dismiss();
+            }
+        });
+
+        eventDetailDialog.show();
+    }
+
+
+
     private void loadImagesFromFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("events").addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -192,25 +223,36 @@ public class Admin extends AppCompatActivity {
         TextView eventInfoView = eventView.findViewById(R.id.event_info_text);
         eventInfoView.setText(event.getDescription());
 
+        // Set OnClickListener for the event view
+        eventView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialogWithEventDetails(event.getName(), event.getOrganizer(), event.getDescription());
+            }
+        });
 
         horizontalLayout.addView(eventView);
     }
 
-    /**
-     * Loads attendees from Firebase and displays them in the vertical scroll view.
-     */
+
     private void loadAttendeesFromFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("attendees").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("attendees").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("loadAttendees", "Listen failed.", e);
+                    return;
+                }
+
+                if (snapshots != null && !snapshots.isEmpty()) {
+                    verticalLayout.removeAllViews(); // Clear the layout before adding updated data
+
+                    for (DocumentSnapshot document : snapshots.getDocuments()) {
                         Map<String, Object> docMap = document.getData();
                         Attendee attendee = new Attendee();
                         attendee.setAttendeeId(document.getId());
                         attendee.setName((String) docMap.get("name"));
-
 
                         addAttendeeToScrollView(attendee);
                     }
@@ -219,14 +261,7 @@ public class Admin extends AppCompatActivity {
         });
     }
 
-    /**
-     * Converts a Base64 encoded String to a Bitmap.
-     *
-     * @param encodedString
-     *      The Base64 encoded string representation of an image.
-     * @return
-     *      The decoded Bitmap image, or null on error.
-     */
+
     public Bitmap stringToBitmap(String encodedString) {
         try {
             byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
@@ -238,12 +273,7 @@ public class Admin extends AppCompatActivity {
         }
     }
 
-    /**
-     * Adds an image to the bottom scroll view.
-     *
-     * @param encodedImageString
-     *      The Base64 encoded string representation of an image.
-     */
+
     private void addImageToBottomScrollView(String encodedImageString) {
         View imageLayoutView = LayoutInflater.from(this).inflate(R.layout.image_layout, null, false);
         ImageView imageView = imageLayoutView.findViewById(R.id.image_view);
@@ -257,5 +287,30 @@ public class Admin extends AppCompatActivity {
         imagesLayout.addView(imageLayoutView);
     }
 
+    private void showDialogWithDetails(String attendeeId, String name, String contactInfo, String encodedImageString) {
+        Dialog detailDialog = new Dialog(this);
+        detailDialog.setContentView(R.layout.attendee_dialog);
 
+        TextView attendeeIdView = detailDialog.findViewById(R.id.dialog_attendee_id);
+        TextView nameView = detailDialog.findViewById(R.id.dialog_name);
+        TextView contactInfoView = detailDialog.findViewById(R.id.dialog_contact_info);
+        ImageView profilePicView = detailDialog.findViewById(R.id.dialog_profile_pic);
+        Button closeButton = detailDialog.findViewById(R.id.dialog_close_button);
+        nameView.setText(name);
+        contactInfoView.setText(contactInfo);
+
+        Bitmap imageBitmap = stringToBitmap(encodedImageString);
+        if (imageBitmap != null) {
+            profilePicView.setImageBitmap(imageBitmap);
+        }
+
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                detailDialog.dismiss();
+            }
+        });
+
+        detailDialog.show();
+    }
 }
