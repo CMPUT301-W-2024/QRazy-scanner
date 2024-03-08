@@ -118,6 +118,14 @@ public class Attendee {
     }
 
     /**
+     * set events
+     * @param events events
+     */
+    public void setEvents(ArrayList<String> events) {
+        this.events = events;
+    }
+
+    /**
      * Add event
      * @param eventId the event added
      */
