@@ -1,13 +1,11 @@
 package com.example.projectapp;
 
 
-import android.media.Image;
-
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -18,20 +16,17 @@ public class Event implements Serializable{
     private String date;
     private String organizer;
     private String description;
-    private HashMap<String, Integer> attendees;
+    private HashMap<String, Integer> checkedAttendees;
+    private ArrayList<String> signedAttendees;
     private String poster;
     private Integer attendanceLimit;
     private String qrCode;
-    public interface eventListener{
-
-    }
 
     /**
      * Event constructor
      */
     public Event(){
-/*        eventId = UUID.randomUUID().toString();
-        attendees = new HashMap<>();*/
+
     }
 
     /**
@@ -52,7 +47,8 @@ public class Event implements Serializable{
         this.description = description;
         this.poster = poster;
         eventId = UUID.randomUUID().toString();
-        attendees = new HashMap<>();
+        checkedAttendees = new HashMap<>();
+        signedAttendees = new ArrayList<>();
     }
 
     /**
@@ -112,16 +108,16 @@ public class Event implements Serializable{
      *
      * @return A HashMap where keys are attendee IDs and values are check-in counts.
      */
-    public HashMap<String, Integer> getAttendees() {
-        return attendees;
+    public HashMap<String, Integer> getCheckedAttendees() {
+        return checkedAttendees;
     }
 
     /**
      * Set Attendees
-     * @param attendees
+     * @param checkedAttendees
      */
-    public void setAttendees(HashMap<String, Integer> attendees) {
-        this.attendees = attendees;
+    public void setCheckedAttendees(HashMap<String, Integer> checkedAttendees) {
+        this.checkedAttendees = checkedAttendees;
     }
 
     /**
@@ -147,7 +143,7 @@ public class Event implements Serializable{
      * @return number of Attendees
      */
     public Integer getAttendance() {
-        return attendees.size();
+        return checkedAttendees.size();
     }
 
     /**
@@ -220,18 +216,46 @@ public class Event implements Serializable{
     }
 
     /**
-     * Add an attendee
-     * @param attendeeId
+     * get signed up attendees
+     * @return user's signed up for events
      */
-    public void addAttendee(String attendeeId){
-        if (!attendees.containsKey(attendeeId)){
-            attendees.put(attendeeId, 1);
+    public ArrayList<String> getSignedAttendees() {
+        return signedAttendees;
+    }
+
+    /**
+     * set checked in attendees
+     * @param  signedAttendees list of signed up attendees
+     */
+    public void setSignedAttendees(ArrayList<String> signedAttendees) {
+        this.signedAttendees = signedAttendees;
+    }
+
+    /**
+     * Check in an attendee
+     * @param attendeeId the attendee who checked in
+     */
+    public void addCheckedAttendee(String attendeeId){
+        if (!checkedAttendees.containsKey(attendeeId)){
+            checkedAttendees.put(attendeeId, 1);
         }
         else{
-            Integer checkIns = attendees.get(attendeeId) + 1;
-            attendees.put(attendeeId, checkIns);
+            Integer checkIns = checkedAttendees.get(attendeeId) + 1;
+            checkedAttendees.put(attendeeId, checkIns);
         }
-        DocumentReference attendeeRef = FirebaseFirestore.getInstance().collection("events").document(eventId);
-        attendeeRef.update("attendees", attendees);
+        DocumentReference eventRef = FirebaseFirestore.getInstance().collection("events").document(eventId);
+        eventRef.update("checkedAttendees", checkedAttendees);
+    }
+
+    /**
+     * Sign up an attendee
+     * @param attendeeId the attendee who signed
+     */
+    public void addSignedAttendee(String attendeeId){
+        if (!signedAttendees.contains(attendeeId)){
+            signedAttendees.add(attendeeId);
+            DocumentReference eventRef = FirebaseFirestore.getInstance().collection("events").document(eventId);
+            eventRef.update("signedAttendees", signedAttendees);
+        }
     }
 }

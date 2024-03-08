@@ -70,110 +70,6 @@ public class DataHandler {
         this.organizer = organizer;
     }
 
-/*    public void addAttendeesListener(){
-        CollectionReference attendeesRef = db.collection("attendees");
-
-        attendeesListener = attendeesRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots,
-                                @Nullable FirebaseFirestoreException e) {
-                for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                    Attendee a = dc.getDocument().toObject(Attendee.class);
-                    switch (dc.getType()) {
-                        case ADDED:
-                            break;
-                        case MODIFIED:
-                            System.out.println("Modified attendee: " + dc.getDocument().getData());
-                            break;
-                        case REMOVED:
-                            System.out.println("Removed attendee: " + dc.getDocument().getData());
-                            break;
-                    }
-                }
-            }
-        });
-    }
-
-    public void removeAttendeesListener(){
-        attendeesListener.remove();
-    }
-
-    public void addAllEventsListener(){
-        CollectionReference eventsRef = db.collection("events");
-
-        eventsListener = eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots,
-                                @Nullable FirebaseFirestoreException e) {
-                for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                    switch (dc.getType()) {
-                        case ADDED:
-                            attendeePageActivity.addEvent(dc.getDocument().toObject(Event.class));
-                            break;
-                        case MODIFIED:
-                            System.out.println("Modified event: " + dc.getDocument().getData());
-                            break;
-                        case REMOVED:
-                            AttendeePageActivity.getInstance().removeEvent(dc.getDocument().toObject(Event.class));
-                            break;
-                    }
-                }
-            }
-        });
-    }
-
-    public void addAttendeeEventsListener(){
-        CollectionReference eventsRef = db.collection("events");
-
-        eventsListener = eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots,
-                                @Nullable FirebaseFirestoreException e) {
-                for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                    switch (dc.getType()) {
-                        case ADDED:
-                            attendeePageActivity.addEvent(dc.getDocument().toObject(Event.class));
-                            break;
-                        case MODIFIED:
-                            System.out.println("Modified event: " + dc.getDocument().getData());
-                            break;
-                        case REMOVED:
-                            AttendeePageActivity.getInstance().removeEvent(dc.getDocument().toObject(Event.class));
-                            break;
-                    }
-                }
-            }
-        });
-    }
-
-    public void addOrganizerEventsListener(){
-        CollectionReference eventsRef = db.collection("events");
-
-        eventsListener = eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots,
-                                @Nullable FirebaseFirestoreException e) {
-                for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                    switch (dc.getType()) {
-                        case ADDED:
-                            attendeePageActivity.addEvent(dc.getDocument().toObject(Event.class));
-                            break;
-                        case MODIFIED:
-                            System.out.println("Modified event: " + dc.getDocument().getData());
-                            break;
-                        case REMOVED:
-                            AttendeePageActivity.getInstance().removeEvent(dc.getDocument().toObject(Event.class));
-                            break;
-                    }
-                }
-            }
-        });
-    }*/
-
-    public void removeEventsListener(){
-        eventsListener.remove();
-    }
-
     public void addOrganizersListener(){
         CollectionReference organizersRef = db.collection("organizers");
 
@@ -198,25 +94,6 @@ public class DataHandler {
         });
     }
 
-    public void removeOrganizersListener(){
-        organizersListener.remove();
-    }
-
-    public void addAllListeners(){
-        addOrganizersListener();
-    }
-
-/*    public Attendee getAttendee(String attendeeId){
-        CollectionReference attendeesRef = db.collection("attendees");
-        attendeesRef.document(attendeeId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                attendee = documentSnapshot.toObject(Attendee.class);
-            }
-        });;
-        return attendee;
-    }*/
-
     public void addAttendee(Attendee attendee){
         CollectionReference attendeesRef = db.collection("attendees");
 
@@ -229,31 +106,10 @@ public class DataHandler {
         attendeesRef.document(event.getEventId()).set(event);
     }
 
-/*    public Event getEvent(String eventId){
-        CollectionReference eventsRef = db.collection("events");
-        eventsRef.document(eventId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                event = documentSnapshot.toObject(Event.class);
-            }
-        });
-        return event;
-    }*/
-
     public void addOrganizer(Organizer organizer){
         CollectionReference organizersRef = db.collection("organizers");
 
         organizersRef.document(organizer.getOrganizerId()).set(organizer);
     }
 
-/*    public Organizer getOrganizer(String organizerId){
-        CollectionReference organizersRef = db.collection("organizers");
-        organizersRef.document(organizerId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                organizer = documentSnapshot.toObject(Organizer.class);
-            }
-        });
-        return organizer;
-    }*/
 }

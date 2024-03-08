@@ -64,13 +64,6 @@ public class WelcomeFragment extends Fragment {
                             .addToBackStack(null)
                             .commit();
                 }
-                // Create and navigate to the ScanFragment
-/*                ScanFragment scanFragment = new ScanFragment();
-                requireActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(android.R.id.content, scanFragment) // Use android.R.id.content as the container
-                        .addToBackStack(null) // Optional: Add to back stack for navigation
-                        .commit();*/
             }
         });
 

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -59,7 +60,7 @@ public class OrganizerPageActivity extends AppCompatActivity {
         Button createNewEventButton = findViewById(R.id.createNewEventButton);
 
         events = new ArrayList<>();
-        eventAdapter = new OrganizerEventAdapter(events);
+        eventAdapter = new OrganizerEventAdapter(events, this);
         recyclerView.setAdapter(eventAdapter);
 
         createNewEventButton.setOnClickListener(new View.OnClickListener() {
@@ -75,7 +76,6 @@ public class OrganizerPageActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
 
     }
 
@@ -138,9 +138,7 @@ public class OrganizerPageActivity extends AppCompatActivity {
     }
 
     private void checkMilestone(Event event){
-        System.out.println("Got till here: " + event.getAttendance());
         if (mileStones.contains(event.getAttendance())){
-            System.out.println("Got till here: " + event.getAttendance());
             Toast.makeText(OrganizerPageActivity.this, "Milestone Reached!! " + event.getAttendance() + " attendees in " + event.getName(), Toast.LENGTH_LONG).show();
         }
     }

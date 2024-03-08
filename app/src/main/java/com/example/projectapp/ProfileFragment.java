@@ -78,7 +78,7 @@ public class ProfileFragment extends Fragment {
             if (fragmentManager.getBackStackEntryCount() > 0) {
                 Integer fulfill = saveValues();
                 if (fulfill == 1){
-                    fragmentManager.popBackStackImmediate(); // Navigate back to the previous fragment
+                    startActivity(new Intent(getContext(), AttendeePageActivity.class));
                 }
             }
         });
@@ -201,15 +201,10 @@ public class ProfileFragment extends Fragment {
         }
 
         Attendee attendee = new Attendee(encodedImage, userNameEditText.getText().toString(), emailEditText.getText().toString(), phoneEditText.getText().toString());
+        dataHandler.addAttendee(attendee);
         dataHandler.setAttendee(attendee);
         saveAttendeeId();
-        dataHandler.addAttendee(attendee);
         return 1;
-
-
-        /*db.collection("attendees").document(getAttendeeId()).update("name", userNameEditText.getText().toString());
-        db.collection("attendees").document(getAttendeeId()).update("contactInfo", emailEditText.getText().toString());
-        db.collection("attendees").document(getAttendeeId()).update("homepage", phoneEditText.getText().toString());*/
     }
 
 
