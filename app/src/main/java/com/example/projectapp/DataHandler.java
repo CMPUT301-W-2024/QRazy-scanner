@@ -16,13 +16,13 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 public class DataHandler {
 
     private static DataHandler instance;
     private FirebaseFirestore db;
-    private AttendeePageActivity attendeePageActivity;
     private Attendee attendee;
     private Organizer organizer;
     private ListenerRegistration attendeesListener;
@@ -31,7 +31,6 @@ public class DataHandler {
 
     private DataHandler(){
         db = FirebaseFirestore.getInstance();
-        attendeePageActivity = AttendeePageActivity.getInstance();
     }
 
     public static DataHandler getInstance(){
@@ -71,7 +70,7 @@ public class DataHandler {
         this.organizer = organizer;
     }
 
-    public void addAttendeesListener(){
+/*    public void addAttendeesListener(){
         CollectionReference attendeesRef = db.collection("attendees");
 
         attendeesListener = attendeesRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -99,8 +98,7 @@ public class DataHandler {
         attendeesListener.remove();
     }
 
-    public void addEventsListener(){
-        System.out.println("added listener letsgooo");
+    public void addAllEventsListener(){
         CollectionReference eventsRef = db.collection("events");
 
         eventsListener = eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -110,8 +108,7 @@ public class DataHandler {
                 for (DocumentChange dc : snapshots.getDocumentChanges()) {
                     switch (dc.getType()) {
                         case ADDED:
-                            System.out.println("Added event: " + dc.getDocument().toObject(Event.class).getEventId());
-                            AttendeePageActivity.getInstance().addEvent(dc.getDocument().toObject(Event.class));
+                            attendeePageActivity.addEvent(dc.getDocument().toObject(Event.class));
                             break;
                         case MODIFIED:
                             System.out.println("Modified event: " + dc.getDocument().getData());
@@ -124,6 +121,54 @@ public class DataHandler {
             }
         });
     }
+
+    public void addAttendeeEventsListener(){
+        CollectionReference eventsRef = db.collection("events");
+
+        eventsListener = eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                    switch (dc.getType()) {
+                        case ADDED:
+                            attendeePageActivity.addEvent(dc.getDocument().toObject(Event.class));
+                            break;
+                        case MODIFIED:
+                            System.out.println("Modified event: " + dc.getDocument().getData());
+                            break;
+                        case REMOVED:
+                            AttendeePageActivity.getInstance().removeEvent(dc.getDocument().toObject(Event.class));
+                            break;
+                    }
+                }
+            }
+        });
+    }
+
+    public void addOrganizerEventsListener(){
+        CollectionReference eventsRef = db.collection("events");
+
+        eventsListener = eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                    switch (dc.getType()) {
+                        case ADDED:
+                            attendeePageActivity.addEvent(dc.getDocument().toObject(Event.class));
+                            break;
+                        case MODIFIED:
+                            System.out.println("Modified event: " + dc.getDocument().getData());
+                            break;
+                        case REMOVED:
+                            AttendeePageActivity.getInstance().removeEvent(dc.getDocument().toObject(Event.class));
+                            break;
+                    }
+                }
+            }
+        });
+    }*/
 
     public void removeEventsListener(){
         eventsListener.remove();
@@ -158,9 +203,7 @@ public class DataHandler {
     }
 
     public void addAllListeners(){
-        addAttendeesListener();
         addOrganizersListener();
-        addEventsListener();
     }
 
 /*    public Attendee getAttendee(String attendeeId){
