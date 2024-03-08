@@ -76,8 +76,10 @@ public class ProfileFragment extends Fragment {
         saveButton.setOnClickListener(v -> {
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
             if (fragmentManager.getBackStackEntryCount() > 0) {
-                saveValues();
-                fragmentManager.popBackStackImmediate(); // Navigate back to the previous fragment
+                Integer fulfill = saveValues();
+                if (fulfill == 1){
+                    fragmentManager.popBackStackImmediate(); // Navigate back to the previous fragment
+                }
             }
         });
 
@@ -187,11 +189,23 @@ public class ProfileFragment extends Fragment {
     /**
      * save values to db
      */
-    private void saveValues() {
+    private Integer saveValues() {
+        String name = userNameEditText.getText().toString().trim();
+        String email = emailEditText.getText().toString().trim();
+        String phone = phoneEditText.getText().toString().trim();
+
+        if (name.isEmpty() || email.isEmpty() || phone.isEmpty()) {
+            Toast.makeText(getActivity(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            return 0; // Stop execution if any of the fields is empty
+        }
+
         Attendee attendee = new Attendee(encodedImage, userNameEditText.getText().toString(), emailEditText.getText().toString(), phoneEditText.getText().toString());
         dataHandler.setAttendee(attendee);
         saveAttendeeId();
         dataHandler.addAttendee(attendee);
+        return 1;
+
+
         /*db.collection("attendees").document(getAttendeeId()).update("name", userNameEditText.getText().toString());
         db.collection("attendees").document(getAttendeeId()).update("contactInfo", emailEditText.getText().toString());
         db.collection("attendees").document(getAttendeeId()).update("homepage", phoneEditText.getText().toString());*/
