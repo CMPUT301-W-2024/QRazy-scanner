@@ -138,9 +138,7 @@ public class OrganizerPageActivity extends AppCompatActivity {
     }
 
     private void checkMilestone(Event event){
-        System.out.println("Got till here: " + event.getAttendance());
         if (mileStones.contains(event.getAttendance())){
-            System.out.println("Got till here: " + event.getAttendance());
             Toast.makeText(OrganizerPageActivity.this, "Milestone Reached!! " + event.getAttendance() + " attendees in " + event.getName(), Toast.LENGTH_LONG).show();
         }
     }

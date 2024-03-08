@@ -33,6 +33,7 @@ public class AttendeePageActivity extends AppCompatActivity {
     private AttendeeEventAdapter allEventsAdapter;
     private ListenerRegistration attendeeEventsListener;
     private ListenerRegistration allEventsListener;
+    private DataHandler dataHandler = DataHandler.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,11 @@ public class AttendeePageActivity extends AppCompatActivity {
 
         attendeeEventsList.setAdapter(attendeeEventsAdapter);
         allEventsList.setAdapter(allEventsAdapter);
+
+        Button scanButton = findViewById(R.id.scanButton);
+        scanButton.setOnClickListener(v -> {
+            startActivity(new Intent(this, ScanActivity.class));
+        });
 
     }
 
@@ -114,8 +120,8 @@ public class AttendeePageActivity extends AppCompatActivity {
 
     private void addAttendeeEventsListener(){
         CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
-
-        attendeeEventsListener = eventsRef.orderBy("attendees."+ DataHandler.getInstance().getAttendee().getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+/*        eventsRef.orderBy("attendees."+ dataHandler.getAttendee().getAttendeeId())*/
+        attendeeEventsListener = eventsRef.whereArrayContains("signedAttendees", dataHandler.getAttendee().getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
@@ -191,7 +197,7 @@ public class AttendeePageActivity extends AppCompatActivity {
             signUpButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    event.addAttendee(DataHandler.getInstance().getAttendee().getAttendeeId());
+                    event.addSignedAttendee(dataHandler.getAttendee().getAttendeeId());
                     eventDetailDialog.dismiss();
                 }
             });

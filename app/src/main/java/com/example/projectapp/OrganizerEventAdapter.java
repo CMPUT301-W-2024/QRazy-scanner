@@ -54,7 +54,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Event event = events.get(position);
         holder.eventNameTextView.setText(event.getName());
-        holder.attendeeCountTextView.setText("Attendee Count: " + String.valueOf(event.getAttendance())); // or any other field representing the count
+        holder.attendeeCountTextView.setText("Live Attendee Count: " + String.valueOf(event.getAttendance())); // or any other field representing the count
         holder.eventDetailTextView.setText(event.getDescription());
         holder.evenDateTextView.setText(event.getDate());
 

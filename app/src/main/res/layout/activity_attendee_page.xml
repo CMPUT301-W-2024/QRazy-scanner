@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/bold1"
-        android:text="My Events"/>
+        android:text="My Signed Up Events"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/attendeeEventsList"
@@ -28,6 +28,21 @@
         android:id="@+id/allEventsList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center|bottom">
+
+
+        <Button
+            android:id="@+id/scanButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Check into event"/>
+
+    </LinearLayout>
 
 
 </LinearLayout>
