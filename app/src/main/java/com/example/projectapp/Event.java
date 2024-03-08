@@ -6,12 +6,12 @@ import android.media.Image;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
-// temporary event class so that conflicts dont occur
-public class Event {
+public class Event implements Serializable{
 
     private String eventId;
     private String name;
@@ -21,6 +21,7 @@ public class Event {
     private HashMap<String, Integer> attendees;
     private String poster;
     private Integer attendanceLimit;
+    private String qrCode;
     public interface eventListener{
 
     }
@@ -200,6 +201,22 @@ public class Event {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * get event QR Code
+     * @return a qrCode encoded as a string
+     */
+    public String getQrCode() {
+        return qrCode;
+    }
+
+    /**
+     * set event's QR Code
+     * @param qrCode an encoded QR code
+     */
+    public void setQrCode(String qrCode) {
+        this.qrCode = qrCode;
     }
 
     /**
