@@ -19,6 +19,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="Event"
+            android:fontFamily="@font/bold1"
             android:textSize="15dp"
             android:ellipsize="end"
             android:maxLines="1"/>
@@ -28,6 +29,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="Organizer"
+            android:fontFamily="@font/bold1"
             android:textSize="10dp"
             android:ellipsize="end"
             android:maxLines="1"/>
@@ -36,6 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="15dp"
+            android:fontFamily="@font/light"
             android:text="@tools:sample/lorem/random"
             android:ellipsize="end"
             android:maxLines="3"/>
