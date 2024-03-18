@@ -351,6 +351,12 @@ public class Admin extends AppCompatActivity {
         }
     }
 
+    private void deleteAttendeeById(String attendeeId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("attendees").document(attendeeId).delete()
+                .addOnSuccessListener(aVoid -> Log.d("Admin", "Attendee successfully deleted!"))
+                .addOnFailureListener(e -> Log.w("Admin", "Error deleting attendee", e));
+    }
 
 
     private void showDialogWithDetails(String attendeeId, String name, String contactInfo, String encodedImageString) {
@@ -362,6 +368,8 @@ public class Admin extends AppCompatActivity {
         TextView contactInfoView = detailDialog.findViewById(R.id.dialog_contact_info);
         ImageView profilePicView = detailDialog.findViewById(R.id.dialog_profile_pic);
         Button closeButton = detailDialog.findViewById(R.id.dialog_close_button);
+        Button deleteButton = detailDialog.findViewById(R.id.dialog_delete_button); // Ensure this button is added in your layout
+
         nameView.setText(name);
         contactInfoView.setText(contactInfo);
 
@@ -370,11 +378,10 @@ public class Admin extends AppCompatActivity {
             profilePicView.setImageBitmap(imageBitmap);
         }
 
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                detailDialog.dismiss();
-            }
+        closeButton.setOnClickListener(v -> detailDialog.dismiss());
+        deleteButton.setOnClickListener(v -> {
+            deleteAttendeeById(attendeeId);
+            detailDialog.dismiss();
         });
 
         detailDialog.show();
