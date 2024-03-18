@@ -186,6 +186,30 @@ public class Admin extends AppCompatActivity {
         });
     }
 
+    private void deleteEventByNameAndDetails(String eventName, String eventOrganizer, String eventDescription) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("events")
+                .whereEqualTo("name", eventName)
+                .whereEqualTo("organizer", eventOrganizer)
+                .whereEqualTo("description", eventDescription)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // Assuming name, organizer and description combination is unique
+                                db.collection("events").document(document.getId()).delete()
+                                        .addOnSuccessListener(aVoid -> Log.d("Admin", "Event successfully deleted!"))
+                                        .addOnFailureListener(e -> Log.w("Admin", "Error deleting event", e));
+                            }
+                        } else {
+                            Log.w("Admin", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
 
     private void showDialogWithEventDetails(String name, String organizer, String description) {
         Dialog eventDetailDialog = new Dialog(this);
@@ -195,20 +219,21 @@ public class Admin extends AppCompatActivity {
         TextView eventOrganizerView = eventDetailDialog.findViewById(R.id.dialog_event_organizer);
         TextView eventDescriptionView = eventDetailDialog.findViewById(R.id.dialog_event_description);
         Button closeButton = eventDetailDialog.findViewById(R.id.dialog_event_close_button);
+        Button deleteButton = eventDetailDialog.findViewById(R.id.event_delete_button);
 
         eventNameView.setText(name);
         eventOrganizerView.setText(organizer);
         eventDescriptionView.setText(description);
 
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                eventDetailDialog.dismiss();
-            }
+        closeButton.setOnClickListener(v -> eventDetailDialog.dismiss());
+        deleteButton.setOnClickListener(v -> {
+            deleteEventByNameAndDetails(name, organizer, description);
+            eventDetailDialog.dismiss();
         });
 
         eventDetailDialog.show();
     }
+
 
 
 
