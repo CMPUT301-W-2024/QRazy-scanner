@@ -13,6 +13,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -229,12 +230,12 @@ public class Admin extends AppCompatActivity {
     }
 
     // Image-related functions
+
     private void loadImagesFromFirebase(String collection, String field, int layoutId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(collection).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots,
-                                @Nullable FirebaseFirestoreException e) {
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
                     Log.w("Admin", "Listen failed.", e);
                     return;
@@ -243,24 +244,36 @@ public class Admin extends AppCompatActivity {
                 if (snapshots != null && !snapshots.isEmpty()) {
                     LinearLayout imagesLayout = findViewById(layoutId);
                     imagesLayout.removeAllViews();
+
                     for (DocumentSnapshot document : snapshots.getDocuments()) {
                         String encodedImage = document.getString(field);
-                        addImageToLayout(encodedImage, imagesLayout);
+                        if (encodedImage != null && !encodedImage.isEmpty()) {
+                            // Pass the document ID, field, and collection to addImageToLayout
+                            addImageToLayout(encodedImage, imagesLayout, document.getId(), field, collection);
+                        }
                     }
                 }
             }
         });
     }
 
-    private void addImageToLayout(String encodedImageString, LinearLayout layout) {
+
+    private void addImageToLayout(String encodedImageString, LinearLayout layout, String documentId, String field, String collection) {
         View imageLayoutView = LayoutInflater.from(this).inflate(R.layout.image_layout, null, false);
         ImageView imageView = imageLayoutView.findViewById(R.id.image_view);
+
         Bitmap imageBitmap = stringToBitmap(encodedImageString);
         if (imageBitmap != null) {
             imageView.setImageBitmap(imageBitmap);
+
+            // Set OnClickListener to show the image in a dialog when clicked
+            imageView.setOnClickListener(v -> showDialogWithImage(imageBitmap, documentId, field, collection));
         }
+
         layout.addView(imageLayoutView);
     }
+
+
 
     private Bitmap stringToBitmap(String encodedString) {
         if (encodedString == null || encodedString.isEmpty()) {
@@ -270,4 +283,32 @@ public class Admin extends AppCompatActivity {
         byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
+
+    private void showDialogWithImage(Bitmap image, String documentId, String field, String collection) {
+        Dialog imageDialog = new Dialog(this);
+        imageDialog.setContentView(R.layout.image_dialog);
+
+        ImageView imageView = imageDialog.findViewById(R.id.dialog_image_view);
+        imageView.setImageBitmap(image);
+
+        Button deleteButton = imageDialog.findViewById(R.id.delete_image_button);
+        deleteButton.setOnClickListener(v -> {
+            deleteImage(documentId, field, collection);
+            imageDialog.dismiss();
+        });
+
+        imageDialog.show();
+    }
+
+    private void deleteImage(String documentId, String field, String collection) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(collection).document(documentId)
+                .update(field, null)
+                .addOnSuccessListener(aVoid -> Log.d("Admin", "Image successfully deleted"))
+                .addOnFailureListener(e -> Log.w("Admin", "Error deleting image", e));
+    }
+
+
+
 }
+
