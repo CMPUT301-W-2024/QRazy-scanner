@@ -2,11 +2,14 @@ package com.example.projectapp;
 
 import android.media.Image;
 
+import androidx.annotation.Nullable;
+
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -187,4 +190,22 @@ public class Attendee {
         }
     }
 
+    @Override
+    public boolean equals(@Nullable Object obj) {
+
+        if (obj == null){
+            return false;
+        }
+
+        if (this == obj){
+            return true;
+        }
+
+        return (obj instanceof Attendee) && ((Attendee) obj).getAttendeeId().equals(attendeeId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(attendeeId);
+    }
 }
