@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
@@ -105,38 +106,24 @@ public class AttendeePageActivity extends AppCompatActivity {
     }
 
     public void addEvent(Event event, ArrayList<Event> list, AttendeeEventAdapter adapter){
-        for (int i=0; i<list.size(); i++){
-            if (event.getEventId() != null && list.get(i).getEventId() != null && (event.getEventId()).equals(list.get(i).getEventId())){
-                return;
-            }
+        if (!list.contains(event)){
+            list.add(event);
+            adapter.notifyDataSetChanged();
         }
-        list.add(event);
-        adapter.notifyDataSetChanged();
     }
 
     public void updateEvent(Event event, ArrayList<Event> list, AttendeeEventAdapter adapter){
-        for (int i=0; i<list.size(); i++){
-            if (event.getEventId() != null && (event.getEventId()).equals(list.get(i).getEventId())){
-                list.set(i, event);
-            }
-        }
+        list.set(list.indexOf(event), event);
         adapter.notifyDataSetChanged();
     }
 
     public void removeEvent(Event event, ArrayList<Event> list, AttendeeEventAdapter adapter){
-        Iterator<Event> i = list.iterator();
-        while(i.hasNext()){
-            Event e = i.next();
-            if (event.getEventId() != null && e.getEventId() != null && (e.getEventId()).equals(event.getEventId())){
-                i.remove();
-            }
-        }
+        list.remove(event);
         adapter.notifyDataSetChanged();
     }
 
     private void addAttendeeEventsListener(){
         CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
-/*        eventsRef.orderBy("attendees."+ dataHandler.getAttendee().getAttendeeId())*/
         attendeeEventsListener = eventsRef.whereArrayContains("signedAttendees", dataHandler.getAttendee().getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
@@ -218,9 +205,15 @@ public class AttendeePageActivity extends AppCompatActivity {
             signUpButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    event.addSignedAttendee(dataHandler.getAttendee().getAttendeeId());
-                    dataHandler.getAttendee().addSignedEvent(event.getEventId());
-                    eventDetailDialog.dismiss();
+                    // only add if attendance limit is not reached
+                    if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().size() < event.getAttendanceLimit()){
+                        event.addSignedAttendee(dataHandler.getAttendee().getAttendeeId());
+                        dataHandler.getAttendee().addSignedEvent(event.getEventId());
+                        eventDetailDialog.dismiss();
+                    }
+                    else {
+                        Toast.makeText(AttendeePageActivity.this, "Event has reached attendance limit", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         }

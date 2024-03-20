@@ -116,14 +116,10 @@ public class OrganizerPageActivity extends AppCompatActivity {
      * @param event The Event object to add.
      */
     public void addEvent(Event event){
-        for (int i=0; i<events.size(); i++){
-            if (event.getEventId().equals(events.get(i).getEventId())){
-                return;
-            }
+        if (!events.contains(event)){
+            events.add(event);
+            eventAdapter.notifyDataSetChanged();
         }
-        events.add(event);
-        eventAdapter.notifyDataSetChanged();
-
     }
 
     /**
@@ -132,11 +128,7 @@ public class OrganizerPageActivity extends AppCompatActivity {
      * @param event The updated Event object.
      */
     public void updateEvent(Event event){
-        for (int i=0; i<events.size(); i++){
-            if (event.getEventId().equals(events.get(i).getEventId())){
-                events.set(i, event);
-            }
-        }
+        events.set(events.indexOf(event), event);
         checkMilestone(event);
         eventAdapter.notifyDataSetChanged();
     }
@@ -146,13 +138,7 @@ public class OrganizerPageActivity extends AppCompatActivity {
      * @param event The Event object to remove.
      */
     public void removeEvent(Event event){
-        Iterator<Event> i = events.iterator();
-        while(i.hasNext()){
-            Event e = i.next();
-            if ((e.getEventId()).equals(event.getEventId())){
-                i.remove();
-            }
-        }
+        events.remove(event);
         eventAdapter.notifyDataSetChanged();
     }
 
@@ -163,6 +149,7 @@ public class OrganizerPageActivity extends AppCompatActivity {
      */
     private void checkMilestone(Event event){
         if (mileStones.contains(event.getAttendance())){
+            mileStones.remove(event.getAttendance());
             Toast.makeText(OrganizerPageActivity.this, "Milestone Reached!! " + event.getAttendance() + " attendees in " + event.getName(), Toast.LENGTH_LONG).show();
         }
     }
