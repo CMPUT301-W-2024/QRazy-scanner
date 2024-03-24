@@ -3,6 +3,7 @@ package com.example.projectapp;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class Event implements Serializable{
     private String poster;
     private Integer attendanceLimit;
     private String qrCode;
+    private ArrayList<GeoPoint> geopoints;
 
     /**
      * Event constructor
@@ -52,6 +54,7 @@ public class Event implements Serializable{
         eventId = UUID.randomUUID().toString();
         checkedAttendees = new HashMap<>();
         signedAttendees = new ArrayList<>();
+        this.geopoints = new ArrayList<GeoPoint>();
     }
 
     /**
@@ -260,5 +263,31 @@ public class Event implements Serializable{
             DocumentReference eventRef = FirebaseFirestore.getInstance().collection("events").document(eventId);
             eventRef.update("signedAttendees", signedAttendees);
         }
+    }
+
+    public void addGeopoint(GeoPoint geopoint){
+        DocumentReference eventRef = FirebaseFirestore.getInstance().collection("events").document(eventId);
+        eventRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                ArrayList<GeoPoint> existingLatitudes = documentSnapshot.toObject(Event.class).getGeopoints();
+                if (existingLatitudes == null) {
+                    existingLatitudes = new ArrayList<>();
+                }
+                // Add the new latitude to the existing array
+                existingLatitudes.add(geopoint);
+                // Update the Firestore document with the modified latitude array
+                eventRef.update("latitude", existingLatitudes);
+            }
+        }).addOnFailureListener(e -> {
+            // Handle any errors
+        });
+    }
+
+    public ArrayList<GeoPoint> getGeopoints() {
+        return geopoints;
+    }
+
+    public void setGeopoints(ArrayList<GeoPoint> geopoints) {
+        this.geopoints = geopoints;
     }
 }

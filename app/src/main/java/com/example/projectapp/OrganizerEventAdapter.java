@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,6 +40,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         LinearLayout expandEventLayout;
         ImageView eventQrView;
         ImageButton expandEventButton;
+        Button viewmapButton;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -49,6 +51,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             expandEventLayout = itemView.findViewById(R.id.expandEventLayout);
             eventQrView = itemView.findViewById(R.id.eventQrView);
             expandEventButton = itemView.findViewById(R.id.expandButton);
+            viewmapButton = itemView.findViewById(R.id.view_map_button);
         }
     }
 
@@ -82,6 +85,12 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             View view = holder.expandEventLayout;
             int visibility = (view.getVisibility() == View.GONE) ? View.VISIBLE: View.GONE;
             view.setVisibility(visibility);
+        });
+
+        holder.viewmapButton.setOnClickListener(v -> {
+            Intent intent = new Intent(context, MapActivity.class);
+            intent.putExtra("eventId", event.getEventId());
+            context.startActivity(intent);
         });
     }
 

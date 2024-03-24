@@ -36,6 +36,26 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp" />
 
+    <RadioGroup
+        android:id="@+id/dialog_event_location_options"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/dialog_event_share_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Share Location" />
+
+        <RadioButton
+            android:id="@+id/dialog_event_not_share_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Do Not Share Location" />
+
+    </RadioGroup>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -52,6 +53,9 @@ public class ScanActivity extends AppCompatActivity {
                                     dataHandler.getAttendee().addCheckedEvent(event.getEventId());
                                     Intent intent = new Intent(ScanActivity.this, AttendeePageActivity.class);
                                     startActivity(intent);
+                                    Intent intent1 = new Intent(ScanActivity.this, GeopointDialog.class);
+                                    intent1.putExtra("eventId", event.getEventId());
+                                    startActivity(intent1);
                                 }
                                 else {
                                     Toast.makeText(ScanActivity.this, "Could not get event", Toast.LENGTH_SHORT).show();

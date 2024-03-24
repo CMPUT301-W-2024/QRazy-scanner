@@ -218,6 +218,7 @@ public class AttendeePageActivity extends AppCompatActivity {
             signUpButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     event.addSignedAttendee(dataHandler.getAttendee().getAttendeeId());
                     dataHandler.getAttendee().addSignedEvent(event.getEventId());
                     eventDetailDialog.dismiss();
