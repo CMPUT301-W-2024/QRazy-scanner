@@ -16,6 +16,7 @@ import com.budiyev.android.codescanner.DecodeCallback;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.zxing.Result;
 
 /**
@@ -51,6 +52,7 @@ public class ScanActivity extends AppCompatActivity {
                                     if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().contains(dataHandler.getAttendee().getAttendeeId()) || event.getAttendance() + event.getSignedAttendees().size() < event.getAttendanceLimit()){
                                         event.addCheckedAttendee(dataHandler.getAttendee().getAttendeeId());
                                         dataHandler.getAttendee().addCheckedEvent(event.getEventId());
+                                        FirebaseMessaging.getInstance().subscribeToTopic(event.getEventId());
                                         Intent intent = new Intent(ScanActivity.this, AttendeePageActivity.class);
                                         startActivity(intent);
                                     }
@@ -95,12 +97,9 @@ public class ScanActivity extends AppCompatActivity {
      * Check for camera's permission
      */
     public void checkPermission(){
-        if(ContextCompat.checkSelfPermission(ScanActivity.this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
-            // permission is already granted
-        }else{
+        if(ContextCompat.checkSelfPermission(ScanActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             //permission is not granted yet
-            //Asking for permission
-            requestPermissions(new String[] { android.Manifest.permission.CAMERA }, CAMERA_PERMISSION_CODE);
+            requestPermissions(new String[]{android.Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
         }
     }
 

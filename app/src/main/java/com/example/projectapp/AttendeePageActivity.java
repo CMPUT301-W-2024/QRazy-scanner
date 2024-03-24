@@ -2,11 +2,14 @@ package com.example.projectapp;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -51,6 +55,8 @@ public class AttendeePageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attendee_page);
+
+        getNotificationPermission();
 
         RecyclerView attendeeEventsList = findViewById(R.id.attendeeEventsList);
         RecyclerView allEventsList = findViewById(R.id.allEventsList);
@@ -209,6 +215,7 @@ public class AttendeePageActivity extends AppCompatActivity {
                     if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().size() < event.getAttendanceLimit()){
                         event.addSignedAttendee(dataHandler.getAttendee().getAttendeeId());
                         dataHandler.getAttendee().addSignedEvent(event.getEventId());
+                        FirebaseMessaging.getInstance().subscribeToTopic(event.getEventId());
                         eventDetailDialog.dismiss();
                     }
                     else {
@@ -232,5 +239,12 @@ public class AttendeePageActivity extends AppCompatActivity {
         announcer.setText("Announcer");
         ScrollView announcmentView = findViewById(R.id.announcementView);
         announcmentView.addView(anouncmentView);
+    }
+
+    private void getNotificationPermission(){
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED){
+            // permission is not already granted
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+        }
     }
 }

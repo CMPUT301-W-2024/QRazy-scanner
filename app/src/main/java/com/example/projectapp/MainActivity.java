@@ -1,14 +1,23 @@
 package com.example.projectapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.StrictMode;
 import android.widget.Toast;
 import android.provider.Settings;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 /**
  * Main Activity
@@ -19,9 +28,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+        StrictMode.setThreadPolicy(policy);
+
         // Load the WelcomeFragment initially
         String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        Toast.makeText(this, "Android ID: " + androidId, Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Android ID: " + androidId, Toast.LENGTH_LONG).show();
         if (isSpecificDevice(androidId)) {
             // If it's the admin device, start the Admin activity
             Intent adminIntent = new Intent(this, Admin.class);

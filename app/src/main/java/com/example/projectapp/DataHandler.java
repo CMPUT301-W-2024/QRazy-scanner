@@ -6,8 +6,10 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
@@ -18,6 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 /**
  * Data handler. Handles interactions with Firebase,
@@ -139,6 +142,19 @@ public class DataHandler {
     public void updateAttendee(String attendeeId, String field, String value){
         CollectionReference attendeeRef = FirebaseFirestore.getInstance().collection("attendees");
         attendeeRef.document(attendeeId).update(field, value);
+    }
+
+    public void subscribeToTopic(String eventId){
+        FirebaseMessaging.getInstance().subscribeToTopic(eventId)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "Subscribed";
+                        if (!task.isSuccessful()) {
+                            msg = "Subscribe failed";
+                        }
+                    }
+                });
     }
 
 }
