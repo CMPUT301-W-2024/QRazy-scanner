@@ -126,7 +126,11 @@ public class Admin extends AppCompatActivity {
         eventOrganizerView.setText(event.getOrganizer());
         TextView eventInfoView = eventView.findViewById(R.id.event_info_text);
         eventInfoView.setText(event.getDescription());
-        eventView.setOnClickListener(v -> showDialogWithEventDetails(event.getName(), event.getOrganizer(), event.getDescription()));
+
+        // Assuming your Event class has a method to get the encoded image string
+        String encodedImage = event.getPoster();
+
+        eventView.setOnClickListener(v -> showDialogWithEventDetails(event.getName(), event.getOrganizer(), event.getDescription(), encodedImage));
         horizontalLayout.addView(eventView);
     }
 
@@ -150,15 +154,23 @@ public class Admin extends AppCompatActivity {
                 });
     }
 
-    private void showDialogWithEventDetails(String name, String organizer, String description) {
+    private void showDialogWithEventDetails(String name, String organizer, String description, String encodedImageString) {
         Dialog eventDetailDialog = new Dialog(this);
         eventDetailDialog.setContentView(R.layout.event_dialog);
+
         TextView eventNameView = eventDetailDialog.findViewById(R.id.dialog_event_name);
         eventNameView.setText(name);
         TextView eventOrganizerView = eventDetailDialog.findViewById(R.id.dialog_event_organizer);
         eventOrganizerView.setText(organizer);
         TextView eventDescriptionView = eventDetailDialog.findViewById(R.id.dialog_event_description);
         eventDescriptionView.setText(description);
+
+        ImageView eventPosterView = eventDetailDialog.findViewById(R.id.dialog_event_poster);
+        Bitmap imageBitmap = stringToBitmap(encodedImageString);
+        if (imageBitmap != null) {
+            eventPosterView.setImageBitmap(imageBitmap);
+        }
+
         Button closeButton = eventDetailDialog.findViewById(R.id.dialog_event_close_button);
         closeButton.setOnClickListener(v -> eventDetailDialog.dismiss());
         Button deleteButton = eventDetailDialog.findViewById(R.id.event_delete_button);
