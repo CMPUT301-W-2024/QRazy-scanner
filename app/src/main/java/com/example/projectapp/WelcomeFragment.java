@@ -12,12 +12,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
@@ -45,16 +48,33 @@ public class WelcomeFragment extends Fragment {
             public void onClick(View v) {
                 // User has logged in before, get their info
                 if (getAttendeeId() != null) {
-                    db.collection("attendees").document(getAttendeeId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    db.collection("attendees").document(getAttendeeId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            Attendee attendee = documentSnapshot.toObject(Attendee.class);
-                            dataHandler.setAttendee(attendee);
-                            Intent intent = new Intent(getActivity(), AttendeePageActivity.class);
-                            startActivity(intent);
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    Attendee attendee = document.toObject(Attendee.class);
+                                    dataHandler.setAttendee(attendee);
+                                    Intent intent = new Intent(getActivity(), AttendeePageActivity.class);
+                                    startActivity(intent);
+                                } else {
+                                    Toast.makeText(getActivity(), "Your account was deleted you will need to create a new account", Toast.LENGTH_SHORT).show();
+                                    ProfileFragment profileFragment = new ProfileFragment();
+                                    requireActivity().getSupportFragmentManager()
+                                            .beginTransaction()
+                                            .replace(android.R.id.content, profileFragment)
+                                            // Use android.R.id.content as the container
+                                            .addToBackStack(null)
+                                            .commit();
+                                }
+                            } else {
+                                Toast.makeText(getActivity(), "Couldn't retrieve account", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
                 }
+
                 else {
                     ProfileFragment profileFragment = new ProfileFragment();
                     requireActivity().getSupportFragmentManager()
