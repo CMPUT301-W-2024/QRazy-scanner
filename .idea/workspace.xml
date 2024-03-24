@@ -20,7 +20,7 @@
           <theme>@style/Theme.ProjectApp</theme>
         </config>
       </layout>
-<<<<<<< HEAD
+
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_create_event.xml">
         <config>
           <theme>@style/Theme.ProjectApp</theme>
@@ -31,8 +31,6 @@
           <theme>@style/Theme.ProjectApp</theme>
         </config>
       </layout>
-=======
->>>>>>> main
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_generate_qrcode.xml">
         <config>
           <theme>@style/Theme.ProjectApp</theme>
@@ -129,11 +127,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-<<<<<<< HEAD
+
     <list default="true" id="33141556-d996-4518-8004-cbe4367a9bf8" name="Changes" comment="final issue fixed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/Admin.java" afterDir="false" />
-=======
     <list default="true" id="33141556-d996-4518-8004-cbe4367a9bf8" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/event_sign_up_dialog.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
@@ -142,21 +139,22 @@
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/OrganizerPageActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/OrganizerPageActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/WelcomeFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/projectapp/WelcomeFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/event_dialog.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/event_dialog.xml" afterDir="false" />
->>>>>>> main
+
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-<<<<<<< HEAD
+
   <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\kodya\.android\avd\Pixel_3a_API_34.avd]" />
-=======
+
   <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RFCRA1AKR1H]" />
->>>>>>> main
+
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
@@ -213,17 +211,16 @@
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;Jason&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-<<<<<<< HEAD
     &quot;last_opened_file_path&quot;: &quot;C:/Users/kodya/AndroidStudioProjects/QRazy-scanner&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;AndroidSdkUpdater&quot;
   }
 }</component>
   <component name="RunManager">
-=======
+
     &quot;last_opened_file_path&quot;: &quot;/Users/veerparasmehra/Desktop/Y3S2/CMPUT301/QRazy-scanner/app/src/main/res/drawable&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;AndroidSdkUpdater&quot;
-  }
-}</component>
+  
+</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/src/main/res/drawable" />
@@ -300,7 +297,7 @@
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
       </method>
     </configuration>
->>>>>>> main
+
     <configuration name="Scanner" type="AndroidRunConfigurationType" factoryName="Android App">
       <module name="Project_app.app.main" />
       <option name="DEPLOY" value="true" />
