@@ -1,54 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".AttendeePageActivity">
 
+    <ImageButton
+        android:id="@+id/menuButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/hamburger_button"
+        android:contentDescription="@string/menu"
+        android:padding="5dp"
+        android:background="?attr/selectableItemBackground"
+        android:scaleType="centerInside" />
+
     <TextView
+        android:id="@+id/welcomeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@id/menuButton"
+        android:text="Welcome back, [Name]"
         android:fontFamily="@font/bold1"
-        android:text="My Signed Up Events"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/attendeeEventsList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/bold1"
-        android:text="All Events"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/allEventsList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:textSize="22sp"
+        android:padding="16dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center|bottom">
+        android:layout_below="@id/welcomeText"
+        android:padding="16dp">
 
-        <ScrollView
-            android:id="@+id/announcementView"
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-
-        <Button
-            android:id="@+id/scanButton"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Check into event"/>
+            android:fontFamily="@font/bold1"
+            android:text="My Signed Up Events"
+            android:textSize="18sp"
+            android:padding="8dp" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/attendeeEventsList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/bold1"
+            android:text="All Events"
+            android:textSize="18sp"
+            android:padding="8dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/allEventsList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center|bottom">
+
+            <ScrollView
+                android:id="@+id/announcementView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:padding="8dp">
+                <!-- ScrollView content here -->
+            </ScrollView>
+
+            <Button
+                android:id="@+id/scanButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Check into event"
+                android:padding="12dp"
+                android:layout_margin="8dp"
+                android:textAppearance="?attr/textAppearanceButton" />
+        </LinearLayout>
     </LinearLayout>
-
-
-</LinearLayout>
+</RelativeLayout>

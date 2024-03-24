@@ -1,22 +1,24 @@
 package com.example.projectapp;
 
+import android.app.Dialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.app.Dialog;
-import android.content.Intent;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
@@ -122,8 +124,34 @@ public class AttendeePageActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-    private void addAttendeeEventsListener(){
+    private void addAttendeeEventsListener() {
         CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
+
+        Attendee attendee = dataHandler.getAttendee();
+
+        if (attendee != null && attendee.getAttendeeId() != null) {
+            attendeeEventsListener = eventsRef
+                    .whereArrayContains("signedAttendees", attendee.getAttendeeId())
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                            if (snapshots != null) {
+                                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                                    Event event = dc.getDocument().toObject(Event.class);
+                                    switch (dc.getType()) {
+                                        case ADDED:
+                                            addEvent(event, attendeeEvents, attendeeEventsAdapter);
+                                            break;
+                                        case MODIFIED:
+                                            updateEvent(event, attendeeEvents, attendeeEventsAdapter);
+                                            break;
+                                        case REMOVED:
+                                            removeEvent(event, attendeeEvents, attendeeEventsAdapter);
+                                            break;
+                                    }
+                                }
+                            }
+
         attendeeEventsListener = eventsRef.whereArrayContains("signedAttendees", dataHandler.getAttendee().getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
@@ -141,12 +169,15 @@ public class AttendeePageActivity extends AppCompatActivity {
                             case REMOVED:
                                 removeEvent(event, attendeeEvents, attendeeEventsAdapter);
                                 break;
+
                         }
-                    }
-                }
-            }
-        });
+                    });
+        } else {
+            // Handle case where attendee or attendeeId is null -CK (keep crashing previously)
+            Log.w("AttendeePageActivity", "Attendee or Attendee ID is null");
+        }
     }
+
 
     private void addAllEventsListener(){
         CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
@@ -233,4 +264,7 @@ public class AttendeePageActivity extends AppCompatActivity {
         ScrollView announcmentView = findViewById(R.id.announcementView);
         announcmentView.addView(anouncmentView);
     }
+
+
+
 }

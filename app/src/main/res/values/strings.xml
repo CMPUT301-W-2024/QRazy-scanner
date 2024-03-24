@@ -12,4 +12,6 @@
     <string name="event">Event</string>
     <string name="organizer">Organizer</string>
     <string name="image_description" />
+    <string name="menu_button" />
+    <string name="menu">menu</string>
 </resources>
