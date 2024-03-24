@@ -1,6 +1,8 @@
 package com.example.projectapp;
 
 
+import androidx.annotation.Nullable;
+
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
@@ -8,6 +10,7 @@ import com.google.firebase.firestore.GeoPoint;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -290,4 +293,24 @@ public class Event implements Serializable{
     public void setGeopoints(ArrayList<GeoPoint> geopoints) {
         this.geopoints = geopoints;
     }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+
+        if (obj == null){
+            return false;
+        }
+
+        if (this == obj){
+            return true;
+        }
+
+        return (obj instanceof Event) && ((Event) obj).getEventId().equals(eventId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(eventId);
+    }
 }
+

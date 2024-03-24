@@ -131,4 +131,14 @@ public class DataHandler {
         organizersRef.document(organizer.getOrganizerId()).set(organizer);
     }
 
+    public void updateEvent(String eventId, String field, String value){
+        CollectionReference eventRef = FirebaseFirestore.getInstance().collection("events");
+        eventRef.document(eventId).update(field, value);
+    }
+
+    public void updateAttendee(String attendeeId, String field, String value){
+        CollectionReference attendeeRef = FirebaseFirestore.getInstance().collection("attendees");
+        attendeeRef.document(attendeeId).update(field, value);
+    }
+
 }

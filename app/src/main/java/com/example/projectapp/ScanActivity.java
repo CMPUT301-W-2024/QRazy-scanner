@@ -43,19 +43,24 @@ public class ScanActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(ScanActivity.this, result.getText(), Toast.LENGTH_SHORT).show();
                         db.collection("events").document(result.getText()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                 Event event = documentSnapshot.toObject(Event.class);
                                 if (event != null){
-                                    event.addCheckedAttendee(dataHandler.getAttendee().getAttendeeId());
-                                    dataHandler.getAttendee().addCheckedEvent(event.getEventId());
-                                    Intent intent = new Intent(ScanActivity.this, AttendeePageActivity.class);
-                                    startActivity(intent);
-                                    Intent intent1 = new Intent(ScanActivity.this, GeopointDialog.class);
-                                    intent1.putExtra("eventId", event.getEventId());
-                                    startActivity(intent1);
+                                    // if no attendance limit or signed attendees is less than limit then sign up
+                                    if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().contains(dataHandler.getAttendee().getAttendeeId()) || event.getAttendance() + event.getSignedAttendees().size() < event.getAttendanceLimit()){
+                                        event.addCheckedAttendee(dataHandler.getAttendee().getAttendeeId());
+                                        dataHandler.getAttendee().addCheckedEvent(event.getEventId());
+                                        Intent intent = new Intent(ScanActivity.this, AttendeePageActivity.class);
+                                        startActivity(intent);
+                                        Intent intent1 = new Intent(ScanActivity.this, GeopointDialog.class);
+                                        intent1.putExtra("eventId", event.getEventId());
+                                        startActivity(intent1);
+                                    }
+                                    else {
+                                        Toast.makeText(ScanActivity.this, "Event has reached attendance limit", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
                                 else {
                                     Toast.makeText(ScanActivity.this, "Could not get event", Toast.LENGTH_SHORT).show();
