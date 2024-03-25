@@ -149,9 +149,7 @@ public class AttendeePageActivity extends AppCompatActivity {
     }
 
     private void removeAnnouncements(Event event){
-        for (int i=0; i < event.getAnnouncements().size(); i++){
-            announcements.remove(event.getAnnouncements().get(i));
-        }
+        announcements.removeAll(event.getAnnouncements());
         announcementAdapter.notifyDataSetChanged();
     }
 
