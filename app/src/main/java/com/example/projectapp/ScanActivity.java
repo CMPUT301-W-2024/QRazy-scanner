@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -55,6 +56,9 @@ public class ScanActivity extends AppCompatActivity {
                                         FirebaseMessaging.getInstance().subscribeToTopic(event.getEventId());
                                         Intent intent = new Intent(ScanActivity.this, AttendeePageActivity.class);
                                         startActivity(intent);
+                                        Intent intent1 = new Intent(ScanActivity.this, GeopointDialog.class);
+                                        intent1.putExtra("eventId", event.getEventId());
+                                        startActivity(intent1);
                                     }
                                     else {
                                         Toast.makeText(ScanActivity.this, "Event has reached attendance limit", Toast.LENGTH_SHORT).show();
