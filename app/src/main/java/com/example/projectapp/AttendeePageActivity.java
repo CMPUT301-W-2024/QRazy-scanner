@@ -2,15 +2,10 @@ package com.example.projectapp;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,19 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
-import android.app.Dialog;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.google.firebase.firestore.CollectionReference;
@@ -47,7 +30,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+
 /**
  * Activity to display events to attendees.
  * It provides functionality to view events the attendee is participating in, and to view all available events.
@@ -58,8 +41,10 @@ public class AttendeePageActivity extends AppCompatActivity {
     private ArrayList<Event> attendeeEvents;
     private AttendeeEventAdapter attendeeEventsAdapter;
     private AttendeeEventAdapter allEventsAdapter;
+    private AnnouncementAdapter announcementAdapter;
     private ListenerRegistration attendeeEventsListener;
     private ListenerRegistration allEventsListener;
+    private ArrayList<Announcement> announcements;
     private DataHandler dataHandler = DataHandler.getInstance();
   
     /**
@@ -76,12 +61,15 @@ public class AttendeePageActivity extends AppCompatActivity {
 
         RecyclerView attendeeEventsList = findViewById(R.id.attendeeEventsList);
         RecyclerView allEventsList = findViewById(R.id.allEventsList);
+        RecyclerView announcementsList = findViewById(R.id.announcementList);
 
         attendeeEvents = new ArrayList<>();
         allEvents = new ArrayList<>();
+        announcements = new ArrayList<>();
 
         attendeeEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         allEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        announcementsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         attendeeEventsAdapter = new AttendeeEventAdapter(attendeeEvents, new AttendeeEventAdapter.OnItemClickListener() {
             @Override
@@ -97,15 +85,17 @@ public class AttendeePageActivity extends AppCompatActivity {
             }
         });
 
+        announcementAdapter = new AnnouncementAdapter(announcements);
+
         attendeeEventsList.setAdapter(attendeeEventsAdapter);
         allEventsList.setAdapter(allEventsAdapter);
+        announcementsList.setAdapter(announcementAdapter);
 
         Button scanButton = findViewById(R.id.scanButton);
         scanButton.setOnClickListener(v -> {
             startActivity(new Intent(this, ScanActivity.class));
         });
 
-        addAnouncmentToScrollView();
     }
     /**
      * Removes event listeners when the activity is paused to avoid unnecessary background processing.
@@ -144,6 +134,27 @@ public class AttendeePageActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
+    private void addAnnouncements(Event event){
+        announcements.addAll(event.getAnnouncements());
+        announcementAdapter.notifyDataSetChanged();
+    }
+
+    private void updateAnnouncements(Event event){
+        for (int i=0; i < event.getAnnouncements().size(); i++){
+            if (!announcements.contains(event.getAnnouncements().get(i))){
+                announcements.add(event.getAnnouncements().get(i));
+            }
+        }
+        announcementAdapter.notifyDataSetChanged();
+    }
+
+    private void removeAnnouncements(Event event){
+        for (int i=0; i < event.getAnnouncements().size(); i++){
+            announcements.remove(event.getAnnouncements().get(i));
+        }
+        announcementAdapter.notifyDataSetChanged();
+    }
+
     private void addAttendeeEventsListener() {
         CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
 
@@ -157,12 +168,15 @@ public class AttendeePageActivity extends AppCompatActivity {
                         switch (dc.getType()) {
                             case ADDED:
                                 addEvent(event, attendeeEvents, attendeeEventsAdapter);
+                                addAnnouncements(event);
                                 break;
                             case MODIFIED:
                                 updateEvent(event, attendeeEvents, attendeeEventsAdapter);
+                                updateAnnouncements(event);
                                 break;
                             case REMOVED:
                                 removeEvent(event, attendeeEvents, attendeeEventsAdapter);
+                                removeAnnouncements(event);
                                 break;
 
                         }
@@ -245,19 +259,6 @@ public class AttendeePageActivity extends AppCompatActivity {
         }
 
         eventDetailDialog.show();
-    }
-
-    /**
-     * Adds announcment to scroll view, currently hard coded since we haven't added the functionality for organizer to push announcments
-     */
-    private void addAnouncmentToScrollView() {
-        View anouncmentView = LayoutInflater.from(this).inflate(R.layout.announcement_scroll_view, findViewById(R.id.announcementView), false);
-        TextView announcment = anouncmentView.findViewById(R.id.announcement_content);
-        TextView announcer = anouncmentView.findViewById(R.id.announcer);
-        announcment.setText("This is an announcment");
-        announcer.setText("Announcer");
-        ScrollView announcmentView = findViewById(R.id.announcementView);
-        announcmentView.addView(anouncmentView);
     }
 
     private void getNotificationPermission(){
