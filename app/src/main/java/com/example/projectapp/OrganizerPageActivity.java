@@ -157,7 +157,7 @@ public class OrganizerPageActivity extends AppCompatActivity {
     private void addOrganizerEventsListener(){
         CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
 
-        organizerEventsListener = eventsRef.whereEqualTo("organizer", dataHandler.getOrganizer().getOrganizerId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        organizerEventsListener = eventsRef.whereEqualTo("organizerId", dataHandler.getOrganizer().getOrganizerId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {

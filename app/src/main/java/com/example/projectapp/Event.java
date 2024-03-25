@@ -1,8 +1,6 @@
 package com.example.projectapp;
 
 
-import android.util.Pair;
-
 import androidx.annotation.Nullable;
 
 import com.google.firebase.firestore.DocumentReference;
@@ -10,9 +8,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -26,7 +22,8 @@ public class Event implements Serializable{
     private String eventId;
     private String name;
     private String date;
-    private String organizer;
+    private String organizerName;
+    private String organizerId;
     private String description;
     private HashMap<String, Integer> checkedAttendees;
     private ArrayList<String> signedAttendees;
@@ -48,15 +45,16 @@ public class Event implements Serializable{
      *
      * @param name            The name of the event.
      * @param date            The date the event occurs (consider a proper Date object).
-     * @param organizer       The name of the event organizer.
+     * @param organizerName       The name of the event organizer.
      * @param attendanceLimit The maximum number of allowed attendees.
      * @param description     A description of the event.
      * @param poster          A poster image associated with the event.
      */
-    public Event(String name, String date, String organizer, Integer attendanceLimit, String description, String poster) {
+    public Event(String name, String date, String organizerName, String organizerId, Integer attendanceLimit, String description, String poster) {
         this.name = name;
         this.date = date;
-        this.organizer = organizer;
+        this.organizerName = organizerName;
+        this.organizerId = organizerId;
         this.attendanceLimit = attendanceLimit;
         this.description = description;
         this.poster = poster;
@@ -106,17 +104,35 @@ public class Event implements Serializable{
      *
      * @return The organizer's name.
      */
-    public String getOrganizer() {
-        return organizer;
+    public String getOrganizerName() {
+        return organizerName;
     }
 
     /**
-     * Sets the organizer of the event.
+     * Sets the organizer name of the event.
      *
-     * @param organizer The new organizer's name.
+     * @param organizerName The new organizer's name.
      */
-    public void setOrganizer(String organizer) {
-        this.organizer = organizer;
+    public void setOrganizerName(String organizerName) {
+        this.organizerName = organizerName;
+    }
+
+    /**
+     * Gets the organizer ID of the event.
+     *
+     * @return The organizer's ID.
+     */
+    public String getOrganizerId() {
+        return organizerId;
+    }
+
+    /**
+     * Sets the organizer ID of the event.
+     *
+     * @param organizerId The new organizer's ID.
+     */
+    public void setOrganizerId(String organizerId) {
+        this.organizerId = organizerId;
     }
 
     /**
@@ -311,7 +327,7 @@ public class Event implements Serializable{
 
     public void addAnnouncements(String announcement){
         LocalTime time = LocalTime.now();
-        announcements.add(new Announcement(announcement, time.toString(), name, organizer));
+        announcements.add(new Announcement(announcement, time.toString(), name, organizerName));
         DocumentReference eventRef = FirebaseFirestore.getInstance().collection("events").document(eventId);
         eventRef.update("announcements", announcements);
     }

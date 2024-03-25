@@ -3,13 +3,12 @@ package com.example.projectapp;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -20,12 +19,15 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -227,7 +229,7 @@ public class AttendeePageActivity extends AppCompatActivity {
         Button signUpButton = eventDetailDialog.findViewById(R.id.dialog_event_sign_button);
 
         eventNameView.setText(event.getName());
-        eventOrganizerView.setText(event.getOrganizer());
+        eventOrganizerView.setText(event.getOrganizerName());
         eventDescriptionView.setText(event.getDescription());
 
         closeButton.setOnClickListener(new View.OnClickListener() {
