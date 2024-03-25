@@ -75,8 +75,7 @@ public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdap
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Event event = events.get(position);
         viewHolder.bind(event, listener);
-        // Get element from your dataset at this position and replace the
-        // contents of the view with that element
+
         viewHolder.nameText.setText(event.getName());
         FirebaseFirestore.getInstance().collection("organizers").whereEqualTo("organizerId", event.getOrganizer()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override

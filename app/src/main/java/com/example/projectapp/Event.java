@@ -1,6 +1,8 @@
 package com.example.projectapp;
 
 
+import android.util.Pair;
+
 import androidx.annotation.Nullable;
 
 import com.google.firebase.firestore.DocumentReference;
@@ -8,6 +10,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -29,6 +34,7 @@ public class Event implements Serializable{
     private Integer attendanceLimit;
     private String qrCode;
     private ArrayList<GeoPoint> geopoints;
+    private ArrayList<Announcement> announcements;
 
     /**
      * Event constructor
@@ -57,7 +63,8 @@ public class Event implements Serializable{
         eventId = UUID.randomUUID().toString();
         checkedAttendees = new HashMap<>();
         signedAttendees = new ArrayList<>();
-        this.geopoints = new ArrayList<GeoPoint>();
+        geopoints = new ArrayList<GeoPoint>();
+        announcements = new ArrayList<>();
     }
 
     /**
@@ -292,6 +299,21 @@ public class Event implements Serializable{
 
     public void setGeopoints(ArrayList<GeoPoint> geopoints) {
         this.geopoints = geopoints;
+    }
+
+    public ArrayList<Announcement> getAnnouncements() {
+        return announcements;
+    }
+
+    public void setAnnouncements(ArrayList<Announcement> announcements) {
+        this.announcements = announcements;
+    }
+
+    public void addAnnouncements(String announcement){
+        LocalTime time = LocalTime.now();
+        announcements.add(new Announcement(announcement, time.toString(), name, organizer));
+        DocumentReference eventRef = FirebaseFirestore.getInstance().collection("events").document(eventId);
+        eventRef.update("announcements", announcements);
     }
 
     @Override

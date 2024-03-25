@@ -124,6 +124,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                 public void onClick(DialogInterface dialog, int which) {
                     try {
                         requestAPI(event, input.getText().toString());
+                        event.addAnnouncements(input.getText().toString());
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
