@@ -17,8 +17,25 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.Manifest;
+import android.app.Dialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
@@ -27,6 +44,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -53,6 +71,8 @@ public class AttendeePageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attendee_page);
+
+        getNotificationPermission();
 
         RecyclerView attendeeEventsList = findViewById(R.id.attendeeEventsList);
         RecyclerView allEventsList = findViewById(R.id.allEventsList);
@@ -127,31 +147,6 @@ public class AttendeePageActivity extends AppCompatActivity {
     private void addAttendeeEventsListener() {
         CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
 
-        Attendee attendee = dataHandler.getAttendee();
-
-        if (attendee != null && attendee.getAttendeeId() != null) {
-            attendeeEventsListener = eventsRef
-                    .whereArrayContains("signedAttendees", attendee.getAttendeeId())
-                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                        @Override
-                        public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
-                            if (snapshots != null) {
-                                for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                                    Event event = dc.getDocument().toObject(Event.class);
-                                    switch (dc.getType()) {
-                                        case ADDED:
-                                            addEvent(event, attendeeEvents, attendeeEventsAdapter);
-                                            break;
-                                        case MODIFIED:
-                                            updateEvent(event, attendeeEvents, attendeeEventsAdapter);
-                                            break;
-                                        case REMOVED:
-                                            removeEvent(event, attendeeEvents, attendeeEventsAdapter);
-                                            break;
-                                    }
-                                }
-                            }
-
         attendeeEventsListener = eventsRef.whereArrayContains("signedAttendees", dataHandler.getAttendee().getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
@@ -171,11 +166,10 @@ public class AttendeePageActivity extends AppCompatActivity {
                                 break;
 
                         }
-                    });
-        } else {
-            // Handle case where attendee or attendeeId is null -CK (keep crashing previously)
-            Log.w("AttendeePageActivity", "Attendee or Attendee ID is null");
-        }
+                    }
+                }
+            }
+        });
     }
 
 
@@ -240,6 +234,7 @@ public class AttendeePageActivity extends AppCompatActivity {
                     if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().size() < event.getAttendanceLimit()){
                         event.addSignedAttendee(dataHandler.getAttendee().getAttendeeId());
                         dataHandler.getAttendee().addSignedEvent(event.getEventId());
+                        FirebaseMessaging.getInstance().subscribeToTopic(event.getEventId());
                         eventDetailDialog.dismiss();
                     }
                     else {
@@ -265,6 +260,10 @@ public class AttendeePageActivity extends AppCompatActivity {
         announcmentView.addView(anouncmentView);
     }
 
-
-
+    private void getNotificationPermission(){
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED){
+            // permission is not already granted
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+        }
+    }
 }

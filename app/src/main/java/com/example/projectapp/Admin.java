@@ -174,6 +174,7 @@ public class Admin extends AppCompatActivity {
         Button closeButton = eventDetailDialog.findViewById(R.id.dialog_event_close_button);
         closeButton.setOnClickListener(v -> eventDetailDialog.dismiss());
         Button deleteButton = eventDetailDialog.findViewById(R.id.event_delete_button);
+        deleteButton.setVisibility(View.VISIBLE);
         deleteButton.setOnClickListener(v -> {
             deleteEventByNameAndDetails(name, organizer, description);
             eventDetailDialog.dismiss();
@@ -234,7 +235,6 @@ public class Admin extends AppCompatActivity {
         Button closeButton = detailDialog.findViewById(R.id.dialog_close_button);
         closeButton.setOnClickListener(v -> detailDialog.dismiss());
         Button deleteButton = detailDialog.findViewById(R.id.dialog_delete_button);
-        deleteButton.setVisibility(View.VISIBLE);
         deleteButton.setOnClickListener(v -> {
             deleteAttendeeById(attendeeId);
             detailDialog.dismiss();
