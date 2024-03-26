@@ -9,6 +9,8 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ScrollView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,7 +55,7 @@ public class AttendeePageActivity extends AppCompatActivity {
     private ListenerRegistration allEventsListener;
     private ArrayList<Announcement> announcements;
     private DataHandler dataHandler = DataHandler.getInstance();
-  
+
     /**
      * Initializes the activity, sets up RecyclerViews for displaying events.
      * @param savedInstanceState If the activity is being re-initialized after being shut down, this Bundle contains the data most recently supplied in onSaveInstanceState.
@@ -70,6 +72,8 @@ public class AttendeePageActivity extends AppCompatActivity {
         RecyclerView allEventsList = findViewById(R.id.allEventsList);
         RecyclerView announcementsList = findViewById(R.id.announcementList);
 
+        ImageButton menuButton = findViewById(R.id.menuButton);
+
         attendeeEvents = new ArrayList<>();
         allEvents = new ArrayList<>();
         announcements = new ArrayList<>();
@@ -82,6 +86,16 @@ public class AttendeePageActivity extends AppCompatActivity {
             @Override
             public void onItemClick(Event event) {
                 showDialogWithEventDetails(event, false);
+            }
+        });
+
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(AttendeePageActivity.this, ProfileEditActivity.class);
+
+                startActivity(intent);
             }
         });
 
@@ -276,6 +290,9 @@ public class AttendeePageActivity extends AppCompatActivity {
         }
     }
 
+}
+
+
     private Bitmap stringToBitmap(String encodedString) {
         if (encodedString == null || encodedString.isEmpty()) {
             Log.e("Admin", "Encoded string is null or empty");
@@ -285,3 +302,4 @@ public class AttendeePageActivity extends AppCompatActivity {
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 }
+
