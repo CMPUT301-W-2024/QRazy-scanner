@@ -11,14 +11,14 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/dialog_event_poster"
+            android:id="@+id/dialogEventPoster"
             android:layout_width="match_parent"
             android:layout_height="180dp"
             android:scaleType="fitCenter"
             android:layout_marginBottom="16dp"/>
 
         <TextView
-            android:id="@+id/dialog_event_name"
+            android:id="@+id/dialogEventName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Event Name"
@@ -29,7 +29,7 @@
             android:gravity="center"/>
 
         <TextView
-            android:id="@+id/dialog_event_organizer"
+            android:id="@+id/dialogEventOrganizer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Organizer"
@@ -40,7 +40,7 @@
             android:gravity="center"/>
 
         <TextView
-            android:id="@+id/dialog_event_description"
+            android:id="@+id/dialogEventDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Description"
@@ -52,7 +52,7 @@
             android:gravity="center"/>
 
         <Button
-            android:id="@+id/event_delete_button"
+            android:id="@+id/eventDeleteButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Delete"
@@ -71,7 +71,7 @@
             android:layout_marginTop="8dp">
 
             <Button
-                android:id="@+id/dialog_event_close_button"
+                android:id="@+id/dialogEventCloseButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -82,7 +82,7 @@
                 android:background="?attr/colorButtonNormal" />
 
             <Button
-                android:id="@+id/dialog_event_sign_button"
+                android:id="@+id/dialogEventSignButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

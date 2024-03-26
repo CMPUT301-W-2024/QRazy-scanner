@@ -37,9 +37,9 @@ public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdap
 
         public ViewHolder(View view) {
             super(view);
-            nameText = (TextView) view.findViewById(R.id.event_name_text);
-            organizerText = (TextView) view.findViewById(R.id.event_organizer_name_text);
-            infoText = (TextView) view.findViewById(R.id.event_info_text);
+            nameText = (TextView) view.findViewById(R.id.eventNameText);
+            organizerText = (TextView) view.findViewById(R.id.eventOrganizerNameText);
+            infoText = (TextView) view.findViewById(R.id.eventInfoText);
         }
 
         public void bind(final Event event,final OnItemClickListener listener) {

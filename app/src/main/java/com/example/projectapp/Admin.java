@@ -116,11 +116,11 @@ public class Admin extends AppCompatActivity {
 
     private void addEventToScrollView(Event event) {
         View eventView = LayoutInflater.from(this).inflate(R.layout.event_widget, horizontalLayout, false);
-        TextView eventNameView = eventView.findViewById(R.id.event_name_text);
+        TextView eventNameView = eventView.findViewById(R.id.eventNameText);
         eventNameView.setText(event.getName());
-        TextView eventOrganizerView = eventView.findViewById(R.id.event_organizer_name_text);
+        TextView eventOrganizerView = eventView.findViewById(R.id.eventOrganizerNameText);
         eventOrganizerView.setText(event.getOrganizerName());
-        TextView eventInfoView = eventView.findViewById(R.id.event_info_text);
+        TextView eventInfoView = eventView.findViewById(R.id.eventInfoText);
         eventInfoView.setText(event.getDescription());
 
         // Assuming your Event class has a method to get the encoded image string
@@ -154,22 +154,22 @@ public class Admin extends AppCompatActivity {
         Dialog eventDetailDialog = new Dialog(this);
         eventDetailDialog.setContentView(R.layout.event_dialog);
 
-        TextView eventNameView = eventDetailDialog.findViewById(R.id.dialog_event_name);
+        TextView eventNameView = eventDetailDialog.findViewById(R.id.dialogEventName);
         eventNameView.setText(name);
-        TextView eventOrganizerView = eventDetailDialog.findViewById(R.id.dialog_event_organizer);
+        TextView eventOrganizerView = eventDetailDialog.findViewById(R.id.dialogEventOrganizer);
         eventOrganizerView.setText(organizer);
-        TextView eventDescriptionView = eventDetailDialog.findViewById(R.id.dialog_event_description);
+        TextView eventDescriptionView = eventDetailDialog.findViewById(R.id.dialogEventDescription);
         eventDescriptionView.setText(description);
 
-        ImageView eventPosterView = eventDetailDialog.findViewById(R.id.dialog_event_poster);
+        ImageView eventPosterView = eventDetailDialog.findViewById(R.id.dialogEventPoster);
         Bitmap imageBitmap = stringToBitmap(encodedImageString);
         if (imageBitmap != null) {
             eventPosterView.setImageBitmap(imageBitmap);
         }
 
-        Button closeButton = eventDetailDialog.findViewById(R.id.dialog_event_close_button);
+        Button closeButton = eventDetailDialog.findViewById(R.id.dialogEventCloseButton);
         closeButton.setOnClickListener(v -> eventDetailDialog.dismiss());
-        Button deleteButton = eventDetailDialog.findViewById(R.id.event_delete_button);
+        Button deleteButton = eventDetailDialog.findViewById(R.id.eventDeleteButton);
         deleteButton.setVisibility(View.VISIBLE);
         deleteButton.setOnClickListener(v -> {
             deleteEventByNameAndDetails(name, organizer, description);
