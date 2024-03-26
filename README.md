@@ -17,3 +17,5 @@ Reference:
    - write me bitmap converter for string to image
 3. For scanning QR-code
    - https://github.com/yuriy-budiyev/code-scanner
+4. Share Qr using URI
+   - https://www.youtube.com/watch?v=eSi28xqGjbE
