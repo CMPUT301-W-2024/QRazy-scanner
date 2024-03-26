@@ -37,9 +37,9 @@ public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdap
 
         public ViewHolder(View view) {
             super(view);
-            nameText = (TextView) view.findViewById(R.id.event_name_text);
-            organizerText = (TextView) view.findViewById(R.id.event_organizer_name_text);
-            infoText = (TextView) view.findViewById(R.id.event_info_text);
+            nameText = (TextView) view.findViewById(R.id.eventNameText);
+            organizerText = (TextView) view.findViewById(R.id.eventOrganizerNameText);
+            infoText = (TextView) view.findViewById(R.id.eventInfoText);
         }
 
         public void bind(final Event event,final OnItemClickListener listener) {
@@ -77,16 +77,7 @@ public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdap
         viewHolder.bind(event, listener);
 
         viewHolder.nameText.setText(event.getName());
-        FirebaseFirestore.getInstance().collection("organizers").whereEqualTo("organizerId", event.getOrganizer()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        viewHolder.organizerText.setText(document.getString("name"));
-                    }
-                }
-            }
-        });
+        viewHolder.organizerText.setText(event.getOrganizerName());
         viewHolder.infoText.setText(event.getDescription());
     }
 
