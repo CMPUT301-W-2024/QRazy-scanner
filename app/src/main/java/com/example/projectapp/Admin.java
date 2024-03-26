@@ -1,11 +1,10 @@
 package com.example.projectapp;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,14 +12,11 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -55,13 +51,13 @@ public class Admin extends AppCompatActivity {
         List<Event> mockEvents = new ArrayList<>();
         Event event1 = new Event();
         event1.setName("Mock Event 1");
-        event1.setOrganizer("Mock Organizer 1");
+        event1.setOrganizerName("Mock Organizer 1");
         event1.setDescription("This is a mock description for Event 1.");
         mockEvents.add(event1);
 
         Event event2 = new Event();
         event2.setName("Mock Event 2");
-        event2.setOrganizer("Mock Organizer 2");
+        event2.setOrganizerName("Mock Organizer 2");
         event2.setDescription("This is a mock description for Event 2.");
         mockEvents.add(event2);
 
@@ -120,17 +116,17 @@ public class Admin extends AppCompatActivity {
 
     private void addEventToScrollView(Event event) {
         View eventView = LayoutInflater.from(this).inflate(R.layout.event_widget, horizontalLayout, false);
-        TextView eventNameView = eventView.findViewById(R.id.event_name_text);
+        TextView eventNameView = eventView.findViewById(R.id.eventNameText);
         eventNameView.setText(event.getName());
-        TextView eventOrganizerView = eventView.findViewById(R.id.event_organizer_name_text);
-        eventOrganizerView.setText(event.getOrganizer());
-        TextView eventInfoView = eventView.findViewById(R.id.event_info_text);
+        TextView eventOrganizerView = eventView.findViewById(R.id.eventOrganizerNameText);
+        eventOrganizerView.setText(event.getOrganizerName());
+        TextView eventInfoView = eventView.findViewById(R.id.eventInfoText);
         eventInfoView.setText(event.getDescription());
 
         // Assuming your Event class has a method to get the encoded image string
         String encodedImage = event.getPoster();
 
-        eventView.setOnClickListener(v -> showDialogWithEventDetails(event.getName(), event.getOrganizer(), event.getDescription(), encodedImage));
+        eventView.setOnClickListener(v -> showDialogWithEventDetails(event.getName(), event.getOrganizerName(), event.getDescription(), encodedImage));
         horizontalLayout.addView(eventView);
     }
 
@@ -158,22 +154,22 @@ public class Admin extends AppCompatActivity {
         Dialog eventDetailDialog = new Dialog(this);
         eventDetailDialog.setContentView(R.layout.event_dialog);
 
-        TextView eventNameView = eventDetailDialog.findViewById(R.id.dialog_event_name);
+        TextView eventNameView = eventDetailDialog.findViewById(R.id.dialogEventName);
         eventNameView.setText(name);
-        TextView eventOrganizerView = eventDetailDialog.findViewById(R.id.dialog_event_organizer);
+        TextView eventOrganizerView = eventDetailDialog.findViewById(R.id.dialogEventOrganizer);
         eventOrganizerView.setText(organizer);
-        TextView eventDescriptionView = eventDetailDialog.findViewById(R.id.dialog_event_description);
+        TextView eventDescriptionView = eventDetailDialog.findViewById(R.id.dialogEventDescription);
         eventDescriptionView.setText(description);
 
-        ImageView eventPosterView = eventDetailDialog.findViewById(R.id.dialog_event_poster);
+        ImageView eventPosterView = eventDetailDialog.findViewById(R.id.dialogEventPoster);
         Bitmap imageBitmap = stringToBitmap(encodedImageString);
         if (imageBitmap != null) {
             eventPosterView.setImageBitmap(imageBitmap);
         }
 
-        Button closeButton = eventDetailDialog.findViewById(R.id.dialog_event_close_button);
+        Button closeButton = eventDetailDialog.findViewById(R.id.dialogEventCloseButton);
         closeButton.setOnClickListener(v -> eventDetailDialog.dismiss());
-        Button deleteButton = eventDetailDialog.findViewById(R.id.event_delete_button);
+        Button deleteButton = eventDetailDialog.findViewById(R.id.eventDeleteButton);
         deleteButton.setVisibility(View.VISIBLE);
         deleteButton.setOnClickListener(v -> {
             deleteEventByNameAndDetails(name, organizer, description);
