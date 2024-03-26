@@ -14,27 +14,39 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/announcer"
+            android:id="@+id/announcementEvent"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:ellipsize="end"
             android:fontFamily="@font/bold1"
             android:gravity="center"
             android:maxLines="1"
-            android:text="Announcer"
+            android:singleLine="true"
+            android:text="Event"
             android:textColor="#000"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            />
 
         <TextView
-            android:id="@+id/announcement_content"
+            android:id="@+id/announcementOrganizer"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:ellipsize="end"
+            android:fontFamily="@font/light"
+            android:text="Organizer"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:maxLines="1"
+            android:scrollHorizontally="true"/>
+
+        <TextView
+            android:id="@+id/announcementContent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:maxLines="1"
             android:fontFamily="@font/light"
             android:gravity="left|center"
-            android:maxLines="1"
             android:text="Announcement"
             android:textColor="#000"
             android:textSize="20sp" />

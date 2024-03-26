@@ -2,13 +2,17 @@ package com.example.projectapp;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -17,6 +21,9 @@ import com.google.zxing.WriterException;
 import com.google.zxing.qrcode.QRCodeWriter;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Activity for generating and storing a QR code associated with an event.
@@ -69,6 +76,17 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
                 navigateBackToCreateEvent();
             }
         });
+
+        MaterialButton shareQrCodeButton = findViewById(R.id.shareQrCodeButton);
+        shareQrCodeButton.setOnClickListener(v -> {
+            if (event != null && event.getEventId() != null && !event.getEventId().isEmpty()) {
+                fetchAndShareQRCode(event.getEventId());
+            } else {
+                Toast.makeText(GenerateQrCodeActivity.this, "No event selected.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
     }
 
     /**
@@ -135,6 +153,68 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
         Intent intent = new Intent(GenerateQrCodeActivity.this, OrganizerPageActivity.class);
         startActivity(intent);
     }
+
+    private Uri bitmapToUri(Bitmap bitmap) {
+        // Creating a file
+        File cachePath = new File(getExternalCacheDir(), "shared_qr_code.png");
+        try {
+            cachePath.createNewFile();
+            FileOutputStream ostream = new FileOutputStream(cachePath);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, ostream);
+            ostream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Get the URI using FileProvider
+        return FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", cachePath);
+    }
+
+    private void shareQRCode(Bitmap bitmap) {
+        Uri qrCodeUri = bitmapToUri(bitmap);
+
+        // Creating a share intent
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, qrCodeUri);
+        shareIntent.setType("image/png");
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(Intent.createChooser(shareIntent, "Share QR Code"));
+    }
+
+
+    private Bitmap stringToBitmap(String encodedString) {
+        try {
+            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+        } catch (Exception e) {
+            e.getMessage();
+            return null;
+        }
+    }
+
+    private void fetchAndShareQRCode(String eventId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("events").document(eventId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot != null && documentSnapshot.exists()) {
+                        String qrCodeString = documentSnapshot.getString("qrCode");
+                        if (qrCodeString != null && !qrCodeString.isEmpty()) {
+                            Bitmap qrCodeBitmap = stringToBitmap(qrCodeString);
+                            shareQRCode(qrCodeBitmap);
+                        } else {
+                            Toast.makeText(GenerateQrCodeActivity.this, "QR Code not found.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(GenerateQrCodeActivity.this, "Event not found.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> Toast.makeText(GenerateQrCodeActivity.this, "Failed to fetch QR Code.", Toast.LENGTH_SHORT).show());
+    }
+
+
+
 
 }
 
