@@ -29,6 +29,9 @@
             android:name=".EventAttendeesActvity"
             android:exported="false" />
         <activity
+            android:name=".ProfileEditActivity"
+            android:exported="true" />
+        <activity
             android:name=".AttendeePageActivity"
             android:exported="true">
         </activity>
