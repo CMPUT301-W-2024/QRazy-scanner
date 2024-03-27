@@ -1,7 +1,5 @@
 package com.example.projectapp;
 
-import android.media.Image;
-
 import androidx.annotation.Nullable;
 
 import com.google.firebase.firestore.DocumentReference;
@@ -28,7 +26,7 @@ public class Attendee {
     /**
      * Attendee Constructor
      */
-    public Attendee(){
+    public Attendee(String testAttendee){
     }
 
     /**
