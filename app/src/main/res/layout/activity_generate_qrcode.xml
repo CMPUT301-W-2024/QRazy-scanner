@@ -52,7 +52,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/bold1"
-        android:text="Generate Promotion QR Code"
+        android:text="Generate Unique QR Code"
         android:textSize="15sp"
     app:layout_constraintTop_toBottomOf="@id/shareQrCodeButton"
     app:layout_constraintStart_toStartOf="parent"
