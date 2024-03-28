@@ -47,7 +47,7 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_generate_qrcode);
 
         qrCodeImageView = findViewById(R.id.qrCodeImageView);
-        event = (Event) getIntent().getSerializableExtra("EVENT"); // Retrieve the event
+        event = (Event) getIntent().getSerializableExtra("Event"); // Retrieve the event
 
         MaterialButton generateQrCodeButton = findViewById(R.id.generateQrCodeButton); // Find the button by its ID
         generateQrCodeButton.setOnClickListener(new View.OnClickListener() {
@@ -86,6 +86,14 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
             }
         });
 
+        MaterialButton useOwnQrButton = findViewById(R.id.useOwnQrButton);
+
+        useOwnQrButton.setOnClickListener(v -> {
+            Intent i = new Intent(this, ScanActivity.class);
+            i.putExtra("usage", "reuseQr");
+            i.putExtra("Event", event);
+            startActivity(i);
+        });
 
     }
 

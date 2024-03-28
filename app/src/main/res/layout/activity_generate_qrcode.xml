@@ -20,7 +20,7 @@
 
     <!-- Use Own QR Code Button -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/useOwnQrTextView"
+        android:id="@+id/useOwnQrButton"
         android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:fontFamily="@font/bold1"
@@ -40,7 +40,7 @@
         android:fontFamily="@font/bold1"
         android:text="Share QR Code"
         android:textSize="15sp"
-    app:layout_constraintTop_toBottomOf="@id/useOwnQrTextView"
+    app:layout_constraintTop_toBottomOf="@id/useOwnQrButton"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintWidth_percent="0.85"
