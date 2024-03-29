@@ -26,7 +26,7 @@ public class Attendee {
     /**
      * Attendee Constructor
      */
-    public Attendee(String testAttendee){
+    public Attendee(){
     }
 
     /**

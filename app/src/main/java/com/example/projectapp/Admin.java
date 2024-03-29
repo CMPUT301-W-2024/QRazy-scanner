@@ -66,11 +66,11 @@ public class Admin extends AppCompatActivity {
 
     private List<Attendee> generateMockProfiles() {
         List<Attendee> mockProfiles = new ArrayList<>();
-        Attendee attendee1 = new Attendee("Test Attendee");
+        Attendee attendee1 = new Attendee();
         attendee1.setName("John Doe");
         mockProfiles.add(attendee1);
 
-        Attendee attendee2 = new Attendee("Test Attendee");
+        Attendee attendee2 = new Attendee();
         attendee2.setName("Jane Smith");
         mockProfiles.add(attendee2);
 
