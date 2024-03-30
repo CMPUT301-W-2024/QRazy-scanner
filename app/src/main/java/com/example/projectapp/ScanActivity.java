@@ -50,7 +50,6 @@ public class ScanActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
                         String qrData = result.getText();
                         String usage = getIntent().getStringExtra("usage");
                         // attendee scanning to check in
@@ -60,6 +59,11 @@ public class ScanActivity extends AppCompatActivity {
                         // organizer scanning to reuse existing code
                         else if (usage.equals("reuseQr")){
                             checkIfCodeExists(qrData, false);
+                        }
+
+                        else if (qrData.startsWith("Promo")){
+                            Intent intent = new Intent(ScanActivity.this, CreateEventActivity.class);
+                            startActivity(intent);
                         }
 
                     }
@@ -114,24 +118,7 @@ public class ScanActivity extends AppCompatActivity {
             }
         }
     }
-/*
 
-    private void checkIntoEvent(String eventId){
-        db.collection("events").document(eventId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                Event event = documentSnapshot.toObject(Event.class);
-                if (event != null){
-                    checkLimit(event);
-                }
-                else {
-                    Toast.makeText(ScanActivity.this, "Could not get event", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-    }
-*/
 
     private void checkLimit(Event event){
         // if no attendance limit or signed attendees is less than limit then check in
