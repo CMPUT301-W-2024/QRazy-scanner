@@ -18,7 +18,6 @@ public class NotificationService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(@NonNull RemoteMessage message) {
         super.onMessageReceived(message);
-        System.out.println("Got till here: " + message.getData().get("event"));
         if (message.getData().size() > 0){
             generateNotification(message.getData().get("event"), message.getData().get("announcement"));
         }

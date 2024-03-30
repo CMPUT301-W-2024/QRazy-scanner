@@ -22,6 +22,7 @@ public class Event implements Serializable{
     private String eventId;
     private String name;
     private String date;
+    private String time;
     private String organizerName;
     private String organizerId;
     private String description;
@@ -44,15 +45,18 @@ public class Event implements Serializable{
      * Creates a new Event object with specified details.
      *
      * @param name            The name of the event.
-     * @param date            The date the event occurs (consider a proper Date object).
+     * @param date            The date the event occurs
+     * @param time             The time the event occurs
      * @param organizerName       The name of the event organizer.
+     * @param organizerId     The id of the event organizer.
      * @param attendanceLimit The maximum number of allowed attendees.
      * @param description     A description of the event.
      * @param poster          A poster image associated with the event.
      */
-    public Event(String name, String date, String organizerName, String organizerId, Integer attendanceLimit, String description, String poster) {
+    public Event(String name, String date, String time, String organizerName, String organizerId, Integer attendanceLimit, String description, String poster) {
         this.name = name;
         this.date = date;
+        this.time = time;
         this.organizerName = organizerName;
         this.organizerId = organizerId;
         this.attendanceLimit = attendanceLimit;
@@ -61,7 +65,7 @@ public class Event implements Serializable{
         eventId = UUID.randomUUID().toString();
         checkedAttendees = new HashMap<>();
         signedAttendees = new ArrayList<>();
-        geopoints = new ArrayList<GeoPoint>();
+        geopoints = new ArrayList<>();
         announcements = new ArrayList<>();
     }
 
@@ -181,7 +185,7 @@ public class Event implements Serializable{
     /**
      * Get date on which event occurs.
      *
-     * @return The event date (consider a proper Date object).
+     * @return The event date
      */
     public String getDate() {
         return date;
@@ -190,10 +194,28 @@ public class Event implements Serializable{
     /**
      * Sets the date on which the event occurs.
      *
-     * @param date The new event date (consider using a proper Date object).
+     * @param date The new event date
      */
     public void setDate(String date) {
         this.date = date;
+    }
+
+    /**
+     * Get time on which event occurs.
+     *
+     * @return The event time
+     */
+    public String getTime() {
+        return time;
+    }
+
+    /**
+     * Sets the time at which the event occurs.
+     *
+     * @param time The new event time
+     */
+    public void setTime(String time) {
+        this.time = time;
     }
 
     /**
