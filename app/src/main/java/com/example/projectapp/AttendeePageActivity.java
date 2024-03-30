@@ -249,6 +249,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         TextView eventNameView = eventDetailDialog.findViewById(R.id.dialogEventName);
         TextView eventOrganizerView = eventDetailDialog.findViewById(R.id.dialogEventOrganizer);
         TextView eventDescriptionView = eventDetailDialog.findViewById(R.id.dialogEventDescription);
+        TextView eventDateView = eventDetailDialog.findViewById(R.id.dialogEventDateTime);
         ImageView eventPosterView = eventDetailDialog.findViewById(R.id.dialogEventPoster);
         Button closeButton = eventDetailDialog.findViewById(R.id.dialogEventCloseButton);
         Button signUpButton = eventDetailDialog.findViewById(R.id.dialogEventSignButton);
@@ -258,6 +259,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         eventOrganizerView.setText(event.getOrganizerName());
         eventDescriptionView.setText(event.getDescription());
         eventPosterView.setImageBitmap(stringToBitmap(event.getPoster()));
+        eventDateView.setText(event.getDate() + " at " + event.getTime());
 
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
