@@ -61,7 +61,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textview_first" />
 
         <!-- TextView acting as a button -->
-        <TextView
+        <Button
             android:id="@+id/promoQrCodeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -70,7 +70,6 @@
             android:fontFamily="@font/bold1"
             android:textSize="16sp"
             android:textColor="@color/white"
-            android:paintFlags="underlineText"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
