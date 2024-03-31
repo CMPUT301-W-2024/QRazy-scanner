@@ -83,6 +83,11 @@ public class ProfileEditActivity extends AttendeePageActivity{
         String newEmail = emailEditText.getText().toString().trim();
         String newPhone = phoneEditText.getText().toString().trim();
 
+        if (currentAttendee == null) {
+            Toast.makeText(this, "Attendee data is not loaded!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         currentAttendee.setName(newName);
         currentAttendee.setHomepage(newEmail);
         currentAttendee.setContactInfo(newPhone);
@@ -94,7 +99,13 @@ public class ProfileEditActivity extends AttendeePageActivity{
         updateAttendeeInFirestore(currentAttendee);
 
         Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
+
+
+        Intent intent = new Intent(this, AttendeePageActivity.class);
+        startActivity(intent);
+        finish();
     }
+
 
 
 
@@ -102,18 +113,13 @@ public class ProfileEditActivity extends AttendeePageActivity{
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference attendeeRef = db.collection("attendees").document(attendee.getAttendeeId());
 
-        attendeeRef.set(attendee)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("ProfileEditActivity", "DocumentSnapshot successfully updated!");
-                    Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    Log.w("ProfileEditActivity", "Error updating document", e);
-                    Toast.makeText(this, "Update failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                });
-    }
 
+        attendeeRef.set(attendee);
+        attendeeRef.set(attendee) 
+
+                .addOnSuccessListener(aVoid -> Log.d("ProfileEditActivity", "DocumentSnapshot successfully updated!"))
+                .addOnFailureListener(e -> Log.w("ProfileEditActivity", "Error updating document", e));
+    }
 
     private void pickImage(){
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
