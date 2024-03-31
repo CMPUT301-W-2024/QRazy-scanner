@@ -102,13 +102,18 @@ public class ProfileEditActivity extends AttendeePageActivity{
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference attendeeRef = db.collection("attendees").document(attendee.getAttendeeId());
 
-
-        attendeeRef.set(attendee);
-        attendeeRef.set(attendee) 
-
-                .addOnSuccessListener(aVoid -> Log.d("ProfileEditActivity", "DocumentSnapshot successfully updated!"))
-                .addOnFailureListener(e -> Log.w("ProfileEditActivity", "Error updating document", e));
+        attendeeRef.set(attendee)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("ProfileEditActivity", "DocumentSnapshot successfully updated!");
+                    Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Log.w("ProfileEditActivity", "Error updating document", e);
+                    Toast.makeText(this, "Update failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
     }
+
 
     private void pickImage(){
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
