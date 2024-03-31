@@ -69,6 +69,29 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
                 }
             }
         });
+
+        MaterialButton generatePromotionalQrButton = findViewById(R.id.generatePromotionQrCodeButton);
+        generatePromotionalQrButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if (event.getEventId() != null && !event.getEventId().isEmpty()) {
+                    // A valid event ID is present, we can generate the QR code
+                    try {
+                        Bitmap qrPromoBitmap = generateQRCode("Promo" + event.getEventId());
+                        qrCodeImageView.setImageBitmap(qrPromoBitmap);
+                        storeQRCodeInFirestore(qrPromoBitmap); // Store the QR code in Firebase
+                    } catch (WriterException e) {
+                        e.printStackTrace();
+                        Toast.makeText(GenerateQrCodeActivity.this, "Error generating QR Code", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    // No valid event ID, show an error or provide a default image
+                    Toast.makeText(GenerateQrCodeActivity.this, "No Event ID provided", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
         MaterialButton finishButton = findViewById(R.id.finishButton);
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +110,6 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
         });
 
         MaterialButton useOwnQrButton = findViewById(R.id.useOwnQrButton);
-
         useOwnQrButton.setOnClickListener(v -> {
             Intent i = new Intent(this, ScanActivity.class);
             i.putExtra("usage", "reuseQr");
@@ -220,9 +242,6 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> Toast.makeText(GenerateQrCodeActivity.this, "Failed to fetch QR Code.", Toast.LENGTH_SHORT).show());
     }
-
-
-
 
 }
 
