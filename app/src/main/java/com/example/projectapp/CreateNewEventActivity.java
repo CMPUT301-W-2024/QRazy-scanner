@@ -1,6 +1,7 @@
 package com.example.projectapp;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -44,7 +46,7 @@ public class CreateNewEventActivity extends AppCompatActivity {
     private ImageView poster;
     private String encodedImage;
     private Event newEvent;
-    private TextInputEditText eventNameEditText, eventDescriptionEditText, attendanceLimitEditText;
+    private TextInputEditText eventNameEditText, eventDescriptionEditText, attendanceLimitEditText, eventTimeEditText;
 
     /**
      * Initializes the activity, sets up UI elements, and prepares date picker functionality.
@@ -61,6 +63,7 @@ public class CreateNewEventActivity extends AppCompatActivity {
         eventNameEditText = findViewById(R.id.eventNameEditText);
         eventDescriptionEditText = findViewById(R.id.eventDescriptionEditText);
         attendanceLimitEditText = findViewById(R.id.attendanceLimitEditText);
+        eventTimeEditText = findViewById(R.id.eventTimeEditText);
         calendar = Calendar.getInstance();
 
 
@@ -87,6 +90,10 @@ public class CreateNewEventActivity extends AppCompatActivity {
             }
         });
 
+        eventTimeEditText.setOnClickListener(v -> {
+            timePicker();
+        });
+
         MaterialButton saveEventButton = findViewById(R.id.newQrButton);
         saveEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,13 +116,14 @@ public class CreateNewEventActivity extends AppCompatActivity {
         // Get the event details from the input fields
         String eventName = eventNameEditText.getText().toString().trim();
         String eventDate = eventDateEditText.getText().toString().trim();
+        String eventTime = eventTimeEditText.getText().toString().trim();
         String eventDescription = eventDescriptionEditText.getText().toString().trim();
         String attendanceLimitStr = attendanceLimitEditText.getText().toString().trim();
         Integer attendanceLimit = attendanceLimitStr.isEmpty() ? 0 : Integer.parseInt(attendanceLimitStr);
 
         // Set the event details to the newEvent object
 
-        Event newEvent = new Event(eventName, eventDate, DataHandler.getInstance().getOrganizer().getName(), DataHandler.getInstance().getOrganizer().getOrganizerId(), attendanceLimit, eventDescription, encodedImage);
+        Event newEvent = new Event(eventName, eventDate, eventTime, DataHandler.getInstance().getOrganizer().getName(), DataHandler.getInstance().getOrganizer().getOrganizerId(), attendanceLimit, eventDescription, encodedImage);
 
 
 
@@ -128,7 +136,7 @@ public class CreateNewEventActivity extends AppCompatActivity {
 
                     // After showing the toast, start the GenerateQrCodeActivity
                     Intent intent = new Intent(CreateNewEventActivity.this, GenerateQrCodeActivity.class);
-                    intent.putExtra("EVENT", newEvent); // Pass the event ID to the next activity
+                    intent.putExtra("Event", newEvent); // Pass the event ID to the next activity
                     startActivity(intent);
                 })
                 .addOnFailureListener(e -> {
@@ -196,6 +204,23 @@ public class CreateNewEventActivity extends AppCompatActivity {
     // Method to set a custom Firebase instance (for testing)
     public void setFirestore(FirebaseFirestore firestore) {
         this.db = firestore;
+    }
+
+    private void timePicker(){
+
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+
+        // Launch Time Picker Dialog
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this,
+                new TimePickerDialog.OnTimeSetListener() {
+
+                    @Override
+                    public void onTimeSet(TimePicker view, int hour, int minute) {
+                        eventTimeEditText.setText(String.format("%02d:%02d", hour, minute));
+                    }
+                }, hour, minute, false);
+        timePickerDialog.show();
     }
 }
 

@@ -16,21 +16,49 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="32dp"
-        android:background="@drawable/ic_launcher_foreground" />
+        android:background="@drawable/ic_launcher_foreground"/>
 
     <!-- Use Own QR Code Button -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/useOwnQrTextView"
+        android:id="@+id/useOwnQrButton"
         android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:fontFamily="@font/bold1"
-    android:text="Use Own QR Code"
-    android:textSize="15sp"
-    app:layout_constraintTop_toBottomOf="@id/qrCodeImageView"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    android:layout_marginTop="16dp"
-    app:layout_constraintWidth_percent="0.85" /> <!-- Constraint to maintain consistency in button widths -->
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/bold1"
+        android:text="Use Own QR Code"
+        android:textSize="15sp"
+        app:layout_constraintTop_toBottomOf="@id/qrCodeImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        app:layout_constraintWidth_percent="0.85" />
+
+    <!-- Generate Unique QR Code Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/generateQrCodeButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/bold1"
+        android:text="Generate Unique QR Code"
+        android:textSize="15sp"
+        app:layout_constraintTop_toBottomOf="@id/useOwnQrButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        app:layout_constraintWidth_percent="0.85" />
+
+    <!-- Generate Promotion QR Code Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/generatePromotionQrCodeButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/bold1"
+        android:text="Generate Promotion QR Code"
+        android:textSize="15sp"
+        app:layout_constraintTop_toBottomOf="@id/generateQrCodeButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        app:layout_constraintWidth_percent="0.85" />
 
     <!-- Share QR Code Button -->
     <com.google.android.material.button.MaterialButton
@@ -40,27 +68,13 @@
         android:fontFamily="@font/bold1"
         android:text="Share QR Code"
         android:textSize="15sp"
-    app:layout_constraintTop_toBottomOf="@id/useOwnQrTextView"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintWidth_percent="0.85"
-    android:layout_marginTop="16dp" />
+        app:layout_constraintTop_toBottomOf="@id/generatePromotionQrCodeButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        app:layout_constraintWidth_percent="0.85" />
 
-    <!-- Generate Promotion QR Code Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/generateQrCodeButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/bold1"
-        android:text="Generate Promotion QR Code"
-        android:textSize="15sp"
-    app:layout_constraintTop_toBottomOf="@id/shareQrCodeButton"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintWidth_percent="0.85"
-    android:layout_marginTop="16dp" />
-
-    <!-- Finish Button -->
+    <!-- Home Page Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/finishButton"
         android:layout_width="0dp"
@@ -68,12 +82,12 @@
         android:fontFamily="@font/bold1"
         android:text="Home Page"
         android:textSize="15sp"
-        app:layout_constraintTop_toBottomOf="@id/generateQrCodeButton"
+        app:layout_constraintTop_toBottomOf="@id/shareQrCodeButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.85"
         android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="32dp" />
+        app:layout_constraintWidth_percent="0.85"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

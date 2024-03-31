@@ -15,10 +15,16 @@ import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.common.hash.Hashing;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.zxing.Result;
+
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * Handle Scanning QR Code
@@ -44,32 +50,22 @@ public class ScanActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        db.collection("events").document(result.getText()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                            @Override
-                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                Event event = documentSnapshot.toObject(Event.class);
-                                if (event != null){
-                                    // if no attendance limit or signed attendees is less than limit then sign up
-                                    if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().contains(dataHandler.getAttendee().getAttendeeId()) || event.getAttendance() + event.getSignedAttendees().size() < event.getAttendanceLimit()){
-                                        event.addCheckedAttendee(dataHandler.getAttendee().getAttendeeId());
-                                        dataHandler.getAttendee().addCheckedEvent(event.getEventId());
-                                        FirebaseMessaging.getInstance().subscribeToTopic(event.getEventId());
-                                        Intent intent = new Intent(ScanActivity.this, AttendeePageActivity.class);
-                                        startActivity(intent);
-                                        Intent intent1 = new Intent(ScanActivity.this, GeopointDialog.class);
-                                        intent1.putExtra("eventId", event.getEventId());
-                                        startActivity(intent1);
-                                    }
-                                    else {
-                                        Toast.makeText(ScanActivity.this, "Event has reached attendance limit", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                                else {
-                                    Toast.makeText(ScanActivity.this, "Could not get event", Toast.LENGTH_SHORT).show();
-                                }
+                        String qrData = result.getText();
+                        String usage = getIntent().getStringExtra("usage");
+                        // attendee scanning to check in
+                        if (usage == null){
+                            checkIfCodeExists(qrData, true);
+                        }
+                        // organizer scanning to reuse existing code
+                        else if (usage.equals("reuseQr")){
+                            checkIfCodeExists(qrData, false);
+                        }
 
-                            }
-                        });
+                        else if (qrData.startsWith("Promo")){
+                            Intent intent = new Intent(ScanActivity.this, CreateEventActivity.class);
+                            startActivity(intent);
+                        }
+
                     }
                 });
             }
@@ -121,5 +117,68 @@ public class ScanActivity extends AppCompatActivity {
                 Toast.makeText(ScanActivity.this, "Camera Permission Denied", Toast.LENGTH_SHORT) .show();
             }
         }
+    }
+
+
+    private void checkLimit(Event event){
+        // if no attendance limit or signed attendees is less than limit then check in
+        if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().contains(dataHandler.getAttendee().getAttendeeId()) || event.getAttendance() + event.getSignedAttendees().size() < event.getAttendanceLimit()){
+            event.addCheckedAttendee(dataHandler.getAttendee().getAttendeeId());
+            dataHandler.getAttendee().addCheckedEvent(event.getEventId());
+            FirebaseMessaging.getInstance().subscribeToTopic(event.getEventId());
+            Intent intent = new Intent(ScanActivity.this, AttendeePageActivity.class);
+            startActivity(intent);
+            Intent intent1 = new Intent(ScanActivity.this, GeopointDialog.class);
+            intent1.putExtra("eventId", event.getEventId());
+            startActivity(intent1);
+        }
+        else {
+            Toast.makeText(ScanActivity.this, "Event has reached attendance limit", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void checkIfCodeExists(String qrData, boolean checkInto){
+        db.collection("events").where(Filter.or(Filter.equalTo("eventId", qrData), Filter.equalTo("qrCode", hashEventCode(qrData)))).get().addOnCompleteListener(task -> {
+            System.out.println("Got till here " + hashEventCode(qrData));
+            if (task.isSuccessful()){
+                QuerySnapshot querySnapshot = task.getResult();
+                // code data doesn't exist
+                if (querySnapshot.isEmpty()){
+                    // attendee is trying to check into event using wrong qrCode
+                    if (checkInto){
+                        Toast.makeText(ScanActivity.this, "Qr Code is not associated to an event", Toast.LENGTH_SHORT) .show();
+                    }
+                    // organizer is allowed use qr code for their event
+                    else{
+                        Event event = (Event) getIntent().getSerializableExtra("Event");
+                        setEventQrCode(event, qrData);
+                        finish();
+                    }
+                }
+                else{
+                    List<Event> events = querySnapshot.toObjects(Event.class); // should only be one
+                    if (checkInto){
+                        checkLimit(events.get(0));
+                    }
+                    else{
+                        Toast.makeText(ScanActivity.this, "Qr Code is already in use", Toast.LENGTH_SHORT) .show();
+                    }
+                }
+            }
+            else{
+                Toast.makeText(ScanActivity.this, "Couldn't reach firebase", Toast.LENGTH_SHORT) .show();
+            }
+        });
+    }
+
+    private void setEventQrCode(Event event, String qrData){
+        qrData = hashEventCode(qrData);
+        db.collection("events").document(event.getEventId()).update("qrCode", qrData);
+    }
+
+    private String hashEventCode(String code){
+        return Hashing.sha256()
+                .hashString(code, StandardCharsets.UTF_8)
+                .toString();
     }
 }

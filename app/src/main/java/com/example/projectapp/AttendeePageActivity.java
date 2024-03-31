@@ -37,7 +37,7 @@ import java.util.ArrayList;
  * It provides functionality to view events the attendee is participating in, and to view all available events.
  * Attendees can interact with the events, such as signing up for them.
  */
-public class AttendeePageActivity extends AppCompatActivity {
+public class AttendeePageActivity extends AppCompatActivity implements ProfileDeletedCallback{
     private ArrayList<Event> allEvents;
     private ArrayList<Event> attendeeEvents;
     private AttendeeEventAdapter attendeeEventsAdapter;
@@ -46,6 +46,7 @@ public class AttendeePageActivity extends AppCompatActivity {
     private ListenerRegistration attendeeEventsListener;
     private ListenerRegistration allEventsListener;
     private ArrayList<Announcement> announcements;
+    private boolean enableListeners;
     private DataHandler dataHandler = DataHandler.getInstance();
 
     /**
@@ -59,6 +60,8 @@ public class AttendeePageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_attendee_page);
 
         getNotificationPermission();
+
+        dataHandler.addProfileDeletedListener(this);
 
         RecyclerView attendeeEventsList = findViewById(R.id.attendeeEventsList);
         RecyclerView allEventsList = findViewById(R.id.allEventsList);
@@ -116,6 +119,7 @@ public class AttendeePageActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        enableListeners = false;
         attendeeEventsListener.remove();
         allEventsListener.remove();
     }
@@ -126,6 +130,7 @@ public class AttendeePageActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        enableListeners = true;
         addAttendeeEventsListener();
         addAllEventsListener();
     }
@@ -280,4 +285,37 @@ public class AttendeePageActivity extends AppCompatActivity {
             requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
         }
     }
+
+
+
+
+    private Bitmap stringToBitmap(String encodedString) {
+        if (encodedString == null || encodedString.isEmpty()) {
+            Log.e("Admin", "Encoded string is null or empty");
+            return null;
+        }
+        byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+    }
+
+    @Override
+    public void onProfileDeleted() {
+        if (enableListeners){
+            restart();
+            unsubscribeFromNotis();
+        }
+    }
+
+    private void restart(){
+        Intent intent = new Intent(this, MainActivity.class);
+        this.startActivity(intent);
+        this.finishAffinity();
+    }
+
+    private void unsubscribeFromNotis(){
+        for (Event event : attendeeEvents){
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(event.getEventId());
+        }
+    }
 }
+

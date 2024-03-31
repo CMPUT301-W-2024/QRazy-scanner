@@ -21,11 +21,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class ProfileEditActivity extends AppCompatActivity {
+public class ProfileEditActivity extends AttendeePageActivity{
     private ImageView avatar;
     private String encodedImage;
     private ActivityResultLauncher<Intent> resultLauncher;
@@ -155,5 +156,9 @@ public class ProfileEditActivity extends AppCompatActivity {
         }
 
     }
-    //au ah
+
+    @Override
+    public void onProfileDeleted() {
+        super.onProfileDeleted();
+    }
 }
