@@ -2,20 +2,15 @@ package com.example.projectapp;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ScrollView;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -26,15 +21,12 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -175,7 +167,9 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     }
 
     private void removeAnnouncements(Event event){
-        announcements.removeAll(event.getAnnouncements());
+        for (int i=0; i < event.getAnnouncements().size(); i++){
+            announcements.remove(event.getAnnouncements().get(i));
+        }
         announcementAdapter.notifyDataSetChanged();
     }
 
@@ -246,18 +240,15 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         Dialog eventDetailDialog = new Dialog(this);
         eventDetailDialog.setContentView(R.layout.event_dialog);
 
-        TextView eventNameView = eventDetailDialog.findViewById(R.id.dialogEventName);
-        TextView eventOrganizerView = eventDetailDialog.findViewById(R.id.dialogEventOrganizer);
-        TextView eventDescriptionView = eventDetailDialog.findViewById(R.id.dialogEventDescription);
-        ImageView eventPosterView = eventDetailDialog.findViewById(R.id.dialogEventPoster);
-        Button closeButton = eventDetailDialog.findViewById(R.id.dialogEventCloseButton);
-        Button signUpButton = eventDetailDialog.findViewById(R.id.dialogEventSignButton);
-
+        TextView eventNameView = eventDetailDialog.findViewById(R.id.dialog_event_name);
+        TextView eventOrganizerView = eventDetailDialog.findViewById(R.id.dialog_event_organizer);
+        TextView eventDescriptionView = eventDetailDialog.findViewById(R.id.dialog_event_description);
+        Button closeButton = eventDetailDialog.findViewById(R.id.dialog_event_close_button);
+        Button signUpButton = eventDetailDialog.findViewById(R.id.dialog_event_sign_button);
 
         eventNameView.setText(event.getName());
-        eventOrganizerView.setText(event.getOrganizerName());
+        eventOrganizerView.setText(event.getOrganizer());
         eventDescriptionView.setText(event.getDescription());
-        eventPosterView.setImageBitmap(stringToBitmap(event.getPoster()));
 
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
