@@ -18,7 +18,6 @@ import java.util.UUID;
  * Setting up Event class
  */
 public class Event implements Serializable{
-
     private String eventId;
     private String promoQrId;
 

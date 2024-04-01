@@ -61,7 +61,10 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
 
     /**
      * Initializes the activity, sets up RecyclerViews for displaying events.
-     * @param savedInstanceState If the activity is being re-initialized after being shut down, this Bundle contains the data most recently supplied in onSaveInstanceState.
+     *
+     * @param savedInstanceState    If the activity is being re-initialized after
+     *                              being shut down, this Bundle contains the data
+     *                              most recently supplied in onSaveInstanceState.
      */
 
     @Override
@@ -140,7 +143,8 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
 
     }
     /**
-     * Removes event listeners when the activity is paused to avoid unnecessary background processing.
+     * Removes event listeners when the activity is paused
+     *  to avoid unnecessary background processing.
      */
     @Override
     protected void onPause() {
@@ -151,7 +155,8 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     }
 
     /**
-     * Re-registers the event listeners when the activity resumes to keep the event lists up-to-date.
+     * Re-registers the event listeners when the activity
+     *  resumes to keep the event lists up-to-date.
      */
     @Override
     protected void onResume() {
@@ -275,14 +280,12 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         Button signUpButton = eventDetailDialog.findViewById(R.id.dialogEventSignButton);
 
 
-
         eventNameView.setText(event.getName());
         eventOrganizerView.setText(event.getOrganizerId());
         eventDescriptionView.setText(event.getDescription());
 
         eventPosterView.setImageBitmap(stringToBitmap(event.getPoster()));
         eventDateView.setText(event.getDate() + " at " + event.getTime());
-
 
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override

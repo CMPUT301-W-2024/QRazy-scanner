@@ -42,6 +42,9 @@ public class OrganizerPageActivity extends AppCompatActivity {
     private ListenerRegistration organizerEventsListener;
     private ArrayList<Integer> mileStones;
 
+    /**
+     * Initializes the activity and sets up UI and event listeners.
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +87,9 @@ public class OrganizerPageActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Adds an event listener if the organizer is not null.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -92,6 +98,9 @@ public class OrganizerPageActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Removes the event listener if it's not null.
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -101,7 +110,7 @@ public class OrganizerPageActivity extends AppCompatActivity {
     }
 
     /**
-     * save organizer's ID
+     * Saves the organizer's ID
      */
     public void saveOrganizerId(){
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("OrganizerPref", Context.MODE_PRIVATE);
@@ -113,6 +122,7 @@ public class OrganizerPageActivity extends AppCompatActivity {
     /**
      * Adds a new Event to the UI and updates the RecyclerView's adapter.
      * Prevents duplicates based on event ID.
+     *
      * @param event The Event object to add.
      */
     public void addEvent(Event event){
@@ -125,6 +135,7 @@ public class OrganizerPageActivity extends AppCompatActivity {
     /**
      * Updates an existing Event in the UI and updates the RecyclerView's adapter.
      * Checks if the updated attendance count reached a milestone.
+     *
      * @param event The updated Event object.
      */
     public void updateEvent(Event event){
@@ -135,6 +146,7 @@ public class OrganizerPageActivity extends AppCompatActivity {
 
     /**
      * Removes an Event from the UI list and updates the RecyclerView's adapter.
+     *
      * @param event The Event object to remove.
      */
     public void removeEvent(Event event){
@@ -145,6 +157,7 @@ public class OrganizerPageActivity extends AppCompatActivity {
     /**
      * Checks if an Event's attendance count has reached one of the predefined milestones.
      * Displays a Toast message if a milestone has been reached.
+     *
      * @param event The Event to check.
      */
     private void checkMilestone(Event event){
@@ -154,6 +167,10 @@ public class OrganizerPageActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sets up a listener for changes to the events organized by the current organizer.
+     * The listener is triggered when an event is added, modified, or removed.
+     */
     private void addOrganizerEventsListener(){
         CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
 

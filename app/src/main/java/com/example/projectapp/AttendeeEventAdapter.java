@@ -21,7 +21,6 @@ import java.util.List;
  * Fetches organizer data from Firebase and handles clicks on Event items.
  */
 public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdapter.ViewHolder> {
-
     private List<Event> events;
     private OnItemClickListener listener;
 
@@ -53,7 +52,7 @@ public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdap
     }
 
     /**
-     * Initialize the dataset of the Adapte
+     * Initialize the dataset of the Adapter
      *
      * @param events list containing the data to populate views to be used
      */
@@ -75,6 +74,7 @@ public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdap
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Event event = events.get(position);
+
         viewHolder.bind(event, listener);
 
         viewHolder.nameText.setText(event.getName());
