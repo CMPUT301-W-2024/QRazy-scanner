@@ -2,20 +2,15 @@ package com.example.projectapp;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ScrollView;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -27,15 +22,16 @@ import android.content.pm.PackageManager;
 
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -121,6 +117,22 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
             startActivity(new Intent(this, ScanActivity.class));
         });
 
+        Button promoQrCodeButton = findViewById(R.id.promoQrCodeButton);
+        promoQrCodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AttendeePageActivity.this, ScanActivity.class);
+                intent.putExtra("usage", "promoQr");
+                startActivity(intent);
+            }
+        });
+
+        String eventId = getIntent().getStringExtra("EVENT_ID");
+        if (eventId != null && !eventId.trim().isEmpty()) {
+            fetchEventAndShowDetails(eventId);
+        }
+
+
     }
     /**
      * Removes event listeners when the activity is paused to avoid unnecessary background processing.
@@ -176,7 +188,9 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     }
 
     private void removeAnnouncements(Event event){
-        announcements.removeAll(event.getAnnouncements());
+        for (int i=0; i < event.getAnnouncements().size(); i++){
+            announcements.remove(event.getAnnouncements().get(i));
+        }
         announcementAdapter.notifyDataSetChanged();
     }
 
@@ -246,6 +260,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         Dialog eventDetailDialog = new Dialog(this);
         eventDetailDialog.setContentView(R.layout.event_dialog);
 
+
         TextView eventNameView = eventDetailDialog.findViewById(R.id.dialogEventName);
         TextView eventOrganizerView = eventDetailDialog.findViewById(R.id.dialogEventOrganizer);
         TextView eventDescriptionView = eventDetailDialog.findViewById(R.id.dialogEventDescription);
@@ -255,11 +270,14 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         Button signUpButton = eventDetailDialog.findViewById(R.id.dialogEventSignButton);
 
 
+
         eventNameView.setText(event.getName());
-        eventOrganizerView.setText(event.getOrganizerName());
+        eventOrganizerView.setText(event.getOrganizer());
         eventDescriptionView.setText(event.getDescription());
+
         eventPosterView.setImageBitmap(stringToBitmap(event.getPoster()));
         eventDateView.setText(event.getDate() + " at " + event.getTime());
+
 
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -327,6 +345,25 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         for (Event event : attendeeEvents){
             FirebaseMessaging.getInstance().unsubscribeFromTopic(event.getEventId());
         }
+    }
+
+    private void fetchEventAndShowDetails(String eventId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("events").document(eventId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    Event event = documentSnapshot.toObject(Event.class);
+                    if (event != null) {
+                        showDialogWithEventDetails(event, true);
+                    }
+                } else {
+                    Toast.makeText(AttendeePageActivity.this, "Event not found", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(AttendeePageActivity.this, "Error fetching event details", Toast.LENGTH_SHORT).show();
+        });
     }
 }
 

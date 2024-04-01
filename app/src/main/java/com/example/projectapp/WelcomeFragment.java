@@ -40,9 +40,11 @@ public class WelcomeFragment extends Fragment {
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder().setLocalCacheSettings(MemoryCacheSettings.newBuilder().build()).build();
         db.setFirestoreSettings(settings);
 
-        // Find the "Join Event" button
+        // Initialize button on the welcome screen
         Button joinEventButton = rootView.findViewById(R.id.joinEventButton);
         Button createEventButton = rootView.findViewById(R.id.createEventButton);
+
+
         joinEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,6 +109,7 @@ public class WelcomeFragment extends Fragment {
                 }
             }
         });
+
 
         return rootView;
     }
