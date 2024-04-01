@@ -182,12 +182,11 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
 
     private void addAttendeeEventsListener() {
         CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
-        attendeeEventsListener = eventsRef.where(Filter.or(Filter.arrayContains("signedAttendees", dataHandler.getAttendee().getAttendeeId()), Filter.greaterThan("checkedAttendees."+dataHandler.getAttendee().getAttendeeId(), 0))).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        attendeeEventsListener = eventsRef.whereArrayContains("signedAttendees", dataHandler.getAttendee().getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
                 if (snapshots != null) {
-                    System.out.println("Got till herehh");
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         Event event = dc.getDocument().toObject(Event.class);
                         switch (dc.getType()) {
