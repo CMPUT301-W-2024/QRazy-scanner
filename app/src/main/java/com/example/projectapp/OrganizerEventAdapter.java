@@ -98,6 +98,11 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             holder.eventQrView.setImageBitmap(bitmap);
         }
 
+        if (event.getPromoQrCode() != null){
+            Bitmap bitmap = stringToBitmap(event.getPromoQrCode());
+            holder.eventQrView.setImageBitmap(bitmap);
+        }
+
         holder.attendeeCountTextView.setOnClickListener(v -> {
             Intent intent = new Intent(context, EventAttendeesActvity.class);
             intent.putExtra("EVENT", event);

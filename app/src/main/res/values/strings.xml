@@ -14,5 +14,5 @@
     <string name="image_description" />
     <string name="menu_button" />
     <string name="menu">menu</string>
-    <string name="have_promo_qr_code"> <u>Have Promo Qr Code?</u> </string>
+    <string name="promo_qr_code"> <u>Promo QrCode</u> </string>
 </resources>
