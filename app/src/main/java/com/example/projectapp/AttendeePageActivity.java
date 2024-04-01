@@ -116,6 +116,16 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
             startActivity(new Intent(this, ScanActivity.class));
         });
 
+        Button promoQrCodeButton = findViewById(R.id.promoQrCodeButton);
+        promoQrCodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AttendeePageActivity.this, ScanActivity.class);
+                intent.putExtra("usage", "promoQr");
+                startActivity(intent);
+            }
+        });
+
         String eventId = getIntent().getStringExtra("EVENT_ID");
         if (eventId != null && !eventId.trim().isEmpty()) {
             fetchEventAndShowDetails(eventId);

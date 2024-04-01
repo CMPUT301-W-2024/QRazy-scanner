@@ -74,12 +74,12 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
         generatePromotionalQrButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                if (event.getEventId() != null && !event.getEventId().isEmpty()) {
+                if (event.getPromoQrId() != null && !event.getPromoQrId().isEmpty()) {
                     // A valid event ID is present, we can generate the QR code
                     try {
-                        Bitmap qrPromoBitmap = generateQRCode("Promo" + event.getEventId());
+                        Bitmap qrPromoBitmap = generateQRCode(event.getPromoQrId());
                         qrCodeImageView.setImageBitmap(qrPromoBitmap);
-                        storeQRCodeInFirestore(qrPromoBitmap); // Store the QR code in Firebase
+                        storePromoQRCodeInFirestore(qrPromoBitmap); // Store the QR code in Firebase
                     } catch (WriterException e) {
                         e.printStackTrace();
                         Toast.makeText(GenerateQrCodeActivity.this, "Error generating QR Code", Toast.LENGTH_SHORT).show();
@@ -172,6 +172,14 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
         String qrCodeString = bitmapToString(qrCodeBitmap);
         db.collection("events").document(event.getEventId())
                 .update("qrCode", qrCodeString)
+                .addOnSuccessListener(aVoid -> Toast.makeText(GenerateQrCodeActivity.this, "QR Code stored successfully", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(GenerateQrCodeActivity.this, "Failed to store QR Code", Toast.LENGTH_SHORT).show());
+    }
+
+    private void storePromoQRCodeInFirestore(Bitmap qrCodeBitmap) {
+        String qrCodeString = bitmapToString(qrCodeBitmap);
+        db.collection("events").document(event.getPromoQrId())
+                .update("promoQrCode", qrCodeString)
                 .addOnSuccessListener(aVoid -> Toast.makeText(GenerateQrCodeActivity.this, "QR Code stored successfully", Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toast.makeText(GenerateQrCodeActivity.this, "Failed to store QR Code", Toast.LENGTH_SHORT).show());
     }
