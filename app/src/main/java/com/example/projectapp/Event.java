@@ -190,7 +190,6 @@ public class Event implements Serializable{
         return poster;
     }
 
-
     /**
      * Sets the Event's poster
      *
@@ -347,7 +346,6 @@ public class Event implements Serializable{
         }
     }
 
-
     /**
      * Adds the geographical location from
      * where the attendee checked in
@@ -400,10 +398,20 @@ public class Event implements Serializable{
         return announcements;
     }
 
+    /**
+     * Sets a list of the announcements.
+     *
+     * @param announcements     A list of the new announcements
+     */
     public void setAnnouncements(ArrayList<Announcement> announcements) {
         this.announcements = announcements;
     }
 
+    /**
+     * Add a new announcement
+     *
+     * @param announcement      A list of the announcements
+     */
     public void addAnnouncements(String announcement){
         LocalTime time = LocalTime.now();
         announcements.add(new Announcement(announcement, time.toString(), name, organizerName));

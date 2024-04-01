@@ -2,11 +2,16 @@ package com.example.projectapp;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -272,7 +277,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
 
 
         eventNameView.setText(event.getName());
-        eventOrganizerView.setText(event.getOrganizer());
+        eventOrganizerView.setText(event.getOrganizerId());
         eventDescriptionView.setText(event.getDescription());
 
         eventPosterView.setImageBitmap(stringToBitmap(event.getPoster()));
@@ -314,9 +319,6 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
             requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
         }
     }
-
-
-
 
     private Bitmap stringToBitmap(String encodedString) {
         if (encodedString == null || encodedString.isEmpty()) {
