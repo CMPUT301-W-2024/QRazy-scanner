@@ -20,6 +20,8 @@ import java.util.UUID;
 public class Event implements Serializable{
 
     private String eventId;
+    private String promoQrId;
+
     private String name;
     private String date;
     private String time;
@@ -31,6 +33,7 @@ public class Event implements Serializable{
     private String poster;
     private Integer attendanceLimit;
     private String qrCode;
+    private String promoQrCode;
     private ArrayList<GeoPoint> geopoints;
     private ArrayList<Announcement> announcements;
 
@@ -63,6 +66,7 @@ public class Event implements Serializable{
         this.description = description;
         this.poster = poster;
         eventId = UUID.randomUUID().toString();
+        promoQrId = "Promo" + eventId;
         checkedAttendees = new HashMap<>();
         signedAttendees = new ArrayList<>();
         geopoints = new ArrayList<>();
@@ -83,6 +87,14 @@ public class Event implements Serializable{
      */
     public void setEventId(String eventId) {
         this.eventId = eventId;
+    }
+
+    public String getPromoQrId() {
+        return promoQrId;
+    }
+
+    public void setPromoQrId(String promoQrId) {
+        this.promoQrId = promoQrId;
     }
 
     /**
@@ -371,6 +383,14 @@ public class Event implements Serializable{
     @Override
     public int hashCode() {
         return Objects.hash(eventId);
+    }
+
+    public String getPromoQrCode() {
+        return promoQrCode;
+    }
+
+    public void setPromoQrCode(String promoQrCode) {
+        this.promoQrCode = promoQrCode;
     }
 }
 

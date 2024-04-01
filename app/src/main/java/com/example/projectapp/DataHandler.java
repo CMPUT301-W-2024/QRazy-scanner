@@ -123,6 +123,12 @@ public class DataHandler {
         attendeesRef.document(event.getEventId()).set(event);
     }
 
+    public void addPromoEvent(Event event){
+        CollectionReference attendeesRef = db.collection("events");
+
+        attendeesRef.document(event.getPromoQrId()).set(event);
+    }
+
     /**
      * Adds an Organizer document to the "organizers" collection in Firebase.
      * @param organizer

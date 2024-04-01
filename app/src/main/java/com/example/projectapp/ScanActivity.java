@@ -61,8 +61,10 @@ public class ScanActivity extends AppCompatActivity {
                             checkIfCodeExists(qrData, false);
                         }
 
-                        else if (qrData.startsWith("Promo")){
-                            Intent intent = new Intent(ScanActivity.this, CreateEventActivity.class);
+                        else if (usage.equals("promoQr")){
+                            String eventId = qrData.substring("Promo".length()); // Extract event ID
+                            Intent intent = new Intent(ScanActivity.this, AttendeePageActivity.class);
+                            intent.putExtra("EVENT_ID", eventId);
                             startActivity(intent);
                         }
 

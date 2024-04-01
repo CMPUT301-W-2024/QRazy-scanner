@@ -21,8 +21,12 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -111,6 +115,22 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         scanButton.setOnClickListener(v -> {
             startActivity(new Intent(this, ScanActivity.class));
         });
+
+        Button promoQrCodeButton = findViewById(R.id.promoQrCodeButton);
+        promoQrCodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AttendeePageActivity.this, ScanActivity.class);
+                intent.putExtra("usage", "promoQr");
+                startActivity(intent);
+            }
+        });
+
+        String eventId = getIntent().getStringExtra("EVENT_ID");
+        if (eventId != null && !eventId.trim().isEmpty()) {
+            fetchEventAndShowDetails(eventId);
+        }
+
 
     }
     /**
@@ -316,6 +336,25 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         for (Event event : attendeeEvents){
             FirebaseMessaging.getInstance().unsubscribeFromTopic(event.getEventId());
         }
+    }
+
+    private void fetchEventAndShowDetails(String eventId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("events").document(eventId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    Event event = documentSnapshot.toObject(Event.class);
+                    if (event != null) {
+                        showDialogWithEventDetails(event, true);
+                    }
+                } else {
+                    Toast.makeText(AttendeePageActivity.this, "Event not found", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(AttendeePageActivity.this, "Error fetching event details", Toast.LENGTH_SHORT).show();
+        });
     }
 }
 

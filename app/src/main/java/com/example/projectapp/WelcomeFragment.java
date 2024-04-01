@@ -43,7 +43,7 @@ public class WelcomeFragment extends Fragment {
         // Initialize button on the welcome screen
         Button joinEventButton = rootView.findViewById(R.id.joinEventButton);
         Button createEventButton = rootView.findViewById(R.id.createEventButton);
-        Button promoQrButton = rootView.findViewById(R.id.promoQrCodeButton);
+
 
         joinEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,16 +109,6 @@ public class WelcomeFragment extends Fragment {
                 }
             }
         });
-
-        promoQrButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Start ScanActivity
-                Intent intent = new Intent(getActivity(), ScanActivity.class);
-                startActivity(intent);
-            }
-        });
-
 
 
         return rootView;
