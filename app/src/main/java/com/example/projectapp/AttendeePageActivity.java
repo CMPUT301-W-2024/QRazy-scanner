@@ -290,7 +290,7 @@ public class AttendeePageActivity extends AppCompatActivity {
         }
     }
 
-}
+
 
 
     private Bitmap stringToBitmap(String encodedString) {

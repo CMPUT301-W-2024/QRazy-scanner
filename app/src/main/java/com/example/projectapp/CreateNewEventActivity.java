@@ -111,6 +111,10 @@ public class CreateNewEventActivity extends AppCompatActivity {
         String eventDate = eventDateEditText.getText().toString().trim();
         String eventDescription = eventDescriptionEditText.getText().toString().trim();
         String attendanceLimitStr = attendanceLimitEditText.getText().toString().trim();
+        if (eventName.isEmpty() || eventDate.isEmpty() || eventDescription.isEmpty() ) {
+            Toast.makeText(CreateNewEventActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
         Integer attendanceLimit = attendanceLimitStr.isEmpty() ? 0 : Integer.parseInt(attendanceLimitStr);
 
         // Set the event details to the newEvent object
