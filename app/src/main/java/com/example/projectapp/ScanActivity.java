@@ -141,7 +141,6 @@ public class ScanActivity extends AppCompatActivity {
 
     private void checkIfCodeExists(String qrData, boolean checkInto){
         db.collection("events").where(Filter.or(Filter.equalTo("eventId", qrData), Filter.equalTo("qrCode", hashEventCode(qrData)))).get().addOnCompleteListener(task -> {
-            System.out.println("Got till here " + hashEventCode(qrData));
             if (task.isSuccessful()){
                 QuerySnapshot querySnapshot = task.getResult();
                 // code data doesn't exist

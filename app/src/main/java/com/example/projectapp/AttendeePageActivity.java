@@ -28,6 +28,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -195,7 +196,6 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
 
     private void addAttendeeEventsListener() {
         CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
-
         attendeeEventsListener = eventsRef.whereArrayContains("signedAttendees", dataHandler.getAttendee().getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
@@ -260,15 +260,24 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         Dialog eventDetailDialog = new Dialog(this);
         eventDetailDialog.setContentView(R.layout.event_dialog);
 
-        TextView eventNameView = eventDetailDialog.findViewById(R.id.dialog_event_name);
-        TextView eventOrganizerView = eventDetailDialog.findViewById(R.id.dialog_event_organizer);
-        TextView eventDescriptionView = eventDetailDialog.findViewById(R.id.dialog_event_description);
-        Button closeButton = eventDetailDialog.findViewById(R.id.dialog_event_close_button);
-        Button signUpButton = eventDetailDialog.findViewById(R.id.dialog_event_sign_button);
+
+        TextView eventNameView = eventDetailDialog.findViewById(R.id.dialogEventName);
+        TextView eventOrganizerView = eventDetailDialog.findViewById(R.id.dialogEventOrganizer);
+        TextView eventDescriptionView = eventDetailDialog.findViewById(R.id.dialogEventDescription);
+        TextView eventDateView = eventDetailDialog.findViewById(R.id.dialogEventDateTime);
+        ImageView eventPosterView = eventDetailDialog.findViewById(R.id.dialogEventPoster);
+        Button closeButton = eventDetailDialog.findViewById(R.id.dialogEventCloseButton);
+        Button signUpButton = eventDetailDialog.findViewById(R.id.dialogEventSignButton);
+
+
 
         eventNameView.setText(event.getName());
         eventOrganizerView.setText(event.getOrganizer());
         eventDescriptionView.setText(event.getDescription());
+
+        eventPosterView.setImageBitmap(stringToBitmap(event.getPoster()));
+        eventDateView.setText(event.getDate() + " at " + event.getTime());
+
 
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override

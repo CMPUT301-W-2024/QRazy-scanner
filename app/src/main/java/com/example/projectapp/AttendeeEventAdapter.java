@@ -33,13 +33,14 @@ public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdap
      * View Holder class to represent individual Event items within the RecyclerView.
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView nameText, organizerText, infoText;
+        private TextView nameText, organizerText, infoText, dateText;
 
         public ViewHolder(View view) {
             super(view);
             nameText = (TextView) view.findViewById(R.id.eventNameText);
             organizerText = (TextView) view.findViewById(R.id.eventOrganizerNameText);
             infoText = (TextView) view.findViewById(R.id.eventInfoText);
+            dateText = (TextView) view.findViewById(R.id.eventDateText);
         }
 
         public void bind(final Event event,final OnItemClickListener listener) {
@@ -79,6 +80,7 @@ public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdap
         viewHolder.nameText.setText(event.getName());
         viewHolder.organizerText.setText(event.getOrganizerName());
         viewHolder.infoText.setText(event.getDescription());
+        viewHolder.dateText.setText(event.getDate());
     }
 
     // Return the size of your dataset (invoked by the layout manager)

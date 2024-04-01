@@ -44,10 +44,9 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:maxLines="1"
             android:fontFamily="@font/light"
             android:gravity="left|center"
-            android:text="Announcement"
+            android:text="Announcement asdfasdas adasd asdas dasd asdasd asd asd asd asd asd asd asd asda"
             android:textColor="#000"
             android:textSize="20sp" />
 

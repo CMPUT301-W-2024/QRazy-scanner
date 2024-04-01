@@ -169,7 +169,7 @@ public class Admin extends AppCompatActivity {
 
         Button closeButton = eventDetailDialog.findViewById(R.id.dialogEventCloseButton);
         closeButton.setOnClickListener(v -> eventDetailDialog.dismiss());
-        Button deleteButton = eventDetailDialog.findViewById(R.id.eventDeleteButton);
+        Button deleteButton = eventDetailDialog.findViewById(R.id.dialogEventDeleteButton);
         deleteButton.setVisibility(View.VISIBLE);
         deleteButton.setOnClickListener(v -> {
             deleteEventByNameAndDetails(name, organizer, description);
