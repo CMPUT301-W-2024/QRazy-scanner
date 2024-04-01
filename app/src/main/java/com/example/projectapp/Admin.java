@@ -92,7 +92,7 @@ public class Admin extends AppCompatActivity {
     }
 
     // Event-related functions
-    private void loadEventsFromFirebase() {
+    void loadEventsFromFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("events").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -114,7 +114,7 @@ public class Admin extends AppCompatActivity {
         });
     }
 
-    private void addEventToScrollView(Event event) {
+    void addEventToScrollView(Event event) {
         View eventView = LayoutInflater.from(this).inflate(R.layout.event_widget, horizontalLayout, false);
         TextView eventNameView = eventView.findViewById(R.id.eventNameText);
         eventNameView.setText(event.getName());
@@ -130,7 +130,7 @@ public class Admin extends AppCompatActivity {
         horizontalLayout.addView(eventView);
     }
 
-    private void deleteEventByNameAndDetails(String eventName, String eventOrganizer, String eventDescription) {
+    void deleteEventByNameAndDetails(String eventName, String eventOrganizer, String eventDescription) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("events")
                 .whereEqualTo("name", eventName)
@@ -179,7 +179,7 @@ public class Admin extends AppCompatActivity {
     }
 
     // Profile (attendee)-related functions
-    private void loadAttendeesFromFirebase() {
+    void loadAttendeesFromFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("attendees").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -201,7 +201,7 @@ public class Admin extends AppCompatActivity {
         });
     }
 
-    private void addAttendeeToScrollView(Attendee attendee) {
+    void addAttendeeToScrollView(Attendee attendee) {
         View attendeeView = LayoutInflater.from(this).inflate(R.layout.profile_widget, verticalLayout, false);
         TextView attendeeNameView = attendeeView.findViewById(R.id.attendee);
         attendeeNameView.setText(attendee.getName());
@@ -209,7 +209,7 @@ public class Admin extends AppCompatActivity {
         verticalLayout.addView(attendeeView);
     }
 
-    private void deleteAttendeeById(String attendeeId) {
+    void deleteAttendeeById(String attendeeId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("attendees").document(attendeeId).delete()
                 .addOnSuccessListener(aVoid -> Log.d("Admin", "Attendee successfully deleted!"))
@@ -267,7 +267,7 @@ public class Admin extends AppCompatActivity {
     }
 
 
-    private void addImageToLayout(String encodedImageString, LinearLayout layout, String documentId, String field, String collection) {
+    void addImageToLayout(String encodedImageString, LinearLayout layout, String documentId, String field, String collection) {
         View imageLayoutView = LayoutInflater.from(this).inflate(R.layout.image_layout, null, false);
         ImageView imageView = imageLayoutView.findViewById(R.id.image_view);
 
@@ -284,7 +284,7 @@ public class Admin extends AppCompatActivity {
 
 
 
-    private Bitmap stringToBitmap(String encodedString) {
+    Bitmap stringToBitmap(String encodedString) {
         if (encodedString == null || encodedString.isEmpty()) {
             Log.e("Admin", "Encoded string is null or empty");
             return null;
@@ -309,7 +309,7 @@ public class Admin extends AppCompatActivity {
         imageDialog.show();
     }
 
-    private void deleteImage(String documentId, String field, String collection) {
+    void deleteImage(String documentId, String field, String collection) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(collection).document(documentId)
                 .update(field, null)

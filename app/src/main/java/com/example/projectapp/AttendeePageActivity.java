@@ -2,11 +2,16 @@ package com.example.projectapp;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,7 +61,10 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
 
     /**
      * Initializes the activity, sets up RecyclerViews for displaying events.
-     * @param savedInstanceState If the activity is being re-initialized after being shut down, this Bundle contains the data most recently supplied in onSaveInstanceState.
+     *
+     * @param savedInstanceState    If the activity is being re-initialized after
+     *                              being shut down, this Bundle contains the data
+     *                              most recently supplied in onSaveInstanceState.
      */
 
     @Override
@@ -135,7 +143,8 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
 
     }
     /**
-     * Removes event listeners when the activity is paused to avoid unnecessary background processing.
+     * Removes event listeners when the activity is paused
+     *  to avoid unnecessary background processing.
      */
     @Override
     protected void onPause() {
@@ -146,7 +155,8 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     }
 
     /**
-     * Re-registers the event listeners when the activity resumes to keep the event lists up-to-date.
+     * Re-registers the event listeners when the activity
+     *  resumes to keep the event lists up-to-date.
      */
     @Override
     protected void onResume() {
@@ -270,14 +280,12 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         Button signUpButton = eventDetailDialog.findViewById(R.id.dialogEventSignButton);
 
 
-
         eventNameView.setText(event.getName());
-        eventOrganizerView.setText(event.getOrganizer());
+        eventOrganizerView.setText(event.getOrganizerId());
         eventDescriptionView.setText(event.getDescription());
 
         eventPosterView.setImageBitmap(stringToBitmap(event.getPoster()));
         eventDateView.setText(event.getDate() + " at " + event.getTime());
-
 
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -314,9 +322,6 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
             requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
         }
     }
-
-
-
 
     private Bitmap stringToBitmap(String encodedString) {
         if (encodedString == null || encodedString.isEmpty()) {
