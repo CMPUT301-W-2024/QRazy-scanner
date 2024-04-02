@@ -37,9 +37,10 @@
             android:layout_marginStart="24dp"
             android:backgroundTint="@color/buttonBackground"
             android:text="@string/createevent"
-            android:textSize="20sp"
+            android:textSize="17sp"
             android:fontFamily="@font/bold1"
             android:textColor="@color/black"
+            android:drawableLeft="@drawable/baseline_create_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/joinEventButton"
@@ -53,11 +54,14 @@
             android:backgroundTint="@color/buttonBackground"
             android:text="@string/joinevent"
             android:fontFamily="@font/bold1"
-            android:textSize="20sp"
+            android:textSize="17sp"
             android:textColor="@color/black"
+            android:drawableLeft="@drawable/baseline_add_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/createEventButton"
             app:layout_constraintTop_toBottomOf="@+id/textview_first" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

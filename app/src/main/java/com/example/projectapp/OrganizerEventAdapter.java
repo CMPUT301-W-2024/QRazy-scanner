@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -15,19 +16,16 @@ import android.graphics.pdf.PdfDocument;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.text.InputType;
-import android.transition.TransitionManager;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -39,20 +37,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
-import java.util.stream.Stream;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 /**
  * Adapter for displaying an organizer's Events in a RecyclerView. Handles
@@ -69,7 +61,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView eventNameTextView, attendeeCountTextView, eventDetailTextView, evenDateTextView;
+        TextView eventNameTextView, attendeeCountTextView, eventDetailTextView, eventDateTextView, eventTimeTextView;
         LinearLayout expandEventLayout;
         ImageView eventQrView;
         ImageButton expandEventButton, announcementButton;
@@ -78,16 +70,17 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
 
         public ViewHolder(View itemView) {
             super(itemView);
-            eventNameTextView = itemView.findViewById(R.id.eventNameTextView);
+            eventNameTextView = itemView.findViewById(R.id.eventNameOrgText);
             attendeeCountTextView = itemView.findViewById(R.id.attendeeCountTextView);
-            eventDetailTextView = itemView.findViewById(R.id.eventDetailTextView);
-            evenDateTextView = itemView.findViewById(R.id.eventDateTextView);
+            eventDetailTextView = itemView.findViewById(R.id.eventDetailOrgText);
+            eventDateTextView = itemView.findViewById(R.id.eventDateOrgText);
+            eventTimeTextView = itemView.findViewById(R.id.eventTimeOrgText);
             expandEventLayout = itemView.findViewById(R.id.expandEventLayout);
             eventQrView = itemView.findViewById(R.id.eventQrView);
             expandEventButton = itemView.findViewById(R.id.expandButton);
             announcementButton = itemView.findViewById(R.id.announcementButton);
-            viewmapButton = itemView.findViewById(R.id.view_map_button);
             pdfButton = itemView.findViewById(R.id.pdf_button);
+            viewmapButton = itemView.findViewById(R.id.viewMapButton);
         }
     }
 
@@ -104,10 +97,16 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         holder.eventNameTextView.setText(event.getName());
         holder.attendeeCountTextView.setText("Live Attendee Count: " + String.valueOf(event.getAttendance()));
         holder.eventDetailTextView.setText(event.getDescription());
-        holder.evenDateTextView.setText(event.getDate());
+        holder.eventDateTextView.setText(event.getDate());
+        holder.eventTimeTextView.setText(event.getStartTime() + " - " +event.getEndTime());
 
         if (event.getQrCode() != null){
             Bitmap bitmap = stringToBitmap(event.getQrCode());
+            holder.eventQrView.setImageBitmap(bitmap);
+        }
+
+        if (event.getPromoQrCode() != null){
+            Bitmap bitmap = stringToBitmap(event.getPromoQrCode());
             holder.eventQrView.setImageBitmap(bitmap);
         }
 

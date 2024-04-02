@@ -24,12 +24,14 @@ import com.google.firebase.messaging.FirebaseMessaging;
  */
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     * Sets up the activity based on the device ID.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-
         StrictMode.setThreadPolicy(policy);
 
         // Load the WelcomeFragment initially
@@ -47,10 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    // Method to load the WelcomeFragment
-
     /**
-     * Load the Fragment
+     * Loads the Welcome Fragment.
      */
     private void loadWelcomeFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -63,14 +63,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Check if it is admin's device
-     * @param androidId Device's Id
-     * @return true or false
+     * Checks if the device is the admin's.
+     *
+     * @param androidId Device ID
+     * @return true     if admin's device,
+     *         false    otherwise.
      */
     private boolean isSpecificDevice(String androidId) {
 
         // Replace "SpecificAndroidID" with the actual Android ID of the admin device
-        return androidId.equals("917cc646adc0623");
+
+        return androidId.equals("136463934ec8e91");
     }
 
 }

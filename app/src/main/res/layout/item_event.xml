@@ -18,7 +18,7 @@
         android:orientation="horizontal"
         android:layout_marginBottom="10dp">
         <TextView
-            android:id="@+id/eventNameTextView"
+            android:id="@+id/eventNameOrgText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -44,14 +44,21 @@
         android:visibility="gone">
 
         <TextView
-            android:id="@+id/eventDateTextView"
+            android:id="@+id/eventDateOrgText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/light"
             android:text="10/10/2024"/>
 
         <TextView
-            android:id="@+id/eventDetailTextView"
+            android:id="@+id/eventTimeOrgText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/light"
+            android:text="20:00 - 22:00"/>
+
+        <TextView
+            android:id="@+id/eventDetailOrgText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/light"
@@ -63,7 +70,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/view_map_button"
+                android:id="@+id/viewMapButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Check map"/>

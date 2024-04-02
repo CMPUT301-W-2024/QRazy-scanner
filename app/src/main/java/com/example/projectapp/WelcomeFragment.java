@@ -40,9 +40,11 @@ public class WelcomeFragment extends Fragment {
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder().setLocalCacheSettings(MemoryCacheSettings.newBuilder().build()).build();
         db.setFirestoreSettings(settings);
 
-        // Find the "Join Event" button
+        // Initialize button on the welcome screen
         Button joinEventButton = rootView.findViewById(R.id.joinEventButton);
         Button createEventButton = rootView.findViewById(R.id.createEventButton);
+
+        // If 'Join Event' button is clicked
         joinEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,6 +89,7 @@ public class WelcomeFragment extends Fragment {
             }
         });
 
+        // If 'Create Event' button was clicked
         createEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,7 +104,8 @@ public class WelcomeFragment extends Fragment {
                             startActivity(intent);
                         }
                     });
-                }else {
+                }
+                else {
                     Intent intent = new Intent(getActivity(), OrganizerPageActivity.class);
                     startActivity(intent);
                 }
@@ -113,8 +117,9 @@ public class WelcomeFragment extends Fragment {
 
 
     /**
-     * get attendee id
-     * @return
+     * Gets attendee's ID.
+     * @return      The ID of the attendee as a String,
+     *              or null if no ID is found.
      */
     public String getAttendeeId(){
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("AttendeePref", Context.MODE_PRIVATE);
@@ -122,14 +127,13 @@ public class WelcomeFragment extends Fragment {
     }
 
     /**
-     * get organizer's ID
-     * @return ORGANIZER'S id
+     * Gets organizer's ID.
+     * @return      The ID of the organizer as a String,
+     *              or null if no ID is found.
      */
     public String getOrganizerId(){
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("OrganizerPref", Context.MODE_PRIVATE);
         return prefs.getString("organizerId", null);
     }
-
-
 
 }

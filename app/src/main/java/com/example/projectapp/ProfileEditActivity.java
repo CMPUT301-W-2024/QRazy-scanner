@@ -21,11 +21,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class ProfileEditActivity extends AppCompatActivity {
+public class ProfileEditActivity extends AttendeePageActivity{
     private ImageView avatar;
     private String encodedImage;
     private ActivityResultLauncher<Intent> resultLauncher;
@@ -82,6 +83,11 @@ public class ProfileEditActivity extends AppCompatActivity {
         String newEmail = emailEditText.getText().toString().trim();
         String newPhone = phoneEditText.getText().toString().trim();
 
+        if (currentAttendee == null) {
+            Toast.makeText(this, "Attendee data is not loaded!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         currentAttendee.setName(newName);
         currentAttendee.setHomepage(newEmail);
         currentAttendee.setContactInfo(newPhone);
@@ -93,7 +99,13 @@ public class ProfileEditActivity extends AppCompatActivity {
         updateAttendeeInFirestore(currentAttendee);
 
         Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
+
+
+        Intent intent = new Intent(this, AttendeePageActivity.class);
+        startActivity(intent);
+        finish();
     }
+
 
 
 
@@ -150,5 +162,9 @@ public class ProfileEditActivity extends AppCompatActivity {
         }
 
     }
-    //au ah
+
+    @Override
+    public void onProfileDeleted() {
+        super.onProfileDeleted();
+    }
 }

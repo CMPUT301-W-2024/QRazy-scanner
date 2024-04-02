@@ -2,9 +2,10 @@ package com.example.projectapp;
 
 import androidx.annotation.Nullable;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Announcement {
+public class Announcement implements Serializable {
     private String announcement;
     private String time;
     private String event;
