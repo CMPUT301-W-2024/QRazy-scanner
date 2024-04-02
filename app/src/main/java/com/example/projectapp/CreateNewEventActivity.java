@@ -83,7 +83,6 @@ public class CreateNewEventActivity extends AppCompatActivity {
                                 // Set the chosen date to the EditText
                                 String selectedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
                                 eventDateEditText.setText(selectedDate);
-
                             }
                         }, year, month, day);
                 datePickerDialog.show();
@@ -126,10 +125,7 @@ public class CreateNewEventActivity extends AppCompatActivity {
         Integer attendanceLimit = attendanceLimitStr.isEmpty() ? 0 : Integer.parseInt(attendanceLimitStr);
 
         // Set the event details to the newEvent object
-
         Event newEvent = new Event(eventName, eventDate, eventTime, DataHandler.getInstance().getOrganizer().getName(), DataHandler.getInstance().getOrganizer().getOrganizerId(), attendanceLimit, eventDescription, encodedImage);
-
-
 
         // Upload the event details to Firebase
         db.collection("events").document(newEvent.getEventId())

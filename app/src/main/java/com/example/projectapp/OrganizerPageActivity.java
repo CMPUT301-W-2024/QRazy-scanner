@@ -125,7 +125,8 @@ public class OrganizerPageActivity extends AppCompatActivity {
      * Adds a new Event to the UI and updates the RecyclerView's adapter.
      * Prevents duplicates based on event ID.
      *
-     * @param event The Event object to add.
+     * @param event
+     *      The Event object to add.
      */
     public void addEvent(Event event){
         if (!events.contains(event)){
@@ -138,7 +139,8 @@ public class OrganizerPageActivity extends AppCompatActivity {
      * Updates an existing Event in the UI and updates the RecyclerView's adapter.
      * Checks if the updated attendance count reached a milestone.
      *
-     * @param event The updated Event object.
+     * @param event
+     *      The updated Event object.
      */
     public void updateEvent(Event event){
         events.set(events.indexOf(event), event);
@@ -149,7 +151,8 @@ public class OrganizerPageActivity extends AppCompatActivity {
     /**
      * Removes an Event from the UI list and updates the RecyclerView's adapter.
      *
-     * @param event The Event object to remove.
+     * @param event
+     *      The Event object to remove.
      */
     public void removeEvent(Event event){
         events.remove(event);
@@ -160,7 +163,8 @@ public class OrganizerPageActivity extends AppCompatActivity {
      * Checks if an Event's attendance count has reached one of the predefined milestones.
      * Displays a Toast message if a milestone has been reached.
      *
-     * @param event The Event to check.
+     * @param event
+     *      The Event to check.
      */
     private void checkMilestone(Event event){
         if (mileStones.contains(event.getAttendance())){

@@ -21,12 +21,14 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 public class WelcomePageTest {
 
+    public ActivityScenario<MainActivity> scenario;
+
     @Before
     public void setup(){
 
         Intents.init();
 
-        ActivityScenario.launch(MainActivity.class);
+        scenario = ActivityScenario.launch(MainActivity.class);
     }
 
 
