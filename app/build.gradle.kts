@@ -65,6 +65,8 @@ dependencies {
     implementation("androidx.camera:camera-video:1.3.2")
     implementation("androidx.camera:camera-view:1.3.2")
     implementation("androidx.camera:camera-extensions:1.3.2")
+    implementation("androidx.core:core:1.12.0")
+    implementation ("com.itextpdf:itextg:5.5.10")
     implementation("androidx.test.ext:junit:1.1.5")
 
     testImplementation("junit:junit:4.13.2")
@@ -77,8 +79,7 @@ dependencies {
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
     androidTestImplementation("androidx.test:rules:1.4.0")
-}
 
 tasks.withType<Test> {
     useJUnitPlatform()
-}
+}}
