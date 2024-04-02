@@ -80,7 +80,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         holder.eventNameTextView.setText(event.getName());
         holder.attendeeCountTextView.setText("Live Attendee Count: " + String.valueOf(event.getAttendance()));
         holder.eventDetailTextView.setText(event.getDescription());
-        holder.evenDateTimeTextView.setText(event.getDate() + " at " + event.getTime());
+        holder.evenDateTimeTextView.setText(event.getDate() + " at " + event.getStartTime());
 
         if (event.getQrCode() != null){
             Bitmap bitmap = stringToBitmap(event.getQrCode());

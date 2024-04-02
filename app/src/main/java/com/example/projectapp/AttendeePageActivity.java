@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -22,9 +21,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import com.google.android.gms.tasks.OnCompleteListener;
+
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -307,7 +305,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         eventDescriptionView.setText(event.getDescription());
 
         eventPosterView.setImageBitmap(stringToBitmap(event.getPoster()));
-        eventDateView.setText(event.getDate() + " at " + event.getTime());
+        eventDateView.setText(event.getDate() + " at " + event.getStartTime());
 
 
         closeButton.setOnClickListener(new View.OnClickListener() {
@@ -389,7 +387,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
             for (Event event : eventsFull) {
                 Date eventDateTime;
                 try {
-                    eventDateTime = sdf.parse(event.getDate() + " " + event.getTime());
+                    eventDateTime = sdf.parse(event.getDate() + " " + event.getStartTime());
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }
