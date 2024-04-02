@@ -178,7 +178,7 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
 
     private void storePromoQRCodeInFirestore(Bitmap qrCodeBitmap) {
         String qrCodeString = bitmapToString(qrCodeBitmap);
-        db.collection("events").document(event.getPromoQrId())
+        db.collection("events").document(event.getEventId())
                 .update("promoQrCode", qrCodeString)
                 .addOnSuccessListener(aVoid -> Toast.makeText(GenerateQrCodeActivity.this, "QR Code stored successfully", Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toast.makeText(GenerateQrCodeActivity.this, "Failed to store QR Code", Toast.LENGTH_SHORT).show());
