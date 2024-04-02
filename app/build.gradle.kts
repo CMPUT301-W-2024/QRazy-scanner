@@ -51,7 +51,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.google.zxing:core:3.4.1")
     implementation("androidx.test:core:1.5.0")
-    implementation("junit:junit:4.12")
+    implementation("junit:junit:4.13.2")
     implementation("org.osmdroid:osmdroid-android:6.1.18")
     implementation("org.osmdroid:osmdroid-android:6.1.18")
     implementation("org.osmdroid:osmdroid-mapsforge:6.1.18")
@@ -65,6 +65,7 @@ dependencies {
     implementation("androidx.camera:camera-video:1.3.2")
     implementation("androidx.camera:camera-view:1.3.2")
     implementation("androidx.camera:camera-extensions:1.3.2")
+    implementation("androidx.test.ext:junit:1.1.5")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:3.12.4")

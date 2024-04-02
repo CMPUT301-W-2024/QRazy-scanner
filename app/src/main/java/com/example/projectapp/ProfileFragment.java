@@ -18,8 +18,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import android.graphics.Bitmap;
 import android.graphics.Color;
 
 import java.security.MessageDigest;

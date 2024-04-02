@@ -5,7 +5,7 @@
 
     <!-- Event Name (fixed at the top) -->
     <TextView
-        android:id="@+id/eventNameTextView"
+        android:id="@+id/eventNameOrgText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/bold1"
@@ -19,7 +19,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/eventNameTextView"
+        android:layout_below="@id/eventNameOrgText"
         android:layout_above="@id/buttonsLayout">
 
         <LinearLayout
