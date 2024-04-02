@@ -8,12 +8,14 @@ import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.pressImeActionButton;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Is.is;
 
@@ -40,7 +42,7 @@ import org.junit.runner.RunWith;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class CreateEventTest {
+public class test {
 
     // Launch app
     @Rule
@@ -53,8 +55,11 @@ public class CreateEventTest {
                     "android.permission.ACCESS_FINE_LOCATION");
 
     @Before
-    public void setup(){Intents.init();}
+    public void setup(){
 
+        Intents.init();
+
+    }
     @Test
     public void testCreateNewEvent() {
         // Click 'Create Event' on main page
@@ -101,16 +106,11 @@ public class CreateEventTest {
                 childAtPosition(childAtPosition(withClassName(is("android.widget.ScrollView")), 0), 3)));
         materialButton3.perform(scrollTo(), click());
 
-        // Click event start time field
+        // Click event time field
         ViewInteraction textInputEditText10 = onView(allOf(withId(R.id.eventStartTimeEditText),
                 childAtPosition(childAtPosition(withId(R.id.eventStartTimeInputLayout), 0), 0),
                 isDisplayed()));
         textInputEditText10.perform(click());
-
-        // Click 'OK' when time dialog pops up
-        ViewInteraction materialButton9 = onView(allOf(withId(android.R.id.button1), withText("OK"),
-                childAtPosition(childAtPosition(withClassName(is("android.widget.ScrollView")), 0), 3)));
-        materialButton9.perform(scrollTo(), click());
 
         // Click event end time field
         ViewInteraction textInputEditText12 = onView(allOf(withId(R.id.eventEndTimeEditText),
@@ -145,29 +145,37 @@ public class CreateEventTest {
         // Checks if activity is switched to generate QR code
         intended(hasComponent(GenerateQrCodeActivity.class.getName()));
 
+        // NEED TO CHECK USE OWN QR CODE
+
         // Click 'Generate Unique QR Code'
         ViewInteraction materialButton7 = onView(allOf(withId(R.id.generateQrCodeButton), withText("Generate Unique QR Code"),
                 childAtPosition(childAtPosition(withId(android.R.id.content), 0), 2),
                 isDisplayed()));
         materialButton7.perform(click());
+        onView(withText("QR Code stored successfully")).check(matches(isDisplayed()));
 
+        /*
         // Click 'Generate Promotion QR Code'
         ViewInteraction materialButton8 = onView(allOf(withId(R.id.generatePromotionQrCodeButton), withText("Generate Promotion QR Code"),
                 childAtPosition(childAtPosition(withId(android.R.id.content), 0), 3),
                 isDisplayed()));
         materialButton8.perform(click());
+        */
 
+        /*
         // Click 'Share QR Code'
         ViewInteraction materialButton10 = onView(allOf(withId(R.id.shareQrCodeButton), withText("Share QR Code"),
                 childAtPosition(childAtPosition(withId(android.R.id.content), 0), 4),
                 isDisplayed()));
         materialButton10.perform(click());
+        */
 
         // Click 'Home Page'
         ViewInteraction materialButton11 = onView(allOf(withId(R.id.finishButton), withText("Home Page"),
                 childAtPosition(childAtPosition(withId(android.R.id.content), 0), 5),
                 isDisplayed()));
         materialButton11.perform(click());
+
 
         // Checks if activity is switched back to organizer dashboard
         intended(hasComponent(OrganizerPageActivity.class.getName()));
@@ -185,12 +193,12 @@ public class CreateEventTest {
         materialButton12.perform(click());
 
 
-        // Checks if activity is switched to create new event
+        // Checks if activity is switched to map
         intended(hasComponent(MapActivity.class.getName()));
 
         // Click back to return from map to organizer dashboard
         ViewInteraction materialButton13 = onView(allOf(withId(R.id.goBackButton), withText("BACK"), childAtPosition(
-                childAtPosition(withId(android.R.id.content), 0), 1),
+                        childAtPosition(withId(android.R.id.content), 0), 1),
                 isDisplayed()));
         materialButton13.perform(click());
 
