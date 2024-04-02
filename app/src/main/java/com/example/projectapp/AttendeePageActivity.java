@@ -87,6 +87,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         Button filterUpcomingButton = findViewById(R.id.attendeeUpcomingEvent);
         Button filterCompletedButton = findViewById(R.id.attendeeCompletedEvent);
         ImageButton menuButton = findViewById(R.id.menuButton);
+        TextView welcomeText = findViewById(R.id.welcomeText);
 
         attendeeEventsFiltered = new ArrayList<>();
         allEventsFiltered = new ArrayList<>();
@@ -97,6 +98,8 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         attendeeEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         allEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         announcementsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        String userName = dataHandler.getAttendee().getName();
+        welcomeText.setText("Welcome back, " + userName);
 
         attendeeEventsAdapter = new AttendeeEventAdapter(attendeeEventsFiltered, new AttendeeEventAdapter.OnItemClickListener() {
             @Override
@@ -190,6 +193,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         enableListeners = true;
         addAttendeeEventsListener();
         addAllEventsListener();
+        updateEventListVisibility();
     }
 
     public void addEvent(Event event, ArrayList<Event> list){
@@ -407,6 +411,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
             }
         }
         adapter.notifyDataSetChanged();
+        updateEventListVisibility();
     }
 
     private void fetchEventAndShowDetails(String eventId) {
@@ -427,5 +432,23 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
             Toast.makeText(AttendeePageActivity.this, "Error fetching event details", Toast.LENGTH_SHORT).show();
         });
     }
+
+    private void updateEventListVisibility() {
+        TextView noMyEventsText = findViewById(R.id.noMyEventsText);
+        TextView noAllEventsText = findViewById(R.id.noAllEventsText);
+
+        if (attendeeEventsFiltered.isEmpty()) {
+            noMyEventsText.setVisibility(View.VISIBLE);
+        } else {
+            noMyEventsText.setVisibility(View.GONE);
+        }
+
+        if (allEventsFiltered.isEmpty()) {
+            noAllEventsText.setVisibility(View.VISIBLE);
+        } else {
+            noAllEventsText.setVisibility(View.GONE);
+        }
+    }
+
 }
 
