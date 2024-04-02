@@ -27,7 +27,10 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -39,13 +42,11 @@ public class CreateNewEventActivity extends AppCompatActivity {
 
     private TextInputEditText eventDateEditText;
     private Calendar calendar;
-
     private MaterialButton uploadButton;
     ActivityResultLauncher<Intent> resultLauncher;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ImageView poster;
     private String encodedImage;
-    private Event newEvent;
     private TextInputEditText eventNameEditText, eventDescriptionEditText, attendanceLimitEditText, eventStartTimeEditText, eventEndTimeEditText;
 
     /**
@@ -125,10 +126,30 @@ public class CreateNewEventActivity extends AppCompatActivity {
         String eventEndTime = eventEndTimeEditText.getText().toString().trim();
         String eventDescription = eventDescriptionEditText.getText().toString().trim();
         String attendanceLimitStr = attendanceLimitEditText.getText().toString().trim();
-        if (eventName.isEmpty() || eventDate.isEmpty() || eventDescription.isEmpty() ) {
+
+        // Check if inputs are valid
+        if (eventName.isEmpty() || eventDate.isEmpty() || eventDescription.isEmpty() || eventStartTime.isEmpty() || eventEndTime.isEmpty()) {
             Toast.makeText(CreateNewEventActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date currentDateTime = new Date();
+        Date eventStartParsed;
+        Date eventEndParsed;
+
+        try {
+            eventStartParsed = sdf.parse(eventDate + " " + eventStartTime);
+            eventEndParsed = sdf.parse(eventDate + " " + eventEndTime);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        if (currentDateTime.after(eventStartParsed) || currentDateTime.after(eventEndParsed) || eventStartParsed.after(eventEndParsed)){
+            Toast.makeText(CreateNewEventActivity.this, "Date or time values are invalid", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
         Integer attendanceLimit = attendanceLimitStr.isEmpty() ? 0 : Integer.parseInt(attendanceLimitStr);
 
         // Set the event details to the newEvent object

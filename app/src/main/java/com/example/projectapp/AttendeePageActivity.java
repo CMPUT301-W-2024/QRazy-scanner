@@ -14,8 +14,7 @@ import android.widget.ImageView;
 
 import android.widget.TextView;
 import android.widget.Toast;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -84,6 +83,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         Button filterAllButton = findViewById(R.id.attendeeAllEvent);
         Button filterUpcomingButton = findViewById(R.id.attendeeUpcomingEvent);
         Button filterCompletedButton = findViewById(R.id.attendeeCompletedEvent);
+        Button filterOngoingButton = findViewById(R.id.attendeeOngoingEvent);
         ImageButton menuButton = findViewById(R.id.menuButton);
 
         attendeeEventsFiltered = new ArrayList<>();
@@ -145,6 +145,12 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
 
         filterCompletedButton.setOnClickListener(v -> {
             filter = "Complete";
+            filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
+            filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
+        });
+
+        filterOngoingButton.setOnClickListener(v -> {
+            filter = "Ongoing";
             filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
             filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
         });
@@ -301,7 +307,8 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         TextView eventNameView = eventDetailDialog.findViewById(R.id.dialogEventName);
         TextView eventOrganizerView = eventDetailDialog.findViewById(R.id.dialogEventOrganizer);
         TextView eventDescriptionView = eventDetailDialog.findViewById(R.id.dialogEventDescription);
-        TextView eventDateView = eventDetailDialog.findViewById(R.id.dialogEventDateTime);
+        TextView eventDateView = eventDetailDialog.findViewById(R.id.dialogEventDate);
+        TextView eventTimeView = eventDetailDialog.findViewById(R.id.dialogEventTime);
         ImageView eventPosterView = eventDetailDialog.findViewById(R.id.dialogEventPoster);
         Button closeButton = eventDetailDialog.findViewById(R.id.dialogEventCloseButton);
         Button signUpButton = eventDetailDialog.findViewById(R.id.dialogEventSignButton);
@@ -314,7 +321,8 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         eventDescriptionView.setText(event.getDescription());
 
         eventPosterView.setImageBitmap(stringToBitmap(event.getPoster()));
-        eventDateView.setText(event.getDate() + " at " + event.getStartTime());
+        eventDateView.setText(event.getDate());
+        eventTimeView.setText(event.getStartTime() + " - " + event.getEndTime());
 
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -385,21 +393,25 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date currentDateTime = new Date();
         events.clear();
-        System.out.println("Got till here: " + eventsFull.size());
         if (filter.equals("All")) {
             events.addAll(eventsFull);
         } else {
             for (Event event : eventsFull) {
-                Date eventDateTime;
+                Date eventStartDateTime;
+                Date eventEndDateTime;
                 try {
-                    eventDateTime = sdf.parse(event.getDate() + " " + event.getStartTime());
+                    eventStartDateTime = sdf.parse(event.getDate() + " " + event.getStartTime());
+                    eventEndDateTime = sdf.parse(event.getDate() + " " + event.getEndTime());
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }
 
-                if (filter.equals("Upcoming") && currentDateTime.before(eventDateTime)) {
+                if (filter.equals("Upcoming") && currentDateTime.before(eventStartDateTime)) {
                     events.add(event);
-                } else if (filter.equals("Complete") && currentDateTime.after(eventDateTime)) {
+                } else if (filter.equals("Complete") && currentDateTime.after(eventEndDateTime)) {
+                    System.out.println("Got till here:  " + eventEndDateTime.toString());
+                    events.add(event);
+                } else if (filter.equals("Ongoing") && currentDateTime.after(eventStartDateTime) && currentDateTime.before(eventEndDateTime)){
                     events.add(event);
                 }
             }

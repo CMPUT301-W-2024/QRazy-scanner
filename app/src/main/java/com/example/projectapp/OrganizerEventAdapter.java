@@ -47,7 +47,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView eventNameTextView, attendeeCountTextView, eventDetailTextView, evenDateTimeTextView;
+        TextView eventNameTextView, attendeeCountTextView, eventDetailTextView, eventDateTextView, eventTimeTextView;
         LinearLayout expandEventLayout;
         ImageView eventQrView;
         ImageButton expandEventButton, announcementButton;
@@ -58,7 +58,8 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             eventNameTextView = itemView.findViewById(R.id.eventNameOrgText);
             attendeeCountTextView = itemView.findViewById(R.id.attendeeCountTextView);
             eventDetailTextView = itemView.findViewById(R.id.eventDetailOrgText);
-            evenDateTimeTextView = itemView.findViewById(R.id.eventDateTimeOrgText);
+            eventDateTextView = itemView.findViewById(R.id.eventDateOrgText);
+            eventTimeTextView = itemView.findViewById(R.id.eventTimeOrgText);
             expandEventLayout = itemView.findViewById(R.id.expandEventLayout);
             eventQrView = itemView.findViewById(R.id.eventQrView);
             expandEventButton = itemView.findViewById(R.id.expandButton);
@@ -80,7 +81,8 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         holder.eventNameTextView.setText(event.getName());
         holder.attendeeCountTextView.setText("Live Attendee Count: " + String.valueOf(event.getAttendance()));
         holder.eventDetailTextView.setText(event.getDescription());
-        holder.evenDateTimeTextView.setText(event.getDate() + " at " + event.getStartTime());
+        holder.eventDateTextView.setText(event.getDate());
+        holder.eventTimeTextView.setText(event.getStartTime() + " - " +event.getEndTime());
 
         if (event.getQrCode() != null){
             Bitmap bitmap = stringToBitmap(event.getQrCode());
