@@ -1,7 +1,5 @@
 package com.example.projectapp;
 
-
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,7 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class CreateEventActivity extends AppCompatActivity {
 
     private EditText organizerNameEditText;
-    private DataHandler dataHandler;
+    DataHandler dataHandler;
 
     /**
      * Handles activity initialization. Sets up UI elements, retrieves the DataHandler instance,

@@ -15,10 +15,9 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Setting up event class
+ * Setting up Event class
  */
 public class Event implements Serializable{
-
     private String eventId;
     private String promoQrId;
 
@@ -78,7 +77,8 @@ public class Event implements Serializable{
 
     /**
      * Get Event ID
-     * @return EVENT ID
+     *
+     * @return      ID of the event
      */
     public String getEventId() {
         return eventId;
@@ -86,16 +86,27 @@ public class Event implements Serializable{
 
     /**
      * Set event's ID
-     * @param eventId
+     *
+     * @param eventId       ID of the event
      */
     public void setEventId(String eventId) {
         this.eventId = eventId;
     }
 
+    /**
+     * Get the event's promotion QR code.
+     *
+     * @return      The event's promotion QR code ID
+     */
     public String getPromoQrId() {
         return promoQrId;
     }
 
+    /**
+     * Sets the event's promotion QR code.
+     *
+     * @param promoQrId      The event's promotion QR code ID
+     */
     public void setPromoQrId(String promoQrId) {
         this.promoQrId = promoQrId;
     }
@@ -103,7 +114,7 @@ public class Event implements Serializable{
     /**
      * Gets the name of the event.
      *
-     * @return The event name.
+     * @return      The event name.
      */
     public String getName() {
         return name;
@@ -112,7 +123,7 @@ public class Event implements Serializable{
     /**
      * Sets the name of the event.
      *
-     * @param name The new name for the event.
+     * @param name      The new name for the event.
      */
     public void setName(String name) {
         this.name = name;
@@ -121,7 +132,7 @@ public class Event implements Serializable{
     /**
      * Gets the organizer of the event.
      *
-     * @return The organizer's name.
+     * @return      The organizer's name.
      */
     public String getOrganizerName() {
         return organizerName;
@@ -130,7 +141,7 @@ public class Event implements Serializable{
     /**
      * Sets the organizer name of the event.
      *
-     * @param organizerName The new organizer's name.
+     * @param organizerName         The new organizer's name.
      */
     public void setOrganizerName(String organizerName) {
         this.organizerName = organizerName;
@@ -139,7 +150,7 @@ public class Event implements Serializable{
     /**
      * Gets the organizer ID of the event.
      *
-     * @return The organizer's ID.
+     * @return      The organizer's ID.
      */
     public String getOrganizerId() {
         return organizerId;
@@ -148,7 +159,7 @@ public class Event implements Serializable{
     /**
      * Sets the organizer ID of the event.
      *
-     * @param organizerId The new organizer's ID.
+     * @param organizerId       The new organizer's ID.
      */
     public void setOrganizerId(String organizerId) {
         this.organizerId = organizerId;
@@ -164,43 +175,45 @@ public class Event implements Serializable{
     }
 
     /**
-     * Set Attendees
-     * @param checkedAttendees
+     * Sets checked event attendees and their check-in counts.
+     *
+     * @param checkedAttendees      The new number of attendees that have checked in.
      */
     public void setCheckedAttendees(HashMap<String, Integer> checkedAttendees) {
         this.checkedAttendees = checkedAttendees;
     }
 
     /**
-     * get the Poster
-     * @return poster
+     * Gets the Event's poster.
+     *
+     * @return      The event's poster.
      */
     public String getPoster() {
         return poster;
     }
 
-  /**
-     * Set Event's poster
-     * @param poster a poster Image
+    /**
+     * Sets the Event's poster
+     *
+     * @param poster        The event's new poster.
      */
     public void setPoster(String poster) {
         this.poster = poster;
     }
 
-    
-
     /**
-     * Get Attendence
-     * @return number of Attendees
+     * Gets the number of attendees.
+     *
+     * @return      The number of Attendees.
      */
     public Integer getAttendance() {
         return checkedAttendees.size();
     }
 
     /**
-     * Get date on which event occurs.
+     * Gets the event's date..
      *
-     * @return The event date
+     * @return      The event date.
      */
     public String getDate() {
         return date;
@@ -209,7 +222,7 @@ public class Event implements Serializable{
     /**
      * Sets the date on which the event occurs.
      *
-     * @param date The new event date
+     * @param date      The new event date.
      */
     public void setDate(String date) {
         this.date = date;
@@ -254,7 +267,7 @@ public class Event implements Serializable{
     /**
      * Gets the attendance limit for the event.
      *
-     * @return The maximum number of allowed attendees.
+     * @return      The maximum number of allowed attendees.
      */
     public Integer getAttendanceLimit() {
         return attendanceLimit;
@@ -263,56 +276,61 @@ public class Event implements Serializable{
     /**
      * Sets the attendance limit for the event.
      *
-     * @param attendanceLimit The new maximum number of allowed attendees.
+     * @param attendanceLimit       The new maximum number of allowed attendees.
      */
     public void setAttendanceLimit(Integer attendanceLimit) {
         this.attendanceLimit = attendanceLimit;
     }
 
-
     /**
-     * get event description
-     * @return a description
+     * Gets event description.
+     *
+     * @return      A description of the event.
      */
     public String getDescription() {
         return description;
     }
 
     /**
-     * set event's description
-     * @param description a description
+     * Sets event description
+     *
+     * @param description       The new description of the event.
      */
     public void setDescription(String description) {
         this.description = description;
     }
 
     /**
-     * get event QR Code
-     * @return a qrCode encoded as a string
+     * Gets the event's QR Code
+     *
+     * @return      The event's QRCode encoded as a string.
      */
     public String getQrCode() {
         return qrCode;
     }
 
     /**
-     * set event's QR Code
-     * @param qrCode an encoded QR code
+     * Sets the event's QR Code
+     *
+     * @param qrCode        The new encoded event QR code.
      */
     public void setQrCode(String qrCode) {
         this.qrCode = qrCode;
     }
 
     /**
-     * get signed up attendees
-     * @return user's signed up for events
+     * Gets a list of signed up attendees.
+     *
+     * @return      Attendees signed up for events.
      */
     public ArrayList<String> getSignedAttendees() {
         return signedAttendees;
     }
 
     /**
-     * set checked in attendees
-     * @param  signedAttendees list of signed up attendees
+     * Sets a list of checked in attendees.
+     *
+     * @param signedAttendees       The new list of signed up attendees.
      */
     public void setSignedAttendees(ArrayList<String> signedAttendees) {
         this.signedAttendees = signedAttendees;
@@ -320,7 +338,8 @@ public class Event implements Serializable{
 
     /**
      * Check in an attendee
-     * @param attendeeId the attendee who checked in
+     *
+     * @param attendeeId        The ID of the attendee who checked in.
      */
     public void addCheckedAttendee(String attendeeId){
         if (!checkedAttendees.containsKey(attendeeId)){
@@ -336,7 +355,8 @@ public class Event implements Serializable{
 
     /**
      * Sign up an attendee
-     * @param attendeeId the attendee who signed
+     *
+     * @param attendeeId        The ID of the attendee who signed up.
      */
     public void addSignedAttendee(String attendeeId){
         if (!signedAttendees.contains(attendeeId)){
@@ -346,7 +366,13 @@ public class Event implements Serializable{
         }
     }
 
-    public void addGeopoint(GeoPoint geopoint){
+    /**
+     * Adds the geographical location from
+     * where the attendee checked in
+     *
+     * @param geopoint        The geographical point of check in.
+     */
+    public void setGeopoint(GeoPoint geopoint){
         DocumentReference eventRef = FirebaseFirestore.getInstance().collection("events").document(eventId);
         eventRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
@@ -364,22 +390,48 @@ public class Event implements Serializable{
         });
     }
 
+    /**
+     * Gets the geographical location from
+     * where the attendee checked in.
+     *
+     * @return         The geographical point of check in.
+     */
     public ArrayList<GeoPoint> getGeopoints() {
         return geopoints;
     }
 
+    /**
+     * Sets the new geographical location of check in.
+     *
+     * @param geopoints        The new geographical points of check in.
+     */
     public void setGeopoints(ArrayList<GeoPoint> geopoints) {
         this.geopoints = geopoints;
     }
 
+    /**
+     * Gets a list of the announcements.
+     *
+     * @return      A list of the announcements
+     */
     public ArrayList<Announcement> getAnnouncements() {
         return announcements;
     }
 
+    /**
+     * Sets a list of the announcements.
+     *
+     * @param announcements     A list of the new announcements
+     */
     public void setAnnouncements(ArrayList<Announcement> announcements) {
         this.announcements = announcements;
     }
 
+    /**
+     * Add a new announcement
+     *
+     * @param announcement      A list of the announcements
+     */
     public void addAnnouncements(String announcement){
         LocalTime time = LocalTime.now();
         announcements.add(new Announcement(announcement, time.toString(), name, organizerName));
@@ -387,6 +439,14 @@ public class Event implements Serializable{
         eventRef.update("announcements", announcements);
     }
 
+    /**
+     * Determines whether the provided object is equal to this Event.
+     * Two Events are considered equal if they have the same event ID.
+     *
+     * @param obj       The object to compare with this Event.
+     * @return true     If the object is an Event with the same ID,
+     *         false    otherwise.
+     */
     @Override
     public boolean equals(@Nullable Object obj) {
 
@@ -401,15 +461,30 @@ public class Event implements Serializable{
         return (obj instanceof Event) && ((Event) obj).getEventId().equals(eventId);
     }
 
+    /**
+     * Gets a hashcode of event ID.
+     *
+     * @return      A hashcode of the event ID.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(eventId);
     }
 
+    /**
+     * Gets the event's promotional QR code.
+     *
+     * @return      The event's promotional QR code as a String.
+     */
     public String getPromoQrCode() {
         return promoQrCode;
     }
 
+    /**
+     * Sets the event's promotional QR code.
+     *
+     * @param promoQrCode       The new event promotional QR code.
+     */
     public void setPromoQrCode(String promoQrCode) {
         this.promoQrCode = promoQrCode;
     }
