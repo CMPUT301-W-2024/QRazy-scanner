@@ -40,10 +40,21 @@
             android:gravity="center"/>
 
         <TextView
-            android:id="@+id/dialogEventDateTime"
+            android:id="@+id/dialogEventDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="12/12/2024"
+            android:fontFamily="@font/light"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/dialogEventTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="20:00 - 22:00"
             android:fontFamily="@font/light"
             android:textAppearance="?attr/textAppearanceBody1"
             android:layout_gravity="center_horizontal"

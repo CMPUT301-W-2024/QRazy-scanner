@@ -57,6 +57,11 @@
                 android:text="Completed"/>
 
         </LinearLayout>
+        <Button
+            android:id="@+id/attendeeOngoingEvent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Completed"/>
 
         <TextView
             android:layout_width="match_parent"

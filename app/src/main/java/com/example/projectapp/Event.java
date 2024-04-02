@@ -23,7 +23,8 @@ public class Event implements Serializable{
 
     private String name;
     private String date;
-    private String time;
+    private String startTime;
+    private String endTime;
     private String organizerName;
     private String organizerId;
     private String description;
@@ -37,7 +38,7 @@ public class Event implements Serializable{
     private ArrayList<Announcement> announcements;
 
     /**
-     * Event constructor
+     * Empty Event constructor required for firebase
      */
     public Event(){
 
@@ -46,19 +47,21 @@ public class Event implements Serializable{
     /**
      * Creates a new Event object with specified details.
      *
-     * @param name              The name of the event.
-     * @param date              The date the event occurs
-     * @param time              The time the event occurs
-     * @param organizerName     The name of the event organizer.
-     * @param organizerId       The id of the event organizer.
-     * @param attendanceLimit   The maximum number of allowed attendees.
-     * @param description       A description of the event.
-     * @param poster            A poster image associated with the event.
+     * @param name            The name of the event.
+     * @param date            The date the event occurs
+     * @param startTime             The time the event starts
+     * @param endTime       The time the event ends.
+     * @param organizerName       The name of the event organizer.
+     * @param organizerId     The id of the event organizer.
+     * @param attendanceLimit The maximum number of allowed attendees.
+     * @param description     A description of the event.
+     * @param poster          A poster image associated with the event.
      */
-    public Event(String name, String date, String time, String organizerName, String organizerId, Integer attendanceLimit, String description, String poster) {
+    public Event(String name, String date, String startTime, String endTime, String organizerName, String organizerId, Integer attendanceLimit, String description, String poster) {
         this.name = name;
         this.date = date;
-        this.time = time;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.organizerName = organizerName;
         this.organizerId = organizerId;
         this.attendanceLimit = attendanceLimit;
@@ -226,21 +229,39 @@ public class Event implements Serializable{
     }
 
     /**
-     * Gets the time of the event.
+     * Get time at which event starts.
      *
-     * @return      The event time.
+     * @return The event start time
      */
-    public String getTime() {
-        return time;
+    public String getStartTime() {
+        return startTime;
     }
 
     /**
-     * Sets the time at which the event occurs.
+     * Sets the time at which the event starts.
      *
-     * @param time      The new event time
+     * @param startTime The new event start time
      */
-    public void setTime(String time) {
-        this.time = time;
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    /**
+     * Get time at which event ends.
+     *
+     * @return The event end time
+     */
+    public String getEndTime() {
+        return endTime;
+    }
+
+    /**
+     * Sets the time at which the event ends.
+     *
+     * @param endTime The new event end time
+     */
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 
     /**

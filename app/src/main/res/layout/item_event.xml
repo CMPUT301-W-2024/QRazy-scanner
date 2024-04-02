@@ -44,11 +44,18 @@
         android:visibility="gone">
 
         <TextView
-            android:id="@+id/eventDateTimeOrgText"
+            android:id="@+id/eventDateOrgText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/light"
             android:text="10/10/2024"/>
+
+        <TextView
+            android:id="@+id/eventTimeOrgText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/light"
+            android:text="20:00 - 22:00"/>
 
         <TextView
             android:id="@+id/eventDetailOrgText"
