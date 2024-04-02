@@ -12,10 +12,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ScrollView;
+
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -24,8 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -33,14 +32,16 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Activity to display events to attendees.
@@ -48,8 +49,11 @@ import java.util.ArrayList;
  * Attendees can interact with the events, such as signing up for them.
  */
 public class AttendeePageActivity extends AppCompatActivity implements ProfileDeletedCallback{
-    private ArrayList<Event> allEvents;
-    private ArrayList<Event> attendeeEvents;
+    private ArrayList<Event> allEventsFiltered;
+    private ArrayList<Event> attendeeEventsFiltered;
+    private ArrayList<Event> allEventsFull;
+    private ArrayList<Event> attendeeEventsFull;
+    private String filter = "All";
     private AttendeeEventAdapter attendeeEventsAdapter;
     private AttendeeEventAdapter allEventsAdapter;
     private AnnouncementAdapter announcementAdapter;
@@ -79,18 +83,22 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         RecyclerView attendeeEventsList = findViewById(R.id.attendeeEventsList);
         RecyclerView allEventsList = findViewById(R.id.allEventsList);
         RecyclerView announcementsList = findViewById(R.id.announcementList);
-
+        Button filterAllButton = findViewById(R.id.attendeeAllEvent);
+        Button filterUpcomingButton = findViewById(R.id.attendeeUpcomingEvent);
+        Button filterCompletedButton = findViewById(R.id.attendeeCompletedEvent);
         ImageButton menuButton = findViewById(R.id.menuButton);
 
-        attendeeEvents = new ArrayList<>();
-        allEvents = new ArrayList<>();
+        attendeeEventsFiltered = new ArrayList<>();
+        allEventsFiltered = new ArrayList<>();
+        attendeeEventsFull = new ArrayList<>();
+        allEventsFull = new ArrayList<>();
         announcements = new ArrayList<>();
 
         attendeeEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         allEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         announcementsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        attendeeEventsAdapter = new AttendeeEventAdapter(attendeeEvents, new AttendeeEventAdapter.OnItemClickListener() {
+        attendeeEventsAdapter = new AttendeeEventAdapter(attendeeEventsFiltered, new AttendeeEventAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Event event) {
                 showDialogWithEventDetails(event, false);
@@ -107,7 +115,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
             }
         });
 
-        allEventsAdapter = new AttendeeEventAdapter(allEvents, new AttendeeEventAdapter.OnItemClickListener() {
+        allEventsAdapter = new AttendeeEventAdapter(allEventsFiltered, new AttendeeEventAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Event event) {
                 showDialogWithEventDetails(event,true);
@@ -123,6 +131,24 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         Button scanButton = findViewById(R.id.scanButton);
         scanButton.setOnClickListener(v -> {
             startActivity(new Intent(this, ScanActivity.class));
+        });
+
+        filterAllButton.setOnClickListener(v -> {
+            filter = "All";
+            filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
+            filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
+        });
+
+        filterUpcomingButton.setOnClickListener(v -> {
+            filter = "Upcoming";
+            filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
+            filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
+        });
+
+        filterCompletedButton.setOnClickListener(v -> {
+            filter = "Complete";
+            filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
+            filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
         });
 
         Button promoQrCodeButton = findViewById(R.id.promoQrCodeButton);
@@ -166,21 +192,18 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         addAllEventsListener();
     }
 
-    public void addEvent(Event event, ArrayList<Event> list, AttendeeEventAdapter adapter){
+    public void addEvent(Event event, ArrayList<Event> list){
         if (!list.contains(event)){
             list.add(event);
-            adapter.notifyDataSetChanged();
         }
     }
 
-    public void updateEvent(Event event, ArrayList<Event> list, AttendeeEventAdapter adapter){
+    public void updateEvent(Event event, ArrayList<Event> list){
         list.set(list.indexOf(event), event);
-        adapter.notifyDataSetChanged();
     }
 
-    public void removeEvent(Event event, ArrayList<Event> list, AttendeeEventAdapter adapter){
+    public void removeEvent(Event event, ArrayList<Event> list){
         list.remove(event);
-        adapter.notifyDataSetChanged();
     }
 
     private void addAnnouncements(Event event){
@@ -215,15 +238,18 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
                         Event event = dc.getDocument().toObject(Event.class);
                         switch (dc.getType()) {
                             case ADDED:
-                                addEvent(event, attendeeEvents, attendeeEventsAdapter);
+                                addEvent(event, attendeeEventsFull);
+                                filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
                                 addAnnouncements(event);
                                 break;
                             case MODIFIED:
-                                updateEvent(event, attendeeEvents, attendeeEventsAdapter);
+                                updateEvent(event, attendeeEventsFull);
+                                filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
                                 updateAnnouncements(event);
                                 break;
                             case REMOVED:
-                                removeEvent(event, attendeeEvents, attendeeEventsAdapter);
+                                removeEvent(event, attendeeEventsFull);
+                                filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
                                 removeAnnouncements(event);
                                 break;
 
@@ -246,13 +272,16 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
                         Event event = dc.getDocument().toObject(Event.class);
                         switch (dc.getType()) {
                             case ADDED:
-                                addEvent(event, allEvents, allEventsAdapter);
+                                addEvent(event, allEventsFull);
+                                filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
                                 break;
                             case MODIFIED:
-                                updateEvent(event, allEvents, allEventsAdapter);
+                                updateEvent(event, allEventsFull);
+                                filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
                                 break;
                             case REMOVED:
-                                removeEvent(event, allEvents, allEventsAdapter);
+                                removeEvent(event, allEventsFull);
+                                filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
                                 break;
                         }
                     }
@@ -281,7 +310,9 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
 
 
         eventNameView.setText(event.getName());
-        eventOrganizerView.setText(event.getOrganizerId());
+
+        eventOrganizerView.setText(event.getOrganizerName());
+
         eventDescriptionView.setText(event.getDescription());
 
         eventPosterView.setImageBitmap(stringToBitmap(event.getPoster()));
@@ -347,9 +378,35 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     }
 
     private void unsubscribeFromNotis(){
-        for (Event event : attendeeEvents){
+        for (Event event : attendeeEventsFiltered){
             FirebaseMessaging.getInstance().unsubscribeFromTopic(event.getEventId());
         }
+    }
+
+    private void filterEvents(ArrayList<Event> events, ArrayList<Event> eventsFull, AttendeeEventAdapter adapter) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date currentDateTime = new Date();
+        events.clear();
+        System.out.println("Got till here: " + eventsFull.size());
+        if (filter.equals("All")) {
+            events.addAll(eventsFull);
+        } else {
+            for (Event event : eventsFull) {
+                Date eventDateTime;
+                try {
+                    eventDateTime = sdf.parse(event.getDate() + " " + event.getTime());
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if (filter.equals("Upcoming") && currentDateTime.before(eventDateTime)) {
+                    events.add(event);
+                } else if (filter.equals("Complete") && currentDateTime.after(eventDateTime)) {
+                    events.add(event);
+                }
+            }
+        }
+        adapter.notifyDataSetChanged();
     }
 
     private void fetchEventAndShowDetails(String eventId) {

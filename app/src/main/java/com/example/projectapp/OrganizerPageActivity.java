@@ -55,12 +55,14 @@ public class OrganizerPageActivity extends AppCompatActivity {
 
         if (dataHandler.getOrganizer() != null){
             organizerNameEditText.setText(dataHandler.getOrganizer().getName());
+            organizerNameEditText.setFocusable(false);
+            organizerNameEditText.setCursorVisible(false);
         }
 
         mileStones = new ArrayList<>();
-        mileStones.add(1);
-        mileStones.add(3);
-        mileStones.add(7);
+        mileStones.add(5);
+        mileStones.add(10);
+        mileStones.add(20);
 
         RecyclerView recyclerView = findViewById(R.id.eventListRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
