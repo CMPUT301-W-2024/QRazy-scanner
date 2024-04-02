@@ -39,7 +39,8 @@ public class EventTest {
         // Checks if every parameter is NULL
         assertNull(event.getName());
         assertNull(event.getDate());
-        assertNull(event.getTime());
+        assertNull(event.getStartTime());
+        assertNull(event.getEndTime());
         assertNull(event.getOrganizerId());
         assertNull(event.getOrganizerName());
         assertNull(event.getAttendanceLimit());
@@ -47,7 +48,7 @@ public class EventTest {
         assertNull(event.getPoster());
     }
 
-    public Event testEvent = new Event("Sample Name","2024-01-01", "00:00", "Test Organizer", "123456789", 50, "Sample description", "poster.png");
+    public Event testEvent = new Event("Sample Name","2024-01-01", "00:00", "01:00", "Test Organizer", "123456789", 50, "Sample description", "poster.png");
 
     /**
      * Tests to check if name is valid using getters and setters
