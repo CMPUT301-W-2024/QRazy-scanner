@@ -71,6 +71,8 @@ dependencies {
     implementation("androidx.camera:camera-video:1.3.2")
     implementation("androidx.camera:camera-view:1.3.2")
     implementation("androidx.camera:camera-extensions:1.3.2")
+    implementation("androidx.core:core:1.12.0")
+    implementation ("com.itextpdf:itextg:5.5.10")
 }
 
 tasks.withType<Test> {

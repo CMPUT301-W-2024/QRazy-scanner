@@ -57,11 +57,24 @@
             android:fontFamily="@font/light"
             android:text="Detail: "/>
 
-        <Button
-            android:id="@+id/view_map_button"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Check map"/>
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/view_map_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Check map"/>
+
+            <Button
+                android:id="@+id/pdf_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PDF"/>
+
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/eventQrView"
