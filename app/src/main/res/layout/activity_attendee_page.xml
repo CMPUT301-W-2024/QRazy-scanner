@@ -101,14 +101,32 @@
                 android:padding="8dp">
             </androidx.recyclerview.widget.RecyclerView>
 
-            <Button
-                android:id="@+id/scanButton"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Check into event"
-                android:padding="12dp"
-                android:layout_margin="8dp"
-                android:textAppearance="?attr/textAppearanceButton" />
+                android:orientation="horizontal"
+                android:gravity="center|bottom"
+                android:layout_alignParentBottom="true"
+                android:padding="8dp">
+
+                <Button
+                    android:id="@+id/scanButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Check into event"
+                    android:padding="12dp"
+                    android:textAppearance="?attr/textAppearanceButton" />
+
+                <Button
+                    android:id="@+id/promoQrCodeButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/promo_qr_code"
+                    android:padding="12dp"
+                    android:textAppearance="?attr/textAppearanceButton" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

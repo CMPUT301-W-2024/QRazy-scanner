@@ -18,6 +18,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.graphics.Color;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -203,12 +207,57 @@ public class ProfileFragment extends Fragment {
             return 0; // Stop execution if any of the fields is empty
         }
 
+        if (encodedImage == null || encodedImage.isEmpty()) {
+            Bitmap generatedProfilePic = IdenticonGenerator.generate(name, 128);
+            if (generatedProfilePic != null) {
+                encodedImage = bitmapToString(generatedProfilePic);
+            }
+        }
+
         Attendee attendee = new Attendee(encodedImage, userNameEditText.getText().toString(), emailEditText.getText().toString(), phoneEditText.getText().toString());
         dataHandler.addAttendee(attendee);
         dataHandler.setAttendee(attendee);
         saveAttendeeId();
         return 1;
     }
+
+
+    public static class IdenticonGenerator {
+
+        public static Bitmap generate(String username, int size) {
+            try {
+                byte[] hash = MessageDigest.getInstance("MD5").digest(username.getBytes());
+                Bitmap identicon = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+
+                int gridSize = 10;
+                int cellSize = size / gridSize;
+
+                for (int x = 0; x < gridSize; x++) {
+                    for (int y = 0; y < gridSize; y++) {
+                        int i = x < gridSize / 2 ? x : gridSize - 1 - x;
+                        if ((hash[i] >> (y % 8) & 0x01) == 0x01) {
+                            int color = Color.rgb(hash[i] & 0xFF, hash[(i + 1) % hash.length] & 0xFF, hash[(i + 2) % hash.length] & 0xFF);
+                            fillCell(identicon, x, y, cellSize, color);
+                        }
+                    }
+                }
+
+                return identicon;
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        private static void fillCell(Bitmap bitmap, int x, int y, int cellSize, int color) {
+            for (int i = 0; i < cellSize; i++) {
+                for (int j = 0; j < cellSize; j++) {
+                    bitmap.setPixel(x * cellSize + i, y * cellSize + j, color);
+                }
+            }
+        }
+    }
+
 
 
     /**

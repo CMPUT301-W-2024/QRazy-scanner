@@ -2,18 +2,18 @@ package com.example.projectapp;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -22,10 +22,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-
-
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -143,6 +145,22 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
             filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
         });
 
+        Button promoQrCodeButton = findViewById(R.id.promoQrCodeButton);
+        promoQrCodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AttendeePageActivity.this, ScanActivity.class);
+                intent.putExtra("usage", "promoQr");
+                startActivity(intent);
+            }
+        });
+
+        String eventId = getIntent().getStringExtra("EVENT_ID");
+        if (eventId != null && !eventId.trim().isEmpty()) {
+            fetchEventAndShowDetails(eventId);
+        }
+
+
     }
     /**
      * Removes event listeners when the activity is paused to avoid unnecessary background processing.
@@ -195,7 +213,9 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     }
 
     private void removeAnnouncements(Event event){
-        announcements.removeAll(event.getAnnouncements());
+        for (int i=0; i < event.getAnnouncements().size(); i++){
+            announcements.remove(event.getAnnouncements().get(i));
+        }
         announcementAdapter.notifyDataSetChanged();
     }
 
@@ -271,6 +291,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         Dialog eventDetailDialog = new Dialog(this);
         eventDetailDialog.setContentView(R.layout.event_dialog);
 
+
         TextView eventNameView = eventDetailDialog.findViewById(R.id.dialogEventName);
         TextView eventOrganizerView = eventDetailDialog.findViewById(R.id.dialogEventOrganizer);
         TextView eventDescriptionView = eventDetailDialog.findViewById(R.id.dialogEventDescription);
@@ -280,11 +301,14 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         Button signUpButton = eventDetailDialog.findViewById(R.id.dialogEventSignButton);
 
 
+
         eventNameView.setText(event.getName());
         eventOrganizerView.setText(event.getOrganizerName());
         eventDescriptionView.setText(event.getDescription());
+
         eventPosterView.setImageBitmap(stringToBitmap(event.getPoster()));
         eventDateView.setText(event.getDate() + " at " + event.getTime());
+
 
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -354,16 +378,15 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         }
     }
 
-    private void filterEvents(ArrayList<Event> events, ArrayList<Event> eventsFull, AttendeeEventAdapter adapter){
+    private void filterEvents(ArrayList<Event> events, ArrayList<Event> eventsFull, AttendeeEventAdapter adapter) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date currentDateTime = new Date();
         events.clear();
         System.out.println("Got till here: " + eventsFull.size());
-        if (filter.equals("All")){
+        if (filter.equals("All")) {
             events.addAll(eventsFull);
-        }
-        else {
-            for (Event event : eventsFull){
+        } else {
+            for (Event event : eventsFull) {
                 Date eventDateTime;
                 try {
                     eventDateTime = sdf.parse(event.getDate() + " " + event.getTime());
@@ -371,15 +394,33 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
                     throw new RuntimeException(e);
                 }
 
-                if (filter.equals("Upcoming") && currentDateTime.before(eventDateTime)){
+                if (filter.equals("Upcoming") && currentDateTime.before(eventDateTime)) {
                     events.add(event);
-                }
-                else if (filter.equals("Complete") && currentDateTime.after(eventDateTime)) {
+                } else if (filter.equals("Complete") && currentDateTime.after(eventDateTime)) {
                     events.add(event);
                 }
             }
         }
         adapter.notifyDataSetChanged();
+    }
+
+    private void fetchEventAndShowDetails(String eventId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("events").document(eventId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    Event event = documentSnapshot.toObject(Event.class);
+                    if (event != null) {
+                        showDialogWithEventDetails(event, true);
+                    }
+                } else {
+                    Toast.makeText(AttendeePageActivity.this, "Event not found", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(AttendeePageActivity.this, "Error fetching event details", Toast.LENGTH_SHORT).show();
+        });
     }
 }
 
