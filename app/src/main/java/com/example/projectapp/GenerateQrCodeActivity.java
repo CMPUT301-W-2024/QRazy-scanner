@@ -103,7 +103,16 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
         MaterialButton shareQrCodeButton = findViewById(R.id.shareQrCodeButton);
         shareQrCodeButton.setOnClickListener(v -> {
             if (event != null && event.getEventId() != null && !event.getEventId().isEmpty()) {
-                fetchAndShareQRCode(event.getEventId());
+                fetchAndShareQRCode(event.getEventId(), "qrCode");
+            } else {
+                Toast.makeText(GenerateQrCodeActivity.this, "No event selected.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        MaterialButton sharePromoButton = findViewById(R.id.sharePromoQrCodeButton);
+        sharePromoButton.setOnClickListener(v -> {
+            if (event != null && event.getEventId() != null && !event.getEventId().isEmpty()) {
+                fetchAndShareQRCode(event.getEventId(), "promoQrCode");
             } else {
                 Toast.makeText(GenerateQrCodeActivity.this, "No event selected.", Toast.LENGTH_SHORT).show();
             }
@@ -231,13 +240,13 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
         }
     }
 
-    private void fetchAndShareQRCode(String eventId) {
+    private void fetchAndShareQRCode(String eventId, String qrCode) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("events").document(eventId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot != null && documentSnapshot.exists()) {
-                        String qrCodeString = documentSnapshot.getString("qrCode");
+                        String qrCodeString = documentSnapshot.getString(qrCode);
                         if (qrCodeString != null && !qrCodeString.isEmpty()) {
                             Bitmap qrCodeBitmap = stringToBitmap(qrCodeString);
                             shareQRCode(qrCodeBitmap);
