@@ -67,12 +67,27 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/bold1"
         android:text="Share QR Code"
-        android:textSize="15sp"
+        android:textSize="13sp"
         app:layout_constraintTop_toBottomOf="@id/generatePromotionQrCodeButton"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/sharePromoQrCodeButton"
+        android:layout_marginTop="8dp"
+        app:layout_constraintWidth_percent="0.42" />
+
+    <!-- Share Promo QR Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/sharePromoQrCodeButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/bold1"
+        android:text="Share Promo QR"
+        android:textSize="13sp"
+        app:layout_constraintTop_toBottomOf="@id/generatePromotionQrCodeButton"
+        app:layout_constraintStart_toEndOf="@id/shareQrCodeButton"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp"
-        app:layout_constraintWidth_percent="0.85" />
+        android:layout_marginStart="8dp"
+        app:layout_constraintWidth_percent="0.42" />
 
     <!-- Home Page Button -->
     <com.google.android.material.button.MaterialButton
