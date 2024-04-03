@@ -34,8 +34,8 @@ public class ScanActivity extends AppCompatActivity {
     private CodeScanner mCodeScanner;
     private final int CAMERA_PERMISSION_CODE = 100;
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private DataHandler dataHandler = DataHandler.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final DataHandler dataHandler = DataHandler.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,7 +127,7 @@ public class ScanActivity extends AppCompatActivity {
         if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().contains(dataHandler.getAttendee().getAttendeeId()) || event.getAttendance() + event.getSignedAttendees().size() < event.getAttendanceLimit()){
             event.addCheckedAttendee(dataHandler.getAttendee().getAttendeeId());
             dataHandler.getAttendee().addCheckedEvent(event.getEventId());
-            FirebaseMessaging.getInstance().subscribeToTopic(event.getEventId());
+            dataHandler.subscribeToTopic(event.getEventId());
             Intent intent = new Intent(ScanActivity.this, AttendeePageActivity.class);
             startActivity(intent);
             Intent intent1 = new Intent(ScanActivity.this, GeopointDialog.class);

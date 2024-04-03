@@ -1,24 +1,12 @@
 package com.example.projectapp;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -32,9 +20,6 @@ public class DataHandler {
     private FirebaseFirestore db;
     private Attendee attendee;
     private Organizer organizer;
-    private ListenerRegistration attendeesListener;
-    private ListenerRegistration eventsListener;
-    private ListenerRegistration organizersListener;
 
     private DataHandler(){
         db = FirebaseFirestore.getInstance();
@@ -80,7 +65,7 @@ public class DataHandler {
     public void addOrganizersListener(){
         CollectionReference organizersRef = db.collection("organizers");
 
-        organizersListener = organizersRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        organizersRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
@@ -151,17 +136,12 @@ public class DataHandler {
     }
 
     public void subscribeToTopic(String eventId){
-        FirebaseMessaging.getInstance().subscribeToTopic(eventId)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        String msg = "Subscribed";
-                        if (!task.isSuccessful()) {
-                            msg = "Subscribe failed";
-                        }
-                    }
-                });
+        FirebaseMessaging.getInstance().subscribeToTopic(eventId);
     }
+    public void unSubscribeToTopic(String eventId){
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(eventId);
+    }
+
 
     public void addProfileDeletedListener(ProfileDeletedCallback callback){
         CollectionReference attendeesRef = db.collection("attendees");
@@ -172,6 +152,38 @@ public class DataHandler {
                 for (DocumentChange dc : snapshots.getDocumentChanges()) {
                     if (dc.getType() == DocumentChange.Type.REMOVED){
                         callback.onProfileDeleted();
+                    }
+                }
+            }
+        });
+    }
+
+    public void addAttendeeEventsListener(AttendeeEventsCallback callback) {
+        CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
+        eventsRef.whereArrayContains("signedAttendees", getAttendee().getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (snapshots != null) {
+                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                        Event event = dc.getDocument().toObject(Event.class);
+                        callback.onAttendeeEventUpdated(dc.getType(), event);
+                    }
+                }
+            }
+        });
+    }
+
+    public void addAllEventsListener(AllEventsCallback callback){
+        CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
+        eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>(){
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (snapshots != null){
+                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                        Event event = dc.getDocument().toObject(Event.class);
+                        callback.onAllEventsUpdated(dc.getType(), event);
                     }
                 }
             }
