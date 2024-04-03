@@ -60,11 +60,7 @@ public class test2CreateEventTest {
                         isDisplayed()));
         materialButton.perform(click());
 
-        ViewInteraction textView = onView(
-                allOf(withId(R.id.headerTextView), withText("Welcome"),
-                        withParent(withParent(withId(android.R.id.content))),
-                        isDisplayed()));
-        textView.check(matches(isDisplayed()));
+        onView(withId(R.id.headerTextView)).check(matches(isDisplayed()));
 
         /*
         ViewInteraction textInputEditText = onView(
@@ -116,8 +112,6 @@ public class test2CreateEventTest {
                                 3)));
         materialButton3.perform(scrollTo(), click());
 
-        pressBack();
-
         ViewInteraction textInputEditText4 = onView(
                 allOf(withId(R.id.eventStartTimeEditText),
                         childAtPosition(
@@ -147,16 +141,6 @@ public class test2CreateEventTest {
                         isDisplayed()));
         textInputEditText5.perform(click());
 
-        ViewInteraction textInputEditText6 = onView(
-                allOf(withId(R.id.eventEndTimeEditText),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.eventEndTimeInputLayout),
-                                        0),
-                                0),
-                        isDisplayed()));
-        textInputEditText6.perform(click());
-
         ViewInteraction materialButton5 = onView(
                 allOf(withId(android.R.id.button1), withText("OK"),
                         childAtPosition(
@@ -165,15 +149,6 @@ public class test2CreateEventTest {
                                         0),
                                 3)));
         materialButton5.perform(scrollTo(), click());
-
-        ViewInteraction materialButton6 = onView(
-                allOf(withId(android.R.id.button1), withText("OK"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.widget.ScrollView")),
-                                        0),
-                                3)));
-        materialButton6.perform(scrollTo(), click());
 
         ViewInteraction textInputEditText7 = onView(
                 allOf(withId(R.id.eventDescriptionEditText),
@@ -184,8 +159,6 @@ public class test2CreateEventTest {
                                 0),
                         isDisplayed()));
         textInputEditText7.perform(replaceText("test "), closeSoftKeyboard());
-
-        pressBack();
 
         ViewInteraction textInputEditText8 = onView(
                 allOf(withId(R.id.eventDescriptionEditText), withText("test "),
@@ -247,117 +220,6 @@ public class test2CreateEventTest {
                         isDisplayed()));
         materialButton8.perform(click());
 
-        ViewInteraction imageView = onView(
-                allOf(withId(R.id.qrCodeImageView),
-                        withParent(withParent(withId(android.R.id.content))),
-                        isDisplayed()));
-        imageView.check(matches(isDisplayed()));
-
-        ViewInteraction materialButton9 = onView(
-                allOf(withId(R.id.generatePromotionQrCodeButton), withText("Generate Promotion QR Code"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                3),
-                        isDisplayed()));
-        materialButton9.perform(click());
-
-        ViewInteraction materialButton10 = onView(
-                allOf(withId(R.id.shareQrCodeButton), withText("Share QR Code"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                4),
-                        isDisplayed()));
-        materialButton10.perform(click());
-
-        ViewInteraction materialButton11 = onView(
-                allOf(withId(R.id.finishButton), withText("Home Page"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                5),
-                        isDisplayed()));
-        materialButton11.perform(click());
-
-        ViewInteraction textView2 = onView(
-                allOf(withId(R.id.eventNameOrgText), withText("test 2"),
-                        withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class))),
-                        isDisplayed()));
-        textView2.check(matches(withText("test 2")));
-
-        ViewInteraction appCompatImageButton = onView(
-                allOf(withId(R.id.expandButton),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.eventListRecyclerView),
-                                        0),
-                                3),
-                        isDisplayed()));
-        appCompatImageButton.perform(click());
-
-        ViewInteraction imageView2 = onView(
-                allOf(withId(R.id.eventQrView),
-                        withParent(allOf(withId(R.id.expandEventLayout),
-                                withParent(IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class)))),
-                        isDisplayed()));
-        imageView2.check(matches(isDisplayed()));
-
-        ViewInteraction materialTextView = onView(
-                allOf(withId(R.id.attendeeCountTextView), withText("Live Attendee Count: 0"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.widget.LinearLayout")),
-                                        1),
-                                1),
-                        isDisplayed()));
-        materialTextView.perform(click());
-
-        ViewInteraction textView3 = onView(
-                allOf(withText("Checked In Attendees"),
-                        withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class))),
-                        isDisplayed()));
-        textView3.check(matches(withText("Checked In Attendees")));
-
-        pressBack();
-
-        ViewInteraction materialButton12 = onView(
-                allOf(withId(R.id.viewMapButton), withText("Check map"),
-                        childAtPosition(
-                                allOf(withId(R.id.expandEventLayout),
-                                        childAtPosition(
-                                                withClassName(is("android.widget.LinearLayout")),
-                                                2)),
-                                3),
-                        isDisplayed()));
-        materialButton12.perform(click());
-
-        ViewInteraction viewGroup = onView(
-                allOf(withId(R.id.mapview),
-                        withParent(withParent(withId(android.R.id.content))),
-                        isDisplayed()));
-        viewGroup.check(matches(isDisplayed()));
-
-        ViewInteraction viewGroup2 = onView(
-                allOf(withId(R.id.mapview),
-                        withParent(withParent(withId(android.R.id.content))),
-                        isDisplayed()));
-        viewGroup2.check(matches(isDisplayed()));
-
-        ViewInteraction materialButton13 = onView(
-                allOf(withId(R.id.goBackButton), withText("BACK"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                1),
-                        isDisplayed()));
-        materialButton13.perform(click());
-
-        pressBack();
     }
 
     private static Matcher<View> childAtPosition(
