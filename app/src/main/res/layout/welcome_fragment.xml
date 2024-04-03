@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/screenBackground"
+        android:background="@color/darkGreen"
         android:padding="16dp">
 
         <TextView
@@ -37,9 +37,10 @@
             android:layout_marginStart="24dp"
             android:backgroundTint="@color/buttonBackground"
             android:text="@string/createevent"
-            android:textSize="20sp"
+            android:textSize="17sp"
             android:fontFamily="@font/bold1"
             android:textColor="@color/black"
+            android:drawableLeft="@drawable/baseline_notifications_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/joinEventButton"
@@ -53,8 +54,9 @@
             android:backgroundTint="@color/buttonBackground"
             android:text="@string/joinevent"
             android:fontFamily="@font/bold1"
-            android:textSize="20sp"
+            android:textSize="17sp"
             android:textColor="@color/black"
+            android:drawableLeft="@drawable/baseline_notifications_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/createEventButton"

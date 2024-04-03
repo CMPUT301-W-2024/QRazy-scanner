@@ -1,11 +1,20 @@
 package com.example.projectapp;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.pdf.PdfDocument;
+import android.os.Environment;
+import android.os.StrictMode;
 import android.text.InputType;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -19,9 +28,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -52,6 +66,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         ImageView eventQrView;
         ImageButton expandEventButton, announcementButton;
         Button viewmapButton;
+        Button pdfButton;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -64,6 +79,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             eventQrView = itemView.findViewById(R.id.eventQrView);
             expandEventButton = itemView.findViewById(R.id.expandButton);
             announcementButton = itemView.findViewById(R.id.announcementButton);
+            pdfButton = itemView.findViewById(R.id.pdf_button);
             viewmapButton = itemView.findViewById(R.id.viewMapButton);
         }
     }
@@ -141,6 +157,11 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             intent.putExtra("eventId", event.getEventId());
             context.startActivity(intent);
         });
+        holder.pdfButton.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ReportActivity.class);
+            intent.putExtra("eventId", event.getEventId());
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -211,4 +232,5 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
 
         return googleCredentials.getAccessToken().getTokenValue();
     }
+
 }
