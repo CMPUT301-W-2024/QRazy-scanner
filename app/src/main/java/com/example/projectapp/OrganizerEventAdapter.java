@@ -20,6 +20,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 /**
@@ -39,7 +42,8 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView eventNameTextView, attendeeCountTextView, eventDetailTextView, eventDateTextView, eventTimeTextView;
         LinearLayout expandEventLayout;
-        ImageView eventQrView;
+        ImageView eventQrView, promoQrView;
+        TextView eventQrText, promoQrText;
         ImageButton expandEventButton, announcementButton;
         Button viewmapButton;
         Button pdfButton;
@@ -53,6 +57,9 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             eventTimeTextView = itemView.findViewById(R.id.eventTimeOrgText);
             expandEventLayout = itemView.findViewById(R.id.expandEventLayout);
             eventQrView = itemView.findViewById(R.id.eventQrView);
+            promoQrView = itemView.findViewById(R.id.promoQrView);
+            eventQrText = itemView.findViewById(R.id.eventQrText);
+            promoQrText = itemView.findViewById(R.id.promoQrText);
             expandEventButton = itemView.findViewById(R.id.expandButton);
             announcementButton = itemView.findViewById(R.id.announcementButton);
             pdfButton = itemView.findViewById(R.id.pdf_button);
@@ -79,11 +86,13 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         if (event.getQrCode() != null){
             Bitmap bitmap = stringToBitmap(event.getQrCode());
             holder.eventQrView.setImageBitmap(bitmap);
+            holder.eventQrText.setVisibility(View.VISIBLE);
         }
 
         if (event.getPromoQrCode() != null){
             Bitmap bitmap = stringToBitmap(event.getPromoQrCode());
-            holder.eventQrView.setImageBitmap(bitmap);
+            holder.promoQrView.setImageBitmap(bitmap);
+            holder.promoQrText.setVisibility(View.VISIBLE);
         }
 
         holder.attendeeCountTextView.setOnClickListener(v -> {
