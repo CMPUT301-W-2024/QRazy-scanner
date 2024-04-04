@@ -1,9 +1,14 @@
 package com.example.projectapp;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -25,7 +30,7 @@ import java.util.List;
 /**
  * Handle Scanning QR Code
  */
-public class ScanActivity extends AppCompatActivity {
+public class ScanActivity extends AppCompatActivity implements GetEventCallback {
 
     private CodeScanner mCodeScanner;
     private final int CAMERA_PERMISSION_CODE = 100;
@@ -59,10 +64,7 @@ public class ScanActivity extends AppCompatActivity {
 
                         else if (usage.equals("promoQr")){
                             String eventId = qrData.substring("Promo".length()); // Extract event ID
-                            Intent intent = new Intent(ScanActivity.this, AttendeePageActivity.class);
-                            intent.putExtra("EVENT_ID", eventId);
-                            startActivity(intent);
-                            finish();
+                            dataHandler.getEvent(eventId, ScanActivity.this);
                         }
 
                     }
@@ -180,4 +182,18 @@ public class ScanActivity extends AppCompatActivity {
                 .hashString(code, StandardCharsets.UTF_8)
                 .toString();
     }
+
+    @Override
+    public void onGetEvent(Event event) {
+        if (event != null){
+            Intent intent = new Intent(ScanActivity.this, AttendeePageActivity.class);
+            intent.putExtra("EVENT", event);
+            setResult(1, intent);
+            finish();
+        }
+        else {
+            Toast.makeText(this, "Error fetching event details", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.example.projectapp;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,6 +17,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,7 +41,7 @@ import java.util.Date;
  * It provides functionality to view events the attendee is participating in, and to view all available events.
  * Attendees can interact with the events, such as signing up for them.
  */
-public class AttendeePageActivity extends AppCompatActivity implements ProfileDeletedListenerCallback, AttendeeEventsListenerCallback, AllEventsListenerCallback, GetEventCallback {
+public class AttendeePageActivity extends AppCompatActivity implements ProfileDeletedListenerCallback, AttendeeEventsListenerCallback, AllEventsListenerCallback {
     private ArrayList<Event> allEventsFiltered;
     private ArrayList<Event> attendeeEventsFiltered;
     private ArrayList<Event> allEventsFull;
@@ -156,14 +161,15 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
             public void onClick(View v) {
                 Intent intent = new Intent(AttendeePageActivity.this, ScanActivity.class);
                 intent.putExtra("usage", "promoQr");
-                startActivity(intent);
+                activityResultLauncher.launch(intent);
+               //startActivity(intent);
             }
         });
 
-        String eventId = getIntent().getStringExtra("EVENT_ID");
-        if (eventId != null && !eventId.trim().isEmpty()) {
-            dataHandler.getEvent(eventId, this);
-        }
+/*        Event event = (Event) getIntent().getSerializableExtra("EVENT");
+        if (event != null) {
+            showDialogWithEventDetails(event, true);
+        }*/
 
     }
     /**
@@ -385,15 +391,6 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         updateEventListVisibility();
     }
 
-    @Override
-    public void onGetEvent(Event event) {
-        if (event == null){
-            Toast.makeText(AttendeePageActivity.this, "Error fetching event details", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        showDialogWithEventDetails(event, true);
-    }
-
     private void updateEventListVisibility() {
         TextView noMyEventsText = findViewById(R.id.noMyEventsText);
         TextView noAllEventsText = findViewById(R.id.noAllEventsText);
@@ -410,6 +407,19 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
             noAllEventsText.setVisibility(View.GONE);
         }
     }
+
+    ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == 1) {
+                        Intent data = result.getData();
+                        Event event = (Event) data.getSerializableExtra("EVENT");
+                        showDialogWithEventDetails(event, true);
+                    }
+                }
+            });
 
 }
 

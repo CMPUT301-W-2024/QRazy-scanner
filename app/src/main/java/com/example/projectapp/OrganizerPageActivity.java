@@ -44,12 +44,6 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
 
         organizerNameEditText = findViewById(R.id.organizerNameEditText);
 
-        if (dataHandler.getOrganizer() != null){
-            organizerNameEditText.setText(dataHandler.getOrganizer().getName());
-            organizerNameEditText.setFocusable(false);
-            organizerNameEditText.setCursorVisible(false);
-        }
-
         mileStones = new ArrayList<>();
         mileStones.add(5);
         mileStones.add(10);
@@ -68,10 +62,15 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
             @Override
             public void onClick(View v) {
                 if (dataHandler.getOrganizer() == null){
-                    Organizer organizer = new Organizer(organizerNameEditText.getText().toString().trim());
+                    String organizerName = organizerNameEditText.getText().toString().trim();
+                    if (organizerName.isEmpty()){
+                        Toast.makeText(OrganizerPageActivity.this, "Organizer name can't be empty", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    Organizer organizer = new Organizer(organizerName);
                     dataHandler.setOrganizer(organizer);
                     saveOrganizerId();
-                    dataHandler.addOrganizer(organizer);
+                    dataHandler.addOrganizer();
                 }
                 Intent intent = new Intent(OrganizerPageActivity.this, CreateNewEventActivity.class);
                 startActivity(intent);
@@ -80,17 +79,16 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
 
     }
 
-    /**
-     * Adds an event listener if the organizer is not null.
-     */
     @Override
     protected void onResume() {
         super.onResume();
+        if (dataHandler.getOrganizer() != null){
+            organizerNameEditText.setText(dataHandler.getOrganizer().getName());
+            organizerNameEditText.setFocusable(false);
+            organizerNameEditText.setCursorVisible(false);
+        }
     }
 
-    /**
-     * Removes the event listener if it's not null.
-     */
     @Override
     protected void onPause() {
         super.onPause();

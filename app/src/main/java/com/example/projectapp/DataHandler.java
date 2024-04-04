@@ -121,10 +121,8 @@ public class DataHandler {
 
     /**
      * Adds an Organizer document to the "organizers" collection in Firebase.
-     * @param organizer
-     *      The Organizer object representing the data to add.
      */
-    public void addOrganizer(Organizer organizer){
+    public void addOrganizer(){
         DocumentReference organizerDocRef =  organizersRef.document(organizer.getOrganizerId());
 
         organizerDocRef.set(organizer);
