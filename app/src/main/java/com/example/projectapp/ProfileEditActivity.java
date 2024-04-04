@@ -92,19 +92,18 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         }
 
         dataHandler.addAttendee(currentAttendee, this);
-
-        Intent intent = new Intent(this, AttendeePageActivity.class);
-        startActivity(intent);
-        finish();
     }
 
     @Override
     public void onAddAttendee(Attendee attendee) {
         if (attendee != null){
             Toast.makeText(this, "Updated profile", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, AttendeePageActivity.class);
+            startActivity(intent);
+            finish();
         }
         else {
-            Toast.makeText(this, "Couldn't update profile", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Couldn't update profile, image quality might be too high", Toast.LENGTH_SHORT).show();
         }
     }
 

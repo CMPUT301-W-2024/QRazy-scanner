@@ -52,7 +52,6 @@ public class ReportActivity extends AppCompatActivity {
 
     String TAG = "Report";
     Event event;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     String eventName;
     String organizer;
     String eventDescription;

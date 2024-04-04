@@ -13,6 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.MemoryCacheSettings;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -96,6 +97,7 @@ public class DataHandler {
                     callback.onAddAttendee(attendee);
                 })
                 .addOnFailureListener(e -> {
+                    System.out.println("Got till here error " + e);
                     callback.onAddAttendee(null);
                 });;
     }
@@ -128,7 +130,7 @@ public class DataHandler {
         organizerDocRef.set(organizer);
     }
 
-    public void updateEvent(String eventId, String field, String value, UpdateEventCallback callback){
+    public void updateEvent(String eventId, String field, Object value, UpdateEventCallback callback){
         DocumentReference eventDocRef = eventsRef.document(eventId);
         eventDocRef.update(field, value).addOnSuccessListener(aVoid -> callback.onUpdateEvent(eventId))
                 .addOnFailureListener(e -> callback.onUpdateEvent(null));
@@ -139,10 +141,10 @@ public class DataHandler {
         attendeeDocRef.update(field, value);
     }
 
-    public void subscribeToTopic(String eventId){
+    public void subscribeToNotis(String eventId){
         FirebaseMessaging.getInstance().subscribeToTopic(eventId);
     }
-    public void unSubscribeToTopic(String eventId){
+    public void unSubscribeFromNotis(String eventId){
         FirebaseMessaging.getInstance().unsubscribeFromTopic(eventId);
     }
 
@@ -201,15 +203,23 @@ public class DataHandler {
         });
     }
 
-    public void addAttendeeEventsListener(AttendeeEventsListenerCallback callback) {
-        eventsRef.whereArrayContains("signedAttendees", getAttendee().getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+    public void addAttendeeEventsListener(boolean getCheckedIn, AttendeeEventsListenerCallback callback) {
+
+        Query query;
+        if (getCheckedIn){
+            query = eventsRef.orderBy("checkedAttendees." + attendee.getAttendeeId());
+        }
+        else {
+            query = eventsRef.whereArrayContains("signedAttendees", attendee.getAttendeeId());
+        }
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
                 if (snapshots != null && !snapshots.isEmpty()) {
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         Event event = dc.getDocument().toObject(Event.class);
-                        callback.onAttendeeEventUpdated(dc.getType(), event);
+                        callback.onAttendeeEventsUpdated(dc.getType(), event);
                     }
                 }
             }
@@ -241,6 +251,35 @@ public class DataHandler {
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         Event event = dc.getDocument().toObject(Event.class);
                         callback.onOrganizerEventsUpdated(dc.getType(), event);
+                    }
+                }
+            }
+        });
+    }
+
+    public void addEventAttendeesListener(Event event, boolean getCheckedIn, EventAttendeesListenerCallback callback){
+
+        Query query;
+        if (getCheckedIn){
+            query = attendeesRef.orderBy("checkedInEvents." + event.getEventId());
+        }
+        else {
+            query = attendeesRef.whereArrayContains("signedUpEvents", event.getEventId());
+        }
+
+        query.addSnapshotListener(new EventListener<QuerySnapshot>(){
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (snapshots != null && !snapshots.isEmpty()){
+                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                        Attendee attendee = dc.getDocument().toObject(Attendee.class);
+                        if (getCheckedIn){
+                            callback.onEventCheckedAttendeesUpdated(dc.getType(), attendee);
+                        }
+                        else {
+                            callback.onEventSignedAttendeesUpdated(dc.getType(), attendee);
+                        }
                     }
                 }
             }

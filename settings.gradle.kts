@@ -14,6 +14,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Project app"
+rootProject.name = "Qrazy Scanner"
 include(":app")
  

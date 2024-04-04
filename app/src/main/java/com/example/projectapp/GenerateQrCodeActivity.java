@@ -160,27 +160,6 @@ public class GenerateQrCodeActivity extends AppCompatActivity implements GetQrCo
         }
     }
 
-    /**
-     * Stores a QR code bitmap string in Firebase, associated with the event.
-     *
-     * @param qrCodeBitmap
-     *      The bitmap string of the QR code to store.
-     */
-/*    private void storeQRCodeInFirestore(Bitmap qrCodeBitmap) {
-        String qrCodeString = bitmapToString(qrCodeBitmap);
-        db.collection("events").document(eventId)
-                .update("qrCode", qrCodeString)
-                .addOnSuccessListener(aVoid -> Toast.makeText(GenerateQrCodeActivity.this, "QR Code stored successfully", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(GenerateQrCodeActivity.this, "Failed to store QR Code", Toast.LENGTH_SHORT).show());
-    }*/
-
-/*    private void storePromoQRCodeInFirestore(Bitmap qrCodeBitmap) {
-        String qrCodeString = bitmapToString(qrCodeBitmap);
-        db.collection("events").document(eventId)
-                .update("promoQrCode", qrCodeString)
-                .addOnSuccessListener(aVoid -> Toast.makeText(GenerateQrCodeActivity.this, "QR Code stored successfully", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(GenerateQrCodeActivity.this, "Failed to store QR Code", Toast.LENGTH_SHORT).show());
-    }*/
 
     /**
      * Navigates back to the CreateEventActivity.

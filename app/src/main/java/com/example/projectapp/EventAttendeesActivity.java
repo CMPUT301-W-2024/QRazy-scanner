@@ -1,21 +1,10 @@
 package com.example.projectapp;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Bundle;
-
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -24,14 +13,12 @@ import java.util.Iterator;
  * Handles separating attendees into lists based on check-in status and
  * sync with Firebase data.
  */
-public class EventAttendeesActivity extends AppCompatActivity {
+public class EventAttendeesActivity extends AppCompatActivity implements EventAttendeesListenerCallback{
 
     private ArrayList<Attendee> checkedInAttendees;
     private ArrayList<Attendee> signedUpAttendees;
     private EventAttendeeAdapter checkedInAttendeeAdapter;
     private EventAttendeeAdapter signedUpAttendeeAdapter;
-    private ListenerRegistration checkedInAttendeeListener;
-    private ListenerRegistration signedUpAttendeeListener;
     private Event event;
 
     @Override
@@ -40,6 +27,8 @@ public class EventAttendeesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_attendees_actvity);
 
         event = (Event) getIntent().getSerializableExtra("EVENT");
+        DataHandler.getInstance().addEventAttendeesListener(event, true, this); // for checked in attendees
+        DataHandler.getInstance().addEventAttendeesListener(event, false, this); // for signed up attendees
 
         RecyclerView checkedInAttendeesListView = findViewById(R.id.checkedInAttendeesList);
         RecyclerView signedUpAttendeesListView = findViewById(R.id.signedUpAttendeesList);
@@ -60,15 +49,11 @@ public class EventAttendeesActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        checkedInAttendeeListener = addAttendeesListener(true, checkedInAttendees, checkedInAttendeeAdapter);
-        signedUpAttendeeListener = addAttendeesListener(false, signedUpAttendees, signedUpAttendeeAdapter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        checkedInAttendeeListener.remove();
-        signedUpAttendeeListener.remove();
     }
 
     /**
@@ -120,39 +105,33 @@ public class EventAttendeesActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-    private ListenerRegistration addAttendeesListener(boolean getCheckedIn, ArrayList<Attendee> attendees, EventAttendeeAdapter adapter){
-        CollectionReference attendeeRef = FirebaseFirestore.getInstance().collection("attendees");
-
-        Query query;
-        if (getCheckedIn){
-            query = attendeeRef.orderBy("checkedInEvents." + event.getEventId());
+    @Override
+    public void onEventCheckedAttendeesUpdated(DocumentChange.Type updateType, Attendee attendee) {
+        switch (updateType) {
+            case ADDED:
+                addAttendee(attendee, checkedInAttendees, checkedInAttendeeAdapter);
+                break;
+            case MODIFIED:
+                updateAttendee(attendee, checkedInAttendees, checkedInAttendeeAdapter);
+                break;
+            case REMOVED:
+                removeAttendee(attendee, checkedInAttendees, checkedInAttendeeAdapter);
+                break;
         }
-        else {
-            query = attendeeRef.whereArrayContains("signedUpEvents", event.getEventId());
-        }
+    }
 
-        ListenerRegistration attendeeListener = query.addSnapshotListener(new EventListener<QuerySnapshot>(){
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots,
-                                @Nullable FirebaseFirestoreException e) {
-                if (snapshots != null){
-                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                        Attendee attendee = dc.getDocument().toObject(Attendee.class);
-                        switch (dc.getType()) {
-                            case ADDED:
-                                addAttendee(attendee, attendees, adapter);
-                                break;
-                            case MODIFIED:
-                                updateAttendee(attendee, attendees, adapter);
-                                break;
-                            case REMOVED:
-                                removeAttendee(attendee, attendees, adapter);
-                                break;
-                        }
-                    }
-                }
-            }
-        });
-        return  attendeeListener;
+    @Override
+    public void onEventSignedAttendeesUpdated(DocumentChange.Type updateType, Attendee attendee) {
+        switch (updateType) {
+            case ADDED:
+                addAttendee(attendee, signedUpAttendees, signedUpAttendeeAdapter);
+                break;
+            case MODIFIED:
+                updateAttendee(attendee, signedUpAttendees, signedUpAttendeeAdapter);
+                break;
+            case REMOVED:
+                removeAttendee(attendee, signedUpAttendees, signedUpAttendeeAdapter);
+                break;
+        }
     }
 }
