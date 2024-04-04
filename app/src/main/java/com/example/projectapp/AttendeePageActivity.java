@@ -45,7 +45,7 @@ import java.util.Date;
  * It provides functionality to view events the attendee is participating in, and to view all available events.
  * Attendees can interact with the events, such as signing up for them.
  */
-public class AttendeePageActivity extends AppCompatActivity implements ProfileDeletedCallback, AttendeeEventsCallback, AllEventsCallback {
+public class AttendeePageActivity extends AppCompatActivity implements ProfileDeletedCallback, AttendeeEventsCallback, AllEventsCallback, GetEventCallback {
     private ArrayList<Event> allEventsFiltered;
     private ArrayList<Event> attendeeEventsFiltered;
     private ArrayList<Event> allEventsFull;
@@ -54,10 +54,9 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     private AttendeeEventAdapter attendeeEventsAdapter;
     private AttendeeEventAdapter allEventsAdapter;
     private AnnouncementAdapter announcementAdapter;
-    private ListenerRegistration allEventsListener;
     private ArrayList<Announcement> announcements;
-    private boolean enableListeners;
-    private DataHandler dataHandler = DataHandler.getInstance();
+    private boolean active;
+    private final DataHandler dataHandler = DataHandler.getInstance();
 
     /**
      * Initializes the activity, sets up RecyclerViews for displaying events.
@@ -171,9 +170,9 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
 
         String eventId = getIntent().getStringExtra("EVENT_ID");
         if (eventId != null && !eventId.trim().isEmpty()) {
-            fetchEventAndShowDetails(eventId);
+            dataHandler.getEvent(eventId, this);
+            //fetchEventAndShowDetails(eventId);
         }
-
 
     }
     /**
@@ -183,7 +182,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     @Override
     protected void onPause() {
         super.onPause();
-        enableListeners = false;
+        active = false;
     }
 
     /**
@@ -193,7 +192,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     @Override
     protected void onResume() {
         super.onResume();
-        enableListeners = true;
+        active = true;
         updateEventListVisibility();
     }
 
@@ -234,45 +233,41 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
 
     @Override
     public void onAttendeeEventUpdated(DocumentChange.Type updateType, Event event) {
-        if (enableListeners){
-            switch (updateType) {
-                case ADDED:
-                    addEvent(event, attendeeEventsFull);
-                    filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
-                    addAnnouncements(event);
-                    break;
-                case MODIFIED:
-                    updateEvent(event, attendeeEventsFull);
-                    filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
-                    updateAnnouncements(event);
-                    break;
-                case REMOVED:
-                    removeEvent(event, attendeeEventsFull);
-                    filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
-                    removeAnnouncements(event);
-                    break;
+        switch (updateType) {
+            case ADDED:
+                addEvent(event, attendeeEventsFull);
+                filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
+                addAnnouncements(event);
+                break;
+            case MODIFIED:
+                updateEvent(event, attendeeEventsFull);
+                filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
+                updateAnnouncements(event);
+                break;
+            case REMOVED:
+                removeEvent(event, attendeeEventsFull);
+                filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
+                removeAnnouncements(event);
+                break;
 
-            }
         }
     }
 
     @Override
     public void onAllEventsUpdated(DocumentChange.Type updateType, Event event) {
-        if (enableListeners){
-            switch (updateType) {
-                case ADDED:
-                    addEvent(event, allEventsFull);
-                    filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
-                    break;
-                case MODIFIED:
-                    updateEvent(event, allEventsFull);
-                    filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
-                    break;
-                case REMOVED:
-                    removeEvent(event, allEventsFull);
-                    filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
-                    break;
-            }
+        switch (updateType) {
+            case ADDED:
+                addEvent(event, allEventsFull);
+                filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
+                break;
+            case MODIFIED:
+                updateEvent(event, allEventsFull);
+                filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
+                break;
+            case REMOVED:
+                removeEvent(event, allEventsFull);
+                filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
+                break;
         }
     }
 
@@ -356,7 +351,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
 
     @Override
     public void onProfileDeleted() {
-        if (enableListeners){
+        if (active){
             restart();
             //unsubscribeFromNotis();
         }
@@ -398,23 +393,13 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         updateEventListVisibility();
     }
 
-    private void fetchEventAndShowDetails(String eventId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("events").document(eventId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    Event event = documentSnapshot.toObject(Event.class);
-                    if (event != null) {
-                        showDialogWithEventDetails(event, true);
-                    }
-                } else {
-                    Toast.makeText(AttendeePageActivity.this, "Event not found", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }).addOnFailureListener(e -> {
+    @Override
+    public void onGetEvent(Event event, boolean error) {
+        if (error){
             Toast.makeText(AttendeePageActivity.this, "Error fetching event details", Toast.LENGTH_SHORT).show();
-        });
+            return;
+        }
+        showDialogWithEventDetails(event, true);
     }
 
     private void updateEventListVisibility() {

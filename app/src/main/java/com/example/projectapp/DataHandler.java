@@ -1,9 +1,13 @@
 package com.example.projectapp;
 
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -62,30 +66,6 @@ public class DataHandler {
         this.organizer = organizer;
     }
 
-    public void addOrganizersListener(){
-        CollectionReference organizersRef = db.collection("organizers");
-
-        organizersRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots,
-                                @Nullable FirebaseFirestoreException e) {
-                for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                    Organizer o = dc.getDocument().toObject(Organizer.class);
-                    switch (dc.getType()) {
-                        case ADDED:
-                            break;
-                        case MODIFIED:
-                            System.out.println("Modified organizer: " + dc.getDocument().getData());
-                            break;
-                        case REMOVED:
-                            System.out.println("Removed organizer: " + dc.getDocument().getData());
-                            break;
-                    }
-                }
-            }
-        });
-    }
-
     /**
      * Adds an Attendee document to the "attendees" collection in Firebase.
      * @param attendee
@@ -108,11 +88,6 @@ public class DataHandler {
         attendeesRef.document(event.getEventId()).set(event);
     }
 
-    public void addPromoEvent(Event event){
-        CollectionReference attendeesRef = db.collection("events");
-
-        attendeesRef.document(event.getPromoQrId()).set(event);
-    }
 
     /**
      * Adds an Organizer document to the "organizers" collection in Firebase.
@@ -143,6 +118,26 @@ public class DataHandler {
     }
 
 
+    public void getEvent(String eventId, GetEventCallback callback){
+        CollectionReference eventsRef = db.collection("events");
+        eventsRef.document(eventId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    Event event = documentSnapshot.toObject(Event.class);
+                    if (event != null) {
+                        callback.onGetEvent(event, false);
+                    }
+                } else {
+                    callback.onGetEvent(null, true);
+                }
+            }
+        }).addOnFailureListener(e -> {
+            callback.onGetEvent(null, true);
+        });
+    }
+
+
     public void addProfileDeletedListener(ProfileDeletedCallback callback){
         CollectionReference attendeesRef = db.collection("attendees");
         attendeesRef.whereEqualTo("attendeeId", attendee.getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -159,7 +154,7 @@ public class DataHandler {
     }
 
     public void addAttendeeEventsListener(AttendeeEventsCallback callback) {
-        CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
+        CollectionReference eventsRef = db.collection("events");
         eventsRef.whereArrayContains("signedAttendees", getAttendee().getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
@@ -175,7 +170,7 @@ public class DataHandler {
     }
 
     public void addAllEventsListener(AllEventsCallback callback){
-        CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
+        CollectionReference eventsRef = db.collection("events");
         eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>(){
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
