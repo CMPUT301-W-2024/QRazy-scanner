@@ -51,6 +51,7 @@ public class ProfileFragment extends Fragment implements AddAttendeeCallback{
     ActivityResultLauncher<Intent> resultLauncher;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private DataHandler dataHandler = DataHandler.getInstance();
+    Integer fulfill = 0;
 
 
     @Nullable
@@ -75,10 +76,7 @@ public class ProfileFragment extends Fragment implements AddAttendeeCallback{
         saveButton.setOnClickListener(v -> {
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
             if (fragmentManager.getBackStackEntryCount() > 0) {
-                Integer fulfill = saveValues();
-                if (fulfill == 1){
-                    startActivity(new Intent(getContext(), AttendeePageActivity.class));
-                }
+                fulfill = saveValues();
             }
         });
 
@@ -109,14 +107,7 @@ public class ProfileFragment extends Fragment implements AddAttendeeCallback{
                     userNameEditText.setText(document.getString("name"));
                     emailEditText.setText(document.getString("contactInfo"));
                     phoneEditText.setText(document.getString("homepage"));
-                    // Do something with the profilePicUrl
-                    ////System.out.println("Profile Pic URL: " + profilePicUrl);
-                } else {
-                    //System.out.println("No matching documents found.");
                 }
-            } else {
-                // Error executing the query
-                //System.out.println("Error getting documents: " + task.getException());
             }
         });
     }
@@ -146,7 +137,6 @@ public class ProfileFragment extends Fragment implements AddAttendeeCallback{
                             avatar.setImageURI(imageUri);
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imageUri);
                             encodedImage = bitmapToString(bitmap);
-                            /*db.collection("attendees").document(MainActivity.getAttendee().getAttendeeId()).update("profilePic", bitmapToString(bitmap));*/
                         }catch(Exception e){
                             //
                         }
@@ -206,10 +196,8 @@ public class ProfileFragment extends Fragment implements AddAttendeeCallback{
             }
         }
 
-        Attendee attendee = new Attendee(encodedImage, userNameEditText.getText().toString(), emailEditText.getText().toString(), phoneEditText.getText().toString());
+        Attendee attendee = new Attendee(encodedImage, name, email, phone);
         dataHandler.addAttendee(attendee, this);
-        dataHandler.setAttendee(attendee);
-        saveAttendeeId();
         return 1;
     }
 
@@ -217,9 +205,14 @@ public class ProfileFragment extends Fragment implements AddAttendeeCallback{
     public void onAddAttendee(Attendee attendee) {
         if (attendee != null){
             Toast.makeText(getActivity(), "Created profile", Toast.LENGTH_SHORT).show();
+            dataHandler.setAttendee(attendee);
+            saveAttendeeId();
+            if (fulfill == 1){
+                startActivity(new Intent(getContext(), AttendeePageActivity.class));
+            }
         }
         else {
-            Toast.makeText(getActivity(), "Couldn't create profile", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Couldn't create profile, image quality might be too high", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -12,7 +12,9 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.MemoryCacheSettings;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -22,6 +24,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -96,6 +99,7 @@ public class DataHandler {
                     callback.onAddAttendee(attendee);
                 })
                 .addOnFailureListener(e -> {
+                    System.out.println("Got till here error " + e);
                     callback.onAddAttendee(null);
                 });;
     }
@@ -241,6 +245,35 @@ public class DataHandler {
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         Event event = dc.getDocument().toObject(Event.class);
                         callback.onOrganizerEventsUpdated(dc.getType(), event);
+                    }
+                }
+            }
+        });
+    }
+
+    public void addEventAttendeesListener(Event event, boolean getCheckedIn, EventAttendeesListenerCallback callback){
+
+        Query query;
+        if (getCheckedIn){
+            query = attendeesRef.orderBy("checkedInEvents." + event.getEventId());
+        }
+        else {
+            query = attendeesRef.whereArrayContains("signedUpEvents", event.getEventId());
+        }
+
+        query.addSnapshotListener(new EventListener<QuerySnapshot>(){
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (snapshots != null && !snapshots.isEmpty()){
+                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                        Attendee attendee = dc.getDocument().toObject(Attendee.class);
+                        if (getCheckedIn){
+                            callback.onCheckedInUpdated(dc.getType(), attendee);
+                        }
+                        else {
+                            callback.onSignedUpUpdated(dc.getType(), attendee);
+                        }
                     }
                 }
             }
