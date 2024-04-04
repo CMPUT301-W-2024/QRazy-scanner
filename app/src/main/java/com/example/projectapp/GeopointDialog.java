@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.GeoPoint;
 
 public class GeopointDialog extends AppCompatActivity implements UpdateEventCallback{
@@ -102,8 +103,7 @@ public class GeopointDialog extends AppCompatActivity implements UpdateEventCall
                             double longitude = location.getLongitude();
                             Log.d("Location", "Latitude: " + latitude + ", Longitude: " + longitude);
                             GeoPoint newGeopoint = new GeoPoint(latitude, longitude);
-                            dataHandler.updateEvent(eventId, "geoPoints", "FieldValue.arrauUnion(" + newGeopoint + ")", GeopointDialog.this);
-                            //updateGeopoints(newGeopoint);
+                            dataHandler.updateEvent(eventId, "geopoints", FieldValue.arrayUnion(newGeopoint), GeopointDialog.this);
                         } else {
                             Toast.makeText(GeopointDialog.this, "Fail to get current location", Toast.LENGTH_SHORT).show();
                         }

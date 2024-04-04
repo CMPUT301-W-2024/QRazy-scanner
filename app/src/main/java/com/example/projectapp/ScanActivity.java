@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -14,13 +13,10 @@ import android.widget.Toast;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.hash.Hashing;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.zxing.Result;
 
 import java.nio.charset.StandardCharsets;
@@ -128,7 +124,7 @@ public class ScanActivity extends AppCompatActivity {
         if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().contains(dataHandler.getAttendee().getAttendeeId()) || event.getAttendance() + event.getSignedAttendees().size() < event.getAttendanceLimit()){
             event.addCheckedAttendee(dataHandler.getAttendee().getAttendeeId());
             dataHandler.getAttendee().addCheckedEvent(event.getEventId());
-            dataHandler.subscribeToTopic(event.getEventId());
+            dataHandler.subscribeToNotis(event.getEventId());
             Intent intent = new Intent(ScanActivity.this, AttendeePageActivity.class);
             startActivity(intent);
             Intent intent1 = new Intent(ScanActivity.this, GeopointDialog.class);

@@ -65,7 +65,8 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         getNotificationPermission();
 
         dataHandler.addProfileDeletedListener(this);
-        dataHandler.addAttendeeEventsListener(this);
+        dataHandler.addAttendeeEventsListener(true,this); // for checked in events
+        dataHandler.addAttendeeEventsListener(false,this); // for signed up events
         dataHandler.addAllEventsListener(this);
 
         RecyclerView attendeeEventsList = findViewById(R.id.attendeeEventsList);
@@ -104,7 +105,6 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
                 Intent intent = new Intent(AttendeePageActivity.this, ProfileEditActivity.class);
 
                 startActivity(intent);
-                finish();
             }
         });
 
@@ -124,7 +124,6 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         Button scanButton = findViewById(R.id.scanButton);
         scanButton.setOnClickListener(v -> {
             startActivity(new Intent(this, ScanActivity.class));
-            finish();
         });
 
         filterAllButton.setOnClickListener(v -> {
@@ -158,7 +157,6 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
                 Intent intent = new Intent(AttendeePageActivity.this, ScanActivity.class);
                 intent.putExtra("usage", "promoQr");
                 startActivity(intent);
-                finish();
             }
         });
 
@@ -225,7 +223,8 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     }
 
     @Override
-    public void onAttendeeEventUpdated(DocumentChange.Type updateType, Event event) {
+    public void onAttendeeEventsUpdated(DocumentChange.Type updateType, Event event) {
+
         switch (updateType) {
             case ADDED:
                 addEvent(event, attendeeEventsFull);
@@ -311,7 +310,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
                     if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().size() < event.getAttendanceLimit()){
                         event.addSignedAttendee(dataHandler.getAttendee().getAttendeeId());
                         dataHandler.getAttendee().addSignedEvent(event.getEventId());
-                        dataHandler.subscribeToTopic(event.getEventId());
+                        dataHandler.subscribeToNotis(event.getEventId());
                         eventDetailDialog.dismiss();
                     }
                     else {

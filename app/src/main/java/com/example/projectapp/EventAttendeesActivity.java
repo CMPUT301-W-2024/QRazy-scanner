@@ -27,8 +27,8 @@ public class EventAttendeesActivity extends AppCompatActivity implements EventAt
         setContentView(R.layout.activity_event_attendees_actvity);
 
         event = (Event) getIntent().getSerializableExtra("EVENT");
-        DataHandler.getInstance().addEventAttendeesListener(event, true, this);
-        DataHandler.getInstance().addEventAttendeesListener(event, false, this);
+        DataHandler.getInstance().addEventAttendeesListener(event, true, this); // for checked in attendees
+        DataHandler.getInstance().addEventAttendeesListener(event, false, this); // for signed up attendees
 
         RecyclerView checkedInAttendeesListView = findViewById(R.id.checkedInAttendeesList);
         RecyclerView signedUpAttendeesListView = findViewById(R.id.signedUpAttendeesList);
@@ -106,7 +106,7 @@ public class EventAttendeesActivity extends AppCompatActivity implements EventAt
     }
 
     @Override
-    public void onCheckedInUpdated(DocumentChange.Type updateType, Attendee attendee) {
+    public void onEventCheckedAttendeesUpdated(DocumentChange.Type updateType, Attendee attendee) {
         switch (updateType) {
             case ADDED:
                 addAttendee(attendee, checkedInAttendees, checkedInAttendeeAdapter);
@@ -121,7 +121,7 @@ public class EventAttendeesActivity extends AppCompatActivity implements EventAt
     }
 
     @Override
-    public void onSignedUpUpdated(DocumentChange.Type updateType, Attendee attendee) {
+    public void onEventSignedAttendeesUpdated(DocumentChange.Type updateType, Attendee attendee) {
         switch (updateType) {
             case ADDED:
                 addAttendee(attendee, signedUpAttendees, signedUpAttendeeAdapter);
