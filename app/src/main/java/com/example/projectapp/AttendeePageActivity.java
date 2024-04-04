@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,15 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.content.pm.PackageManager;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -45,7 +36,7 @@ import java.util.Date;
  * It provides functionality to view events the attendee is participating in, and to view all available events.
  * Attendees can interact with the events, such as signing up for them.
  */
-public class AttendeePageActivity extends AppCompatActivity implements ProfileDeletedCallback, AttendeeEventsCallback, AllEventsCallback, GetEventCallback {
+public class AttendeePageActivity extends AppCompatActivity implements ProfileDeletedListenerCallback, AttendeeEventsListenerCallback, AllEventsListenerCallback, GetEventCallback {
     private ArrayList<Event> allEventsFiltered;
     private ArrayList<Event> attendeeEventsFiltered;
     private ArrayList<Event> allEventsFull;
