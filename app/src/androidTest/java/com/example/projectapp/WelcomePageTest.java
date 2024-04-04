@@ -1,6 +1,7 @@
 package com.example.projectapp;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
@@ -10,6 +11,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.intent.Intents;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.After;
@@ -18,48 +20,37 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+/**
+ * Tests the functionality of the ‘Create Event’
+ * and ‘Join Event’ buttons on the welcome page to
+ * ensure they correctly switch activities.
+ */
 @RunWith(AndroidJUnit4.class)
 public class WelcomePageTest {
 
-    public ActivityScenario<MainActivity> scenario;
-
-    @Before
-    public void setup(){
-
-        Intents.init();
-
-        scenario = ActivityScenario.launch(MainActivity.class);
-    }
-
+    @Rule
+    public ActivityScenarioRule<MainActivity> activityScenarioRule =
+            new ActivityScenarioRule<>(MainActivity.class);
 
     /**
-     * Verifies that the "Create Event" button
-     *  on main page opens to organizer page.
+     * Verifies that the ‘Create Event’ button
+     * transitions to the organizer dashboard activity
      */
     @Test
-    public void createEventButtonTest() {
+    public void testCreateEventButton() {
         onView(withId(R.id.createEventButton)).perform(click());
-
-        intended(hasComponent(OrganizerPageActivity.class.getName()));
+        onView(withId(R.id.organizerNameEditText)).check(matches(isDisplayed()));
     }
 
     /**
-     * Verifies that the "Join Event" button
-     *  on main page opens to profile fragment.
+     * Verifies that the ‘Join Event’ button transitions to
+     * the create profile fragment if new user or
+     * the attendee dashboard activity if returning user
      */
     @Test
-    public void joinEventButtonTest() throws InterruptedException {
+    public void testJoinEventButton(){
         onView(withId(R.id.joinEventButton)).perform(click());
-
-        // Check that a unique view in ProfileFragment is displayed
-        onView(withId(R.id.avatarImageButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.userNameEditText)).check(matches(isDisplayed()));
     }
 
-    /**
-     * Release intents on shutdown
-     */
-    @After
-    public void shutdown() {
-        Intents.release();
-    }
 }
