@@ -48,11 +48,20 @@ public class DataHandler {
         eventsRef = db.collection("events");
     }
 
+    DataHandler(FirebaseFirestore db) {
+        this.db = db;
+    }
+
     public static DataHandler getInstance(){
         if (instance == null){
-            instance = new DataHandler();
+            instance = new DataHandler(FirebaseFirestore.getInstance());
         }
         return instance;
+    }
+
+    // For unit testing
+    public static void setInstance(DataHandler testInstance) {
+        instance = testInstance;
     }
 
     /**
