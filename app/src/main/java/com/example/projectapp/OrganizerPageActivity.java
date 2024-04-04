@@ -9,37 +9,25 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Activity for an organizer to manage their events. Provides action to set an
  * organizer name, create new events, and displays a list of existing events.
  * Sync with Firebase for real-time updates.
  */
-public class OrganizerPageActivity extends AppCompatActivity {
+public class OrganizerPageActivity extends AppCompatActivity implements OrganizerEventsListenerCallback {
 
     private EditText organizerNameEditText;
-    private DataHandler dataHandler;
+    private final DataHandler dataHandler = DataHandler.getInstance();
     private ArrayList<Event> events;
     private OrganizerEventAdapter eventAdapter;
-    private ListenerRegistration organizerEventsListener;
     private ArrayList<Integer> mileStones;
 
     /**
@@ -50,7 +38,10 @@ public class OrganizerPageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_organizer_page);
 
-        dataHandler = DataHandler.getInstance();
+        if (dataHandler.getOrganizer() != null){
+            dataHandler.addOrganizerEventsListener(this);
+        }
+
         organizerNameEditText = findViewById(R.id.organizerNameEditText);
 
         if (dataHandler.getOrganizer() != null){
@@ -95,9 +86,6 @@ public class OrganizerPageActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (dataHandler.getOrganizer() != null){
-            addOrganizerEventsListener();
-        }
     }
 
     /**
@@ -106,9 +94,6 @@ public class OrganizerPageActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (organizerEventsListener != null){
-            organizerEventsListener.remove();
-        }
     }
 
     /**
@@ -169,33 +154,19 @@ public class OrganizerPageActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Sets up a listener for changes to the events organized by the current organizer.
-     * The listener is triggered when an event is added, modified, or removed.
-     */
-    private void addOrganizerEventsListener(){
-        CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
-
-        organizerEventsListener = eventsRef.whereEqualTo("organizerId", dataHandler.getOrganizer().getOrganizerId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots,
-                                @Nullable FirebaseFirestoreException e) {
-                for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                    Event event = dc.getDocument().toObject(Event.class);
-                    switch (dc.getType()) {
-                        case ADDED:
-                            addEvent(event);
-                            break;
-                        case MODIFIED:
-                            updateEvent(event);
-                            break;
-                        case REMOVED:
-                            removeEvent(event);
-                            break;
-                    }
-                }
-            }
-        });
+    @Override
+    public void onOrganizerEventsUpdated(DocumentChange.Type updateType, Event event) {
+        switch (updateType) {
+            case ADDED:
+                addEvent(event);
+                break;
+            case MODIFIED:
+                updateEvent(event);
+                break;
+            case REMOVED:
+                removeEvent(event);
+                break;
+        }
     }
 }
 

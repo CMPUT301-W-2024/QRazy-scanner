@@ -64,17 +64,83 @@
             android:fontFamily="@font/light"
             android:text="Detail: "/>
 
-        <Button
-            android:id="@+id/viewMapButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Check map"/>
-
-        <ImageView
-            android:id="@+id/eventQrView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"/>
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/viewMapButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Check map"/>
+
+            <Button
+                android:id="@+id/pdf_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PDF"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+
+            <!-- Event QR Code -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:id="@+id/eventQrText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Event QR Code"
+                    android:textAlignment="center"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/light"
+                    android:textSize="16sp"
+                    android:visibility="gone"/>
+
+                <ImageView
+                    android:id="@+id/eventQrView"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+
+            <!-- Promo QR Code -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:id="@+id/promoQrText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Promo QR Code"
+                    android:textAlignment="center"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/light"
+                    android:textSize="16sp"
+                    android:visibility="gone"/>
+
+                <ImageView
+                    android:id="@+id/promoQrView"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
 

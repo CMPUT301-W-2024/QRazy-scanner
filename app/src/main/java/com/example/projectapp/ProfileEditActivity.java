@@ -18,15 +18,10 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.messaging.FirebaseMessaging;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class ProfileEditActivity extends AttendeePageActivity{
+public class ProfileEditActivity extends AppCompatActivity implements AddAttendeeCallback{
     private ImageView avatar;
     private String encodedImage;
     private ActivityResultLauncher<Intent> resultLauncher;
@@ -96,32 +91,23 @@ public class ProfileEditActivity extends AttendeePageActivity{
             currentAttendee.setProfilePic(encodedImage);
         }
 
-        updateAttendeeInFirestore(currentAttendee);
-
-        Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
-
-
-        Intent intent = new Intent(this, AttendeePageActivity.class);
-        startActivity(intent);
-        finish();
+        dataHandler.addAttendee(currentAttendee, this);
     }
 
-
-
-
-    private void updateAttendeeInFirestore(Attendee attendee) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference attendeeRef = db.collection("attendees").document(attendee.getAttendeeId());
-
-
-        attendeeRef.set(attendee);
-        attendeeRef.set(attendee) 
-
-                .addOnSuccessListener(aVoid -> Log.d("ProfileEditActivity", "DocumentSnapshot successfully updated!"))
-                .addOnFailureListener(e -> Log.w("ProfileEditActivity", "Error updating document", e));
+    @Override
+    public void onAddAttendee(Attendee attendee) {
+        if (attendee != null){
+            Toast.makeText(this, "Updated profile", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, AttendeePageActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        else {
+            Toast.makeText(this, "Couldn't update profile, image quality might be too high", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    private void pickImage(){
+    private void pickImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         resultLauncher.launch(intent);
     }
@@ -161,10 +147,5 @@ public class ProfileEditActivity extends AttendeePageActivity{
             return null;
         }
 
-    }
-
-    @Override
-    public void onProfileDeleted() {
-        super.onProfileDeleted();
     }
 }

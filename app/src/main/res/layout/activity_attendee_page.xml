@@ -23,11 +23,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="-2dp"
+        android:layout_marginEnd="142dp"
         android:layout_toStartOf="@id/menuButton"
-        android:text="Welcome back, [Name]"
         android:fontFamily="@font/bold1"
-        android:textSize="22sp"
-        android:padding="16dp" />
+        android:padding="16dp"
+        android:text="Welcome, "
+        android:textSize="22sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -71,6 +73,16 @@
             android:textSize="18sp"
             android:padding="8dp" />
 
+        <TextView
+            android:id="@+id/noMyEventsText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="None"
+            android:fontFamily="@font/bold1"
+            android:visibility="gone"
+            android:padding="16dp"
+            android:gravity="center" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/attendeeEventsList"
             android:layout_width="match_parent"
@@ -84,6 +96,16 @@
             android:text="All Events"
             android:textSize="18sp"
             android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/noAllEventsText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="None"
+            android:fontFamily="@font/bold1"
+            android:visibility="gone"
+            android:padding="16dp"
+            android:gravity="center" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/allEventsList"
@@ -121,6 +143,7 @@
                     android:layout_weight="1"
                     android:text="Check into event"
                     android:padding="12dp"
+                    android:background="@color/primaryButton"
                     android:textAppearance="?attr/textAppearanceButton" />
 
                 <Button
@@ -130,6 +153,7 @@
                     android:layout_weight="1"
                     android:text="@string/promo_qr_code"
                     android:padding="12dp"
+                    android:background="@color/primaryButton"
                     android:textAppearance="?attr/textAppearanceButton" />
             </LinearLayout>
         </LinearLayout>

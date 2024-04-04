@@ -9,13 +9,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.graphics.Color;
@@ -26,30 +24,24 @@ import java.security.NoSuchAlgorithmException;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.ByteArrayOutputStream;
-import java.net.URI;
 
 /**
  * Store save value of a profile
  */
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements AddAttendeeCallback{
 
     private EditText userNameEditText;
     private EditText emailEditText;
@@ -59,6 +51,7 @@ public class ProfileFragment extends Fragment {
     ActivityResultLauncher<Intent> resultLauncher;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private DataHandler dataHandler = DataHandler.getInstance();
+    Integer fulfill = 0;
 
 
     @Nullable
@@ -83,10 +76,7 @@ public class ProfileFragment extends Fragment {
         saveButton.setOnClickListener(v -> {
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
             if (fragmentManager.getBackStackEntryCount() > 0) {
-                Integer fulfill = saveValues();
-                if (fulfill == 1){
-                    startActivity(new Intent(getContext(), AttendeePageActivity.class));
-                }
+                fulfill = saveValues();
             }
         });
 
@@ -117,14 +107,7 @@ public class ProfileFragment extends Fragment {
                     userNameEditText.setText(document.getString("name"));
                     emailEditText.setText(document.getString("contactInfo"));
                     phoneEditText.setText(document.getString("homepage"));
-                    // Do something with the profilePicUrl
-                    ////System.out.println("Profile Pic URL: " + profilePicUrl);
-                } else {
-                    //System.out.println("No matching documents found.");
                 }
-            } else {
-                // Error executing the query
-                //System.out.println("Error getting documents: " + task.getException());
             }
         });
     }
@@ -154,7 +137,6 @@ public class ProfileFragment extends Fragment {
                             avatar.setImageURI(imageUri);
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imageUri);
                             encodedImage = bitmapToString(bitmap);
-                            /*db.collection("attendees").document(MainActivity.getAttendee().getAttendeeId()).update("profilePic", bitmapToString(bitmap));*/
                         }catch(Exception e){
                             //
                         }
@@ -214,11 +196,24 @@ public class ProfileFragment extends Fragment {
             }
         }
 
-        Attendee attendee = new Attendee(encodedImage, userNameEditText.getText().toString(), emailEditText.getText().toString(), phoneEditText.getText().toString());
-        dataHandler.addAttendee(attendee);
-        dataHandler.setAttendee(attendee);
-        saveAttendeeId();
+        Attendee attendee = new Attendee(encodedImage, name, email, phone);
+        dataHandler.addAttendee(attendee, this);
         return 1;
+    }
+
+    @Override
+    public void onAddAttendee(Attendee attendee) {
+        if (attendee != null){
+            Toast.makeText(getActivity(), "Created profile", Toast.LENGTH_SHORT).show();
+            dataHandler.setAttendee(attendee);
+            saveAttendeeId();
+            if (fulfill == 1){
+                startActivity(new Intent(getContext(), AttendeePageActivity.class));
+            }
+        }
+        else {
+            Toast.makeText(getActivity(), "Couldn't create profile, image quality might be too high", Toast.LENGTH_SHORT).show();
+        }
     }
 
 

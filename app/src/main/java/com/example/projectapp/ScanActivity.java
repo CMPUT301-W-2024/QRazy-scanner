@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -14,13 +13,10 @@ import android.widget.Toast;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.hash.Hashing;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.zxing.Result;
 
 import java.nio.charset.StandardCharsets;
@@ -34,8 +30,8 @@ public class ScanActivity extends AppCompatActivity {
     private CodeScanner mCodeScanner;
     private final int CAMERA_PERMISSION_CODE = 100;
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private DataHandler dataHandler = DataHandler.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final DataHandler dataHandler = DataHandler.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +62,7 @@ public class ScanActivity extends AppCompatActivity {
                             Intent intent = new Intent(ScanActivity.this, AttendeePageActivity.class);
                             intent.putExtra("EVENT_ID", eventId);
                             startActivity(intent);
+                            finish();
                         }
 
                     }
@@ -127,12 +124,13 @@ public class ScanActivity extends AppCompatActivity {
         if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().contains(dataHandler.getAttendee().getAttendeeId()) || event.getAttendance() + event.getSignedAttendees().size() < event.getAttendanceLimit()){
             event.addCheckedAttendee(dataHandler.getAttendee().getAttendeeId());
             dataHandler.getAttendee().addCheckedEvent(event.getEventId());
-            FirebaseMessaging.getInstance().subscribeToTopic(event.getEventId());
+            dataHandler.subscribeToNotis(event.getEventId());
             Intent intent = new Intent(ScanActivity.this, AttendeePageActivity.class);
             startActivity(intent);
             Intent intent1 = new Intent(ScanActivity.this, GeopointDialog.class);
             intent1.putExtra("eventId", event.getEventId());
             startActivity(intent1);
+            finish();
         }
         else {
             Toast.makeText(ScanActivity.this, "Event has reached attendance limit", Toast.LENGTH_SHORT).show();
@@ -151,8 +149,8 @@ public class ScanActivity extends AppCompatActivity {
                     }
                     // organizer is allowed use qr code for their event
                     else{
-                        Event event = (Event) getIntent().getSerializableExtra("Event");
-                        setEventQrCode(event, qrData);
+                        String eventId = getIntent().getStringExtra("EVENT_ID");
+                        setEventQrCode(eventId, qrData);
                         finish();
                     }
                 }
@@ -172,9 +170,9 @@ public class ScanActivity extends AppCompatActivity {
         });
     }
 
-    private void setEventQrCode(Event event, String qrData){
+    private void setEventQrCode(String eventId, String qrData){
         qrData = hashEventCode(qrData);
-        db.collection("events").document(event.getEventId()).update("qrCode", qrData);
+        db.collection("events").document(eventId).update("qrCode", qrData);
     }
 
     private String hashEventCode(String code){
