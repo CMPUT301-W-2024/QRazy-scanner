@@ -13,7 +13,8 @@
         android:scaleType="centerCrop"
         android:contentDescription="Avatar Image" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:id="@+id/avatarImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,7 +22,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:background="@null"
-        android:fontFamily="@font/bold1"
         android:text="Change and Save Avatar"
         android:onClick="showImageChangeDialog" />
 
@@ -55,9 +55,10 @@
         android:layout_marginTop="16dp" />
 
     <!-- Save button at the bottom -->
-    <Button
+    <com.google.android.material.button.MaterialButton
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:id="@+id/saveButton"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="Save"
         android:fontFamily="@font/bold1"
