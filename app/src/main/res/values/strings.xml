@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Project app</string>
+    <string name="app_name">Qrazy Scanner</string>
     <string name="welcome">Welcome!</string>
     <string name="joinevent">Join Event</string>
     <string name="createevent">Create Event</string>
