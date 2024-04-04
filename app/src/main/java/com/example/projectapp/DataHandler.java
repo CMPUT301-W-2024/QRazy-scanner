@@ -1,5 +1,9 @@
 package com.example.projectapp;
 
+import android.content.Context;
+import android.content.Intent;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -89,10 +93,15 @@ public class DataHandler {
      * @param event
      *      The Event object representing the data to add.
      */
-    public void addEvent(Event event){
+    public void addEvent(Event event, AddEventCallback callback){
         CollectionReference attendeesRef = db.collection("events");
 
-        attendeesRef.document(event.getEventId()).set(event);
+        attendeesRef.document(event.getEventId()).set(event).addOnSuccessListener(aVoid -> {
+                    callback.onAddEvent(event);
+                })
+                .addOnFailureListener(e -> {
+                    callback.onAddEvent(null);
+                });
     }
 
 
@@ -133,14 +142,14 @@ public class DataHandler {
                 if (documentSnapshot.exists()) {
                     Event event = documentSnapshot.toObject(Event.class);
                     if (event != null) {
-                        callback.onGetEvent(event, false);
+                        callback.onGetEvent(event);
                     }
                 } else {
-                    callback.onGetEvent(null, true);
+                    callback.onGetEvent(null);
                 }
             }
         }).addOnFailureListener(e -> {
-            callback.onGetEvent(null, true);
+            callback.onGetEvent(null);
         });
     }
 

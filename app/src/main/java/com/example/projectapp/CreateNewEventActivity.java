@@ -24,7 +24,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
@@ -38,16 +37,16 @@ import java.util.Locale;
  * It allows users to set event information, upload an image, and save the
  * event to Firebase.
  */
-public class CreateNewEventActivity extends AppCompatActivity {
+public class CreateNewEventActivity extends AppCompatActivity implements AddEventCallback {
 
     private TextInputEditText eventDateEditText;
     private Calendar calendar;
     private MaterialButton uploadButton;
     ActivityResultLauncher<Intent> resultLauncher;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ImageView poster;
     private String encodedImage;
     private TextInputEditText eventNameEditText, eventDescriptionEditText, attendanceLimitEditText, eventStartTimeEditText, eventEndTimeEditText;
+    private final DataHandler dataHandler = DataHandler.getInstance();
 
     /**
      * Initializes the activity, sets up UI elements, and prepares date picker functionality.
@@ -154,28 +153,27 @@ public class CreateNewEventActivity extends AppCompatActivity {
 
         // Set the event details to the newEvent object
 
-        Event newEvent = new Event(eventName, eventDate, eventStartTime, eventEndTime, DataHandler.getInstance().getOrganizer().getName(), DataHandler.getInstance().getOrganizer().getOrganizerId(), attendanceLimit, eventDescription, encodedImage);
+        Event newEvent = new Event(eventName, eventDate, eventStartTime, eventEndTime, dataHandler.getOrganizer().getName(), dataHandler.getOrganizer().getOrganizerId(), attendanceLimit, eventDescription, encodedImage);
 
-
-
-        // Upload the event details to Firebase
-        db.collection("events").document(newEvent.getEventId())
-                .set(newEvent)
-                .addOnSuccessListener(aVoid -> {
-                    // Success handling
-                    Toast.makeText(CreateNewEventActivity.this, "Event saved successfully", Toast.LENGTH_SHORT).show();
-
-                    // After showing the toast, start the GenerateQrCodeActivity
-                    Intent intent = new Intent(CreateNewEventActivity.this, GenerateQrCodeActivity.class);
-                    intent.putExtra("Event", newEvent); // Pass the event ID to the next activity
-                    startActivity(intent);
-                })
-                .addOnFailureListener(e -> {
-                    // Failure handling
-                    Toast.makeText(CreateNewEventActivity.this, "Failed to save event", Toast.LENGTH_SHORT).show();
-                });
+        dataHandler.addEvent(newEvent, this);
     }
 
+    @Override
+    public void onAddEvent(Event event) {
+        // Success handling
+        if (event != null){
+            Toast.makeText(CreateNewEventActivity.this, "Event saved successfully", Toast.LENGTH_SHORT).show();
+
+            // After showing the toast, start the GenerateQrCodeActivity
+            Intent intent = new Intent(CreateNewEventActivity.this, GenerateQrCodeActivity.class);
+            intent.putExtra("EVENT_ID", event.getEventId()); // Pass the event ID to the next activity
+            startActivity(intent);
+            finish();
+        }
+        else {
+            Toast.makeText(CreateNewEventActivity.this, "Failed to save event", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     /**
      * Launches an image picker intent to allow users to select an image for the event poster.
@@ -230,11 +228,6 @@ public class CreateNewEventActivity extends AppCompatActivity {
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] byteArray = baos.toByteArray();
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
-    }
-
-    // Method to set a custom Firebase instance (for testing)
-    public void setFirestore(FirebaseFirestore firestore) {
-        this.db = firestore;
     }
 
     private void timePicker(EditText editText){

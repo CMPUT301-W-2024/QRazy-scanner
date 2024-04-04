@@ -87,7 +87,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         }
 
         holder.attendeeCountTextView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, EventAttendeesActvity.class);
+            Intent intent = new Intent(context, EventAttendeesActivity.class);
             intent.putExtra("EVENT", event);
             context.startActivity(intent);
         });

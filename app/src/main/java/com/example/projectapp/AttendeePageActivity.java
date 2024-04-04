@@ -385,8 +385,8 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     }
 
     @Override
-    public void onGetEvent(Event event, boolean error) {
-        if (error){
+    public void onGetEvent(Event event) {
+        if (event == null){
             Toast.makeText(AttendeePageActivity.this, "Error fetching event details", Toast.LENGTH_SHORT).show();
             return;
         }

@@ -47,7 +47,7 @@ public class GenerateQrCodeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_generate_qrcode);
 
         qrCodeImageView = findViewById(R.id.qrCodeImageView);
-        event = (Event) getIntent().getSerializableExtra("Event"); // Retrieve the event
+        event = (Event) getIntent().getSerializableExtra("EventId"); // Retrieve the eventId
 
         MaterialButton generateQrCodeButton = findViewById(R.id.generateQrCodeButton); // Find the button by its ID
         generateQrCodeButton.setOnClickListener(new View.OnClickListener() {

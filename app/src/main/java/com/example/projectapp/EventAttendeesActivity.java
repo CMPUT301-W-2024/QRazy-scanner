@@ -9,7 +9,6 @@ import android.os.Bundle;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -25,7 +24,7 @@ import java.util.Iterator;
  * Handles separating attendees into lists based on check-in status and
  * sync with Firebase data.
  */
-public class EventAttendeesActvity extends AppCompatActivity {
+public class EventAttendeesActivity extends AppCompatActivity {
 
     private ArrayList<Attendee> checkedInAttendees;
     private ArrayList<Attendee> signedUpAttendees;
