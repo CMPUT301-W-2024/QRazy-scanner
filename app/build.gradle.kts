@@ -68,6 +68,7 @@ dependencies {
     implementation("androidx.core:core:1.12.0")
     implementation ("com.itextpdf:itextg:5.5.10")
     implementation("androidx.test.ext:junit:1.1.5")
+    implementation("androidx.test.espresso:espresso-contrib:3.5.1")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:3.12.4")
