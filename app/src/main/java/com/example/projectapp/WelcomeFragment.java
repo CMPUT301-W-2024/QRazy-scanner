@@ -42,13 +42,15 @@ public class WelcomeFragment extends Fragment implements GetOrganizerCallback, G
                     dataHandler.getAttendee(getLocalAttendeeId(), WelcomeFragment.this);
                 }
                 else {
-                    ProfileFragment profileFragment = new ProfileFragment();
+                    Intent intent = new Intent(getActivity(), ProfileEditActivity.class);
+                    startActivity(intent);
+ /*                   ProfileFragment profileFragment = new ProfileFragment();
                     requireActivity().getSupportFragmentManager()
                             .beginTransaction()
                             .replace(android.R.id.content, profileFragment)
                             // Use android.R.id.content as the container
                             .addToBackStack(null)
-                            .commit();
+                            .commit();*/
                 }
             }
         });
@@ -92,14 +94,15 @@ public class WelcomeFragment extends Fragment implements GetOrganizerCallback, G
         }
         else if (deleted){
             Toast.makeText(getActivity(), "Your account was deleted you will need to create a new account", Toast.LENGTH_SHORT).show();
-
-            ProfileFragment profileFragment = new ProfileFragment();
+            Intent intent = new Intent(getActivity(), ProfileEditActivity.class);
+            startActivity(intent);
+ /*           ProfileFragment profileFragment = new ProfileFragment();
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
                     .replace(android.R.id.content, profileFragment)
                     // Use android.R.id.content as the container
                     .addToBackStack(null)
-                    .commit();
+                    .commit();*/
         }
         else {
             Toast.makeText(getActivity(), "Couldn't access firebase", Toast.LENGTH_SHORT).show();

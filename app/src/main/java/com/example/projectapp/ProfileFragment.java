@@ -87,9 +87,9 @@ public class ProfileFragment extends Fragment implements AddAttendeeCallback{
         return rootView;
     }
 
-    /**
+/*    *//**
      * load the saved values on firestore
-     */
+     *//*
     private void loadSavedValues() {
         CollectionReference a = db.collection("attendees");
         Query query = a.whereEqualTo("attendeeId", dataHandler.getLocalAttendee().getAttendeeId());
@@ -110,7 +110,7 @@ public class ProfileFragment extends Fragment implements AddAttendeeCallback{
                 }
             }
         });
-    }
+    }*/
 
     /**
      * Pick image
@@ -216,42 +216,6 @@ public class ProfileFragment extends Fragment implements AddAttendeeCallback{
         }
     }
 
-
-    public static class IdenticonGenerator {
-
-        public static Bitmap generate(String username, int size) {
-            try {
-                byte[] hash = MessageDigest.getInstance("MD5").digest(username.getBytes());
-                Bitmap identicon = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
-
-                int gridSize = 10;
-                int cellSize = size / gridSize;
-
-                for (int x = 0; x < gridSize; x++) {
-                    for (int y = 0; y < gridSize; y++) {
-                        int i = x < gridSize / 2 ? x : gridSize - 1 - x;
-                        if ((hash[i] >> (y % 8) & 0x01) == 0x01) {
-                            int color = Color.rgb(hash[i] & 0xFF, hash[(i + 1) % hash.length] & 0xFF, hash[(i + 2) % hash.length] & 0xFF);
-                            fillCell(identicon, x, y, cellSize, color);
-                        }
-                    }
-                }
-
-                return identicon;
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        private static void fillCell(Bitmap bitmap, int x, int y, int cellSize, int color) {
-            for (int i = 0; i < cellSize; i++) {
-                for (int j = 0; j < cellSize; j++) {
-                    bitmap.setPixel(x * cellSize + i, y * cellSize + j, color);
-                }
-            }
-        }
-    }
 
 
 
