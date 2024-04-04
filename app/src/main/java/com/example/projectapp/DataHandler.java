@@ -1,14 +1,16 @@
 package com.example.projectapp;
 
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.common.hash.Hashing;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
@@ -24,6 +26,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Data handler. Handles interactions with Firebase,
@@ -149,9 +152,7 @@ public class DataHandler {
 
     public void getEvent(String eventId, GetEventCallback callback){
         DocumentReference eventDocRef = eventsRef.document(eventId);
-        eventDocRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
+        eventDocRef.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
                     Event event = documentSnapshot.toObject(Event.class);
                     if (event != null) {
@@ -160,7 +161,6 @@ public class DataHandler {
                 } else {
                     callback.onGetEvent(null);
                 }
-            }
         }).addOnFailureListener(e -> {
             callback.onGetEvent(null);
         });
@@ -282,6 +282,30 @@ public class DataHandler {
                 }
             }
         });
+    }
+
+
+    // get event that has qrData same as Id or in qrCode (in case reusing qr code)
+    public void getQrCodeEvent(String qrData, boolean checkInto, GetQrCodeEventCallback callback){
+
+        Query query = eventsRef.where(Filter.or(Filter.equalTo("eventId", qrData), Filter.equalTo("qrCode", hashEventCode(qrData))));
+        System.out.println("Got till here " + qrData);
+        query.get().addOnSuccessListener(documentSnapshots -> {
+            if (documentSnapshots.isEmpty()){
+                callback.onGetQrCodeEvent(null, checkInto, hashEventCode(qrData));
+            }
+            else {
+                List<Event> events = documentSnapshots.toObjects(Event.class);
+                callback.onGetQrCodeEvent(events.get(0), checkInto, hashEventCode(qrData));
+            }
+        });
+
+    }
+
+    private String hashEventCode(String code){
+        return Hashing.sha256()
+                .hashString(code, StandardCharsets.UTF_8)
+                .toString();
     }
 
 
