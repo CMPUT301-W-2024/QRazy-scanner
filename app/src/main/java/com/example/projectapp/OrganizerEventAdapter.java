@@ -130,12 +130,12 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
 
         holder.viewmapButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, MapActivity.class);
-            intent.putExtra("eventId", event.getEventId());
+            intent.putExtra("EVENT_ID", event.getEventId());
             context.startActivity(intent);
         });
         holder.pdfButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, ReportActivity.class);
-            intent.putExtra("eventId", event.getEventId());
+            intent.putExtra("EVENT_ID", event);
             context.startActivity(intent);
         });
     }
