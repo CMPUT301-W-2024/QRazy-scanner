@@ -14,13 +14,24 @@
         android:contentDescription="Avatar Image" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/delete_button"
         style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-        android:id="@+id/avatarImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/avatarImage"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
+        android:text="Remove Profile Pic"
+        android:visibility="gone" />
+
+    <com.google.android.material.button.MaterialButton
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:id="@+id/avatarImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/delete_button"
         android:background="@null"
         android:text="Change and Save Avatar"
         android:onClick="showImageChangeDialog" />
