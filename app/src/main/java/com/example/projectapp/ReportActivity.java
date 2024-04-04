@@ -10,7 +10,6 @@ import androidx.core.content.FileProvider;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.pdf.PdfDocument;
@@ -45,14 +44,14 @@ public class ReportActivity extends AppCompatActivity {
     Button btn;
     ConstraintLayout container;
 
-    String[] required_permissions = new String[]{
+    String[] requiredPermissions = new String[]{
             android.Manifest.permission.READ_MEDIA_IMAGES
     };
 
-    boolean is_storage_image_permitted = false;
+    boolean isStorageImagePermitted = false;
 
     String TAG = "Report";
-    String eventId;
+    Event event;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     String eventName;
     String organizer;
@@ -67,12 +66,12 @@ public class ReportActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.report_layout);
-        eventId = (String) getIntent().getSerializableExtra("eventId");
+        event = (Event) getIntent().getSerializableExtra("EVENT_ID");
         btn = (Button) findViewById(R.id.btn);
         container = (ConstraintLayout) findViewById(R.id.container);
 
 
-        if (!is_storage_image_permitted) {
+        if (!isStorageImagePermitted) {
             requestPermissionStorageImages();
         }
 
@@ -187,12 +186,12 @@ public class ReportActivity extends AppCompatActivity {
     }
 
     public void requestPermissionStorageImages() {
-        if (ContextCompat.checkSelfPermission(this, required_permissions[0]) == PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, required_permissions[0] + " Granted");
-            is_storage_image_permitted = true;
+        if (ContextCompat.checkSelfPermission(this, requiredPermissions[0]) == PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, requiredPermissions[0] + " Granted");
+            isStorageImagePermitted = true;
         } else {
             //new android 13 code after onActivityResult is deprecated, now ActivityResultLauncher..
-            request_permission_launcher_storage_images.launch(required_permissions[0]);
+            request_permission_launcher_storage_images.launch(requiredPermissions[0]);
         }
 
     }
@@ -201,80 +200,44 @@ public class ReportActivity extends AppCompatActivity {
             registerForActivityResult(new ActivityResultContracts.RequestPermission(),
                     isGranted -> {
                         if (isGranted) {
-                            Log.d(TAG, required_permissions[0] + " Granted");
-                            is_storage_image_permitted = true;
+                            Log.d(TAG, requiredPermissions[0] + " Granted");
+                            isStorageImagePermitted = true;
 
                         } else {
-                            Log.d(TAG, required_permissions[0] + " Not Granted");
-                            is_storage_image_permitted = false;
+                            Log.d(TAG, requiredPermissions[0] + " Not Granted");
+                            isStorageImagePermitted = false;
                         }
                     });
 
-    public void getInfo(){
-        // Define the Type for ArrayList<String>
-        //Type listType = new TypeToken<ArrayList<String>>() {}.getType();
+    private void getInfo(){
+        // Retrieve values from the event
+        eventName = event.getName();
+        organizer = event.getOrganizerName();
+        adate = event.getDate();
+        eventDescription = event.getDescription();
+        if (eventDescription != null){
+            eventDescription= eventDescription.substring(0, Math.min(3000, eventDescription.length()));
+        };
 
-        db.collection("events")
-                .document(eventId)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document.exists()) {
-                                // Retrieve values from the document
-                                eventName = document.getString("name");
-                                organizer = document.getString("organizerName");
-                                adate = document.getString("date");
-                                eventDescription = document.getString("description");
-                                if (eventDescription != null){
-                                    eventDescription= eventDescription.substring(0, Math.min(3000, eventDescription.length()));
-                                };
+        ArrayList<String> checkins = new ArrayList<>(event.getCheckedAttendees().keySet());
 
-                                // Extract ArrayList<String> values from the map
-                                Map<String, Object> data = document.getData();
-                                ArrayList<String> checkins = new ArrayList<>();
-                                if (data.containsKey("checkedAttendees")) {
-                                    Object checkedAttendeesObject = data.get("checkedAttendees");
-                                    if (checkedAttendeesObject instanceof ArrayList<?>) {
-                                        checkins.addAll((ArrayList<String>) checkedAttendeesObject);
-                                    }
-                                }
+        ArrayList<String> signups = new ArrayList<>(event.getSignedAttendees());
 
-                                ArrayList<String> signups = new ArrayList<>();
-                                if (data.containsKey("signedAttendees")) {
-                                    Object signedAttendeesObject = data.get("signedAttendees");
-                                    if (signedAttendeesObject instanceof ArrayList<?>) {
-                                        signups.addAll((ArrayList<String>) signedAttendeesObject);
-                                    }
-                                }
+        // Find common items
+        Set<String> commonItems = new HashSet<>(checkins);
+        commonItems.retainAll(signups);
+        Integer numCommonItems = commonItems.size();
 
-                                // Find common items
-                                Set<String> commonItems = new HashSet<>(checkins);
-                                commonItems.retainAll(signups);
-                                Integer numCommonItems = commonItems.size();
+        // Find union of the lists
+        Set<String> unionItems = new HashSet<>(checkins);
+        unionItems.addAll(signups);
+        numUnionItems = unionItems.size();
 
-                                // Find union of the lists
-                                Set<String> unionItems = new HashSet<>(checkins);
-                                unionItems.addAll(signups);
-                                numUnionItems = unionItems.size();
-
-                                if (numCommonItems>0 && numCommonItems<signups.size()){
-                                    diff1 = signups.size() - numCommonItems;
-                                }
-                                if (numCommonItems>0 && numCommonItems<checkins.size()){
-                                    diff2 = checkins.size() - numCommonItems;
-                                }
-
-                                // Now you can use these values as needed
-                            } else {
-                                Log.d(TAG, "No such document");
-                            }
-                        } else {
-                            Log.d(TAG, "get failed with ", task.getException());
-                        }
-                    }
-                });
+        if (numCommonItems>0 && numCommonItems<signups.size()){
+            diff1 = signups.size() - numCommonItems;
+        }
+        if (numCommonItems>0 && numCommonItems<checkins.size()){
+            diff2 = checkins.size() - numCommonItems;
+        }
     }
 }

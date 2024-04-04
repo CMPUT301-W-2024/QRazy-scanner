@@ -20,16 +20,12 @@ import androidx.core.content.ContextCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 
-public class GeopointDialog extends AppCompatActivity {
+public class GeopointDialog extends AppCompatActivity implements UpdateEventCallback{
     private String eventId; // The variable you want to pass
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-    private FirebaseFirestore db;
-    private DocumentReference eventRef;
+    private final DataHandler dataHandler = DataHandler.getInstance();
     private FusedLocationProviderClient fusedLocationClient;
 
 
@@ -38,9 +34,7 @@ public class GeopointDialog extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.geopoint_dialog);
 
-        eventId = (String) getIntent().getSerializableExtra("eventId");
-        db = FirebaseFirestore.getInstance();
-        eventRef = db.collection("events").document(eventId);
+        eventId = getIntent().getStringExtra("eventId");
 
         Button okButton = findViewById(R.id.okButton);
         Button cancelButton = findViewById(R.id.noButton);
@@ -89,43 +83,6 @@ public class GeopointDialog extends AppCompatActivity {
         }
     }
 
-    public void updateGeopoints(GeoPoint geoPoint){
-        eventRef.update("geopoints", FieldValue.arrayUnion(geoPoint))
-                .addOnSuccessListener(aVoid -> {
-                    // Successfully added the GeoPoint
-                    Toast.makeText(this, "Added successfully", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    // Handle failure (e.g., network error, permission denied, etc.)
-                    Toast.makeText(this, "Fail to add", Toast.LENGTH_SHORT).show();
-                });
-    }
-
-    public void setLocation(){
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        String provider = locationManager.getBestProvider(criteria, false);
-
-        // Check if at least one provider is enabled
-        if (provider == null || !locationManager.isProviderEnabled(provider)) {
-            Toast.makeText(this, "No enabled location provider", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Request permissions if not granted (this should not happen as we check permission before calling this method)
-            return;
-        }
-        Location location = locationManager.getLastKnownLocation(provider);
-        if (location!= null){
-            double latitude = location.getLatitude();
-            double longitude = location.getLongitude();
-            Log.d("Location", "Latitude: " + latitude + ", Longitude: " + longitude);
-            GeoPoint newGeopoint = new GeoPoint(latitude, longitude);
-            updateGeopoints(newGeopoint);
-        } else {
-            Toast.makeText(this, "Fail to add", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     private void getCurrentLocation() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -145,7 +102,8 @@ public class GeopointDialog extends AppCompatActivity {
                             double longitude = location.getLongitude();
                             Log.d("Location", "Latitude: " + latitude + ", Longitude: " + longitude);
                             GeoPoint newGeopoint = new GeoPoint(latitude, longitude);
-                            updateGeopoints(newGeopoint);
+                            dataHandler.updateEvent(eventId, "geoPoints", "FieldValue.arrauUnion(" + newGeopoint + ")", GeopointDialog.this);
+                            //updateGeopoints(newGeopoint);
                         } else {
                             Toast.makeText(GeopointDialog.this, "Fail to get current location", Toast.LENGTH_SHORT).show();
                         }
@@ -153,4 +111,15 @@ public class GeopointDialog extends AppCompatActivity {
                 });
     }
 
+    @Override
+    public void onUpdateEvent(String eventId) {
+        if (eventId != null){
+            // Successfully added the GeoPoint
+            Toast.makeText(this, "Added successfully", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            // Handle failure (e.g., network error, permission denied, etc.)
+            Toast.makeText(this, "Fail to add", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

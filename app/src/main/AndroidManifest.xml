@@ -30,7 +30,7 @@
             android:name=".ReportActivity"
             android:exported="true"/>
         <activity
-            android:name=".EventAttendeesActvity"
+            android:name=".EventAttendeesActivity"
             android:exported="false" />
         <activity
             android:name=".ProfileEditActivity"
