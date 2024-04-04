@@ -89,7 +89,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         allEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         announcementsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         String userName = dataHandler.getAttendee().getName();
-        welcomeText.setText("Welcome back, " + userName);
+        welcomeText.setText("Welcome, " + userName);
 
         attendeeEventsAdapter = new AttendeeEventAdapter(attendeeEventsFiltered, new AttendeeEventAdapter.OnItemClickListener() {
             @Override
@@ -101,9 +101,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(AttendeePageActivity.this, ProfileEditActivity.class);
-
                 startActivity(intent);
             }
         });
