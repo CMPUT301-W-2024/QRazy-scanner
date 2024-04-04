@@ -40,7 +40,7 @@ import java.util.Set;
 
 
 
-public class ReportActivity extends AppCompatActivity {
+public class ReportActivity extends AppCompatActivity implements GetEventCallback{
 
     Button btn;
     ConstraintLayout container;
@@ -76,7 +76,7 @@ public class ReportActivity extends AppCompatActivity {
             requestPermissionStorageImages();
         }
 
-        getInfo();
+        DataHandler.getInstance().getEvent(eventId, this);
 
 
         btn.setOnClickListener(new View.OnClickListener() {
@@ -276,5 +276,10 @@ public class ReportActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onGetEvent(Event event) {
+
     }
 }

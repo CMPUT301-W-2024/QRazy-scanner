@@ -104,6 +104,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
                 Intent intent = new Intent(AttendeePageActivity.this, ProfileEditActivity.class);
 
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -123,6 +124,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         Button scanButton = findViewById(R.id.scanButton);
         scanButton.setOnClickListener(v -> {
             startActivity(new Intent(this, ScanActivity.class));
+            finish();
         });
 
         filterAllButton.setOnClickListener(v -> {
@@ -156,13 +158,13 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
                 Intent intent = new Intent(AttendeePageActivity.this, ScanActivity.class);
                 intent.putExtra("usage", "promoQr");
                 startActivity(intent);
+                finish();
             }
         });
 
         String eventId = getIntent().getStringExtra("EVENT_ID");
         if (eventId != null && !eventId.trim().isEmpty()) {
             dataHandler.getEvent(eventId, this);
-            //fetchEventAndShowDetails(eventId);
         }
 
     }

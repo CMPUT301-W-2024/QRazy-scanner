@@ -1,19 +1,18 @@
 package com.example.projectapp;
 
-import android.content.Context;
-import android.content.Intent;
-import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.MemoryCacheSettings;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -33,11 +32,19 @@ public class DataHandler {
 
     private static DataHandler instance;
     private FirebaseFirestore db;
+    private CollectionReference attendeesRef;
+    private CollectionReference organizersRef;
+    private CollectionReference eventsRef;
     private Attendee attendee;
     private Organizer organizer;
 
     private DataHandler(){
         db = FirebaseFirestore.getInstance();
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder().setLocalCacheSettings(MemoryCacheSettings.newBuilder().build()).build();
+        db.setFirestoreSettings(settings);
+        attendeesRef = db.collection("attendees");
+        organizersRef = db.collection("organizers");
+        eventsRef = db.collection("events");
     }
 
     public static DataHandler getInstance(){
@@ -82,10 +89,15 @@ public class DataHandler {
      * @param attendee
      *      The Attendee object representing the data to add.
      */
-    public void addAttendee(Attendee attendee){
-        CollectionReference attendeesRef = db.collection("attendees");
+    public void addAttendee(Attendee attendee, AddAttendeeCallback callback){
+        DocumentReference attendeeDocRef = attendeesRef.document(attendee.getAttendeeId());
 
-        attendeesRef.document(attendee.getAttendeeId()).set(attendee);
+        attendeeDocRef.set(attendee).addOnSuccessListener(aVoid -> {
+                    callback.onAddAttendee(attendee);
+                })
+                .addOnFailureListener(e -> {
+                    callback.onAddAttendee(null);
+                });;
     }
 
     /**
@@ -94,9 +106,9 @@ public class DataHandler {
      *      The Event object representing the data to add.
      */
     public void addEvent(Event event, AddEventCallback callback){
-        CollectionReference attendeesRef = db.collection("events");
+        DocumentReference eventDocRef = eventsRef.document(event.getEventId());
 
-        attendeesRef.document(event.getEventId()).set(event).addOnSuccessListener(aVoid -> {
+        eventDocRef.set(event).addOnSuccessListener(aVoid -> {
                     callback.onAddEvent(event);
                 })
                 .addOnFailureListener(e -> {
@@ -111,19 +123,20 @@ public class DataHandler {
      *      The Organizer object representing the data to add.
      */
     public void addOrganizer(Organizer organizer){
-        CollectionReference organizersRef = db.collection("organizers");
+        DocumentReference organizerDocRef =  organizersRef.document(organizer.getOrganizerId());
 
-        organizersRef.document(organizer.getOrganizerId()).set(organizer);
+        organizerDocRef.set(organizer);
     }
 
-    public void updateEvent(String eventId, String field, String value){
-        CollectionReference eventRef = FirebaseFirestore.getInstance().collection("events");
-        eventRef.document(eventId).update(field, value);
+    public void updateEvent(String eventId, String field, String value, UpdateEventCallback callback){
+        DocumentReference eventDocRef = eventsRef.document(eventId);
+        eventDocRef.update(field, value).addOnSuccessListener(aVoid -> callback.onUpdateEvent(eventId))
+                .addOnFailureListener(e -> callback.onUpdateEvent(null));
     }
 
     public void updateAttendee(String attendeeId, String field, String value){
-        CollectionReference attendeeRef = FirebaseFirestore.getInstance().collection("attendees");
-        attendeeRef.document(attendeeId).update(field, value);
+        DocumentReference attendeeDocRef = attendeesRef.document(attendeeId);
+        attendeeDocRef.update(field, value);
     }
 
     public void subscribeToTopic(String eventId){
@@ -135,8 +148,8 @@ public class DataHandler {
 
 
     public void getEvent(String eventId, GetEventCallback callback){
-        CollectionReference eventsRef = db.collection("events");
-        eventsRef.document(eventId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        DocumentReference eventDocRef = eventsRef.document(eventId);
+        eventDocRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()) {
@@ -153,9 +166,26 @@ public class DataHandler {
         });
     }
 
+    public void getQRCode(String eventId, String qrCodeType,GetQrCodeCallback callback) {
+        DocumentReference eventDocRef = eventsRef.document(eventId);
+
+        eventDocRef.get().addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot != null && documentSnapshot.exists()) {
+                        String qrCodeString = documentSnapshot.getString(qrCodeType);
+                        if (qrCodeString != null && !qrCodeString.isEmpty()) {
+                            callback.onGetQrCode(qrCodeString);
+                        } else {
+                            callback.onGetQrCode(null);
+                        }
+                    } else {
+                        callback.onGetQrCode(null);
+                    }
+                })
+                .addOnFailureListener(e -> callback.onGetQrCode(null));
+    }
+
 
     public void addProfileDeletedListener(ProfileDeletedListenerCallback callback){
-        CollectionReference attendeesRef = db.collection("attendees");
         attendeesRef.whereEqualTo("attendeeId", attendee.getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
@@ -172,7 +202,6 @@ public class DataHandler {
     }
 
     public void addAttendeeEventsListener(AttendeeEventsListenerCallback callback) {
-        CollectionReference eventsRef = db.collection("events");
         eventsRef.whereArrayContains("signedAttendees", getAttendee().getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
@@ -188,7 +217,6 @@ public class DataHandler {
     }
 
     public void addAllEventsListener(AllEventsListenerCallback callback){
-        CollectionReference eventsRef = db.collection("events");
         eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>(){
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
@@ -204,7 +232,6 @@ public class DataHandler {
     }
 
     public void addOrganizerEventsListener(OrganizerEventsListenerCallback callback){
-        CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
 
         eventsRef.whereEqualTo("organizerId", getOrganizer().getOrganizerId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
