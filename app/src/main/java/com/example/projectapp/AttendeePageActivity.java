@@ -1,6 +1,5 @@
 package com.example.projectapp;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -93,7 +92,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         attendeeEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         allEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         announcementsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        String userName = dataHandler.getAttendee().getName();
+        String userName = dataHandler.getLocalAttendee().getName();
         welcomeText.setText("Welcome back, " + userName);
 
         attendeeEventsAdapter = new AttendeeEventAdapter(attendeeEventsFiltered, new AttendeeEventAdapter.OnItemClickListener() {
@@ -166,10 +165,6 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
             }
         });
 
-/*        Event event = (Event) getIntent().getSerializableExtra("EVENT");
-        if (event != null) {
-            showDialogWithEventDetails(event, true);
-        }*/
 
     }
     /**
@@ -314,8 +309,8 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
                 public void onClick(View v) {
                     // only add if attendance limit is not reached
                     if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().size() < event.getAttendanceLimit()){
-                        event.addSignedAttendee(dataHandler.getAttendee().getAttendeeId());
-                        dataHandler.getAttendee().addSignedEvent(event.getEventId());
+                        event.addSignedAttendee(dataHandler.getLocalAttendee().getAttendeeId());
+                        dataHandler.getLocalAttendee().addSignedEvent(event.getEventId());
                         dataHandler.subscribeToNotis(event.getEventId());
                         eventDetailDialog.dismiss();
                     }

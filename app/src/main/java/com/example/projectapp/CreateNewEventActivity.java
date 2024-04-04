@@ -158,7 +158,7 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
 
         // Set the event details to the newEvent object
 
-        Event newEvent = new Event(eventName, eventDate, eventStartTime, eventEndTime, dataHandler.getOrganizer().getName(), dataHandler.getOrganizer().getOrganizerId(), attendanceLimit, eventDescription, encodedImage);
+        Event newEvent = new Event(eventName, eventDate, eventStartTime, eventEndTime, dataHandler.getLocalOrganizer().getName(), dataHandler.getLocalOrganizer().getOrganizerId(), attendanceLimit, eventDescription, encodedImage);
 
         dataHandler.addEvent(newEvent, this);
     }

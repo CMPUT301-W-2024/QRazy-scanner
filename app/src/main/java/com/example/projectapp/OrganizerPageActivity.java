@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * organizer name, create new events, and displays a list of existing events.
  * Sync with Firebase for real-time updates.
  */
-public class OrganizerPageActivity extends AppCompatActivity implements OrganizerEventsListenerCallback {
+public class OrganizerPageActivity extends AppCompatActivity implements OrganizerEventsListenerCallback, AddOrganizerCallback {
 
     private EditText organizerNameEditText;
     private final DataHandler dataHandler = DataHandler.getInstance();
@@ -37,10 +37,6 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_organizer_page);
-
-        if (dataHandler.getOrganizer() != null){
-            dataHandler.addOrganizerEventsListener(this);
-        }
 
         organizerNameEditText = findViewById(R.id.organizerNameEditText);
 
@@ -61,19 +57,22 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
         createNewEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (dataHandler.getOrganizer() == null){
+                if (dataHandler.getLocalOrganizer() == null){
                     String organizerName = organizerNameEditText.getText().toString().trim();
                     if (organizerName.isEmpty()){
                         Toast.makeText(OrganizerPageActivity.this, "Organizer name can't be empty", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     Organizer organizer = new Organizer(organizerName);
-                    dataHandler.setOrganizer(organizer);
-                    saveOrganizerId();
-                    dataHandler.addOrganizer();
+                    dataHandler.setLocalOrganizer(organizer);
+                    saveLocalOrganizerId();
+                    dataHandler.addOrganizer(OrganizerPageActivity.this);
                 }
-                Intent intent = new Intent(OrganizerPageActivity.this, CreateNewEventActivity.class);
-                startActivity(intent);
+                else {
+                    Intent intent = new Intent(OrganizerPageActivity.this, CreateNewEventActivity.class);
+                    startActivity(intent);
+                }
+
             }
         });
 
@@ -82,8 +81,9 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
     @Override
     protected void onResume() {
         super.onResume();
-        if (dataHandler.getOrganizer() != null){
-            organizerNameEditText.setText(dataHandler.getOrganizer().getName());
+        if (dataHandler.getLocalOrganizer() != null){
+            dataHandler.addOrganizerEventsListener(this);
+            organizerNameEditText.setText(dataHandler.getLocalOrganizer().getName());
             organizerNameEditText.setFocusable(false);
             organizerNameEditText.setCursorVisible(false);
         }
@@ -97,10 +97,10 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
     /**
      * Saves the organizer's ID
      */
-    public void saveOrganizerId(){
+    public void saveLocalOrganizerId(){
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("OrganizerPref", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("organizerId", dataHandler.getOrganizer().getOrganizerId());
+        editor.putString("organizerId", dataHandler.getLocalOrganizer().getOrganizerId());
         editor.apply();
     }
 
@@ -164,6 +164,17 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
             case REMOVED:
                 removeEvent(event);
                 break;
+        }
+    }
+
+    @Override
+    public void onAddOrganizer(Organizer organizer) {
+        if (organizer != null){
+            Intent intent = new Intent(OrganizerPageActivity.this, CreateNewEventActivity.class);
+            startActivity(intent);
+        }
+        else {
+            Toast.makeText(OrganizerPageActivity.this, "Error accessing firebase", Toast.LENGTH_SHORT).show();
         }
     }
 }

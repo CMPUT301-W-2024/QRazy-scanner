@@ -18,17 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
-import com.google.firebase.firestore.MemoryCacheSettings;
 
-public class WelcomeFragment extends Fragment {
-
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+public class WelcomeFragment extends Fragment implements GetOrganizerCallback, GetAttendeeCallback{
     private DataHandler dataHandler;
 
     @Nullable
@@ -47,34 +38,9 @@ public class WelcomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // User has logged in before, get their info
-                if (getAttendeeId() != null) {
-                    db.collection("attendees").document(getAttendeeId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot document = task.getResult();
-                                if (document.exists()) {
-                                    Attendee attendee = document.toObject(Attendee.class);
-                                    dataHandler.setAttendee(attendee);
-                                    Intent intent = new Intent(getActivity(), AttendeePageActivity.class);
-                                    startActivity(intent);
-                                } else {
-                                    Toast.makeText(getActivity(), "Your account was deleted you will need to create a new account", Toast.LENGTH_SHORT).show();
-                                    ProfileFragment profileFragment = new ProfileFragment();
-                                    requireActivity().getSupportFragmentManager()
-                                            .beginTransaction()
-                                            .replace(android.R.id.content, profileFragment)
-                                            // Use android.R.id.content as the container
-                                            .addToBackStack(null)
-                                            .commit();
-                                }
-                            } else {
-                                Toast.makeText(getActivity(), "Couldn't retrieve account", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                if (getLocalAttendeeId() != null) {
+                    dataHandler.getAttendee(getLocalAttendeeId(), WelcomeFragment.this);
                 }
-
                 else {
                     ProfileFragment profileFragment = new ProfileFragment();
                     requireActivity().getSupportFragmentManager()
@@ -92,16 +58,8 @@ public class WelcomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // User has logged in before, get their info
-                if (getOrganizerId() != null) {
-                    db.collection("organizers").document(getOrganizerId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            Organizer organizer = documentSnapshot.toObject(Organizer.class);
-                            dataHandler.setOrganizer(organizer);
-                            Intent intent = new Intent(getActivity(), OrganizerPageActivity.class);
-                            startActivity(intent);
-                        }
-                    });
+                if (getLocalOrganizerId() != null) {
+                    dataHandler.getOrganizer(getLocalOrganizerId(), WelcomeFragment.this);
                 }
                 else {
                     Intent intent = new Intent(getActivity(), OrganizerPageActivity.class);
@@ -113,13 +71,47 @@ public class WelcomeFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onGetOrganizer(Organizer organizer) {
+        if (organizer != null){
+            dataHandler.setLocalOrganizer(organizer);
+            Intent intent = new Intent(getActivity(), OrganizerPageActivity.class);
+            startActivity(intent);
+        }
+        else {
+            Toast.makeText(getActivity(), "Couldn't access firebase", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onGetAttendee(Attendee attendee, boolean deleted) {
+        if (attendee != null && !deleted){
+            dataHandler.setLocalAttendee(attendee);
+            Intent intent = new Intent(getActivity(), AttendeePageActivity.class);
+            startActivity(intent);
+        }
+        else if (deleted){
+            Toast.makeText(getActivity(), "Your account was deleted you will need to create a new account", Toast.LENGTH_SHORT).show();
+
+            ProfileFragment profileFragment = new ProfileFragment();
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(android.R.id.content, profileFragment)
+                    // Use android.R.id.content as the container
+                    .addToBackStack(null)
+                    .commit();
+        }
+        else {
+            Toast.makeText(getActivity(), "Couldn't access firebase", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     /**
      * Gets attendee's ID.
      * @return      The ID of the attendee as a String,
      *              or null if no ID is found.
      */
-    public String getAttendeeId(){
+    public String getLocalAttendeeId(){
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("AttendeePref", Context.MODE_PRIVATE);
         return prefs.getString("attendeeId", null);
     }
@@ -129,7 +121,7 @@ public class WelcomeFragment extends Fragment {
      * @return      The ID of the organizer as a String,
      *              or null if no ID is found.
      */
-    public String getOrganizerId(){
+    public String getLocalOrganizerId(){
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("OrganizerPref", Context.MODE_PRIVATE);
         return prefs.getString("organizerId", null);
     }

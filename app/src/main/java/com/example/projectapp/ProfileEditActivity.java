@@ -57,7 +57,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
     }
 
     private void loadAttendeeInfo() {
-        currentAttendee = dataHandler.getAttendee();
+        currentAttendee = dataHandler.getLocalAttendee();
         if (currentAttendee != null) {
             userNameEditText.setText(currentAttendee.getName());
             emailEditText.setText(currentAttendee.getHomepage());

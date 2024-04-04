@@ -67,7 +67,7 @@ public class ProfileFragment extends Fragment implements AddAttendeeCallback{
         avatar= rootView.findViewById(R.id.avatarImage);
 
         // Load saved values from SharedPreferences
-        if (dataHandler.getAttendee() != null){
+        if (dataHandler.getLocalAttendee() != null){
             loadSavedValues();
         }
 
@@ -92,7 +92,7 @@ public class ProfileFragment extends Fragment implements AddAttendeeCallback{
      */
     private void loadSavedValues() {
         CollectionReference a = db.collection("attendees");
-        Query query = a.whereEqualTo("attendeeId", dataHandler.getAttendee().getAttendeeId());
+        Query query = a.whereEqualTo("attendeeId", dataHandler.getLocalAttendee().getAttendeeId());
         query.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 // Query execution successful
@@ -205,7 +205,7 @@ public class ProfileFragment extends Fragment implements AddAttendeeCallback{
     public void onAddAttendee(Attendee attendee) {
         if (attendee != null){
             Toast.makeText(getActivity(), "Created profile", Toast.LENGTH_SHORT).show();
-            dataHandler.setAttendee(attendee);
+            dataHandler.setLocalAttendee(attendee);
             saveAttendeeId();
             if (fulfill == 1){
                 startActivity(new Intent(getContext(), AttendeePageActivity.class));
@@ -261,7 +261,7 @@ public class ProfileFragment extends Fragment implements AddAttendeeCallback{
     public void saveAttendeeId(){
         SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("AttendeePref", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("attendeeId", dataHandler.getAttendee().getAttendeeId());
+        editor.putString("attendeeId", dataHandler.getLocalAttendee().getAttendeeId());
         editor.apply();
     }
 }

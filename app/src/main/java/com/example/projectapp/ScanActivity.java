@@ -1,9 +1,5 @@
 package com.example.projectapp;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -16,7 +12,6 @@ import android.widget.Toast;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.Result;
 
 /**
@@ -85,9 +80,9 @@ public class ScanActivity extends AppCompatActivity implements GetEventCallback,
 
     private void checkLimit(Event event){
         // if no attendance limit or signed attendees is less than limit then check in
-        if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().contains(dataHandler.getAttendee().getAttendeeId()) || event.getAttendance() + event.getSignedAttendees().size() < event.getAttendanceLimit()){
-            event.addCheckedAttendee(dataHandler.getAttendee().getAttendeeId());
-            dataHandler.getAttendee().addCheckedEvent(event.getEventId());
+        if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().contains(dataHandler.getLocalAttendee().getAttendeeId()) || event.getAttendance() + event.getSignedAttendees().size() < event.getAttendanceLimit()){
+            event.addCheckedAttendee(dataHandler.getLocalAttendee().getAttendeeId());
+            dataHandler.getLocalAttendee().addCheckedEvent(event.getEventId());
             dataHandler.subscribeToNotis(event.getEventId());
             Intent intent1 = new Intent(ScanActivity.this, GeopointDialog.class);
             intent1.putExtra("eventId", event.getEventId());
