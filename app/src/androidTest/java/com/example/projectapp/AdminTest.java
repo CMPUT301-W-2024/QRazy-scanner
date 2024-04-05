@@ -21,7 +21,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-public class Admin_test {
+public class AdminTest {
     @RunWith(AndroidJUnit4.class)
     @LargeTest
     public class AdminActivityTest {

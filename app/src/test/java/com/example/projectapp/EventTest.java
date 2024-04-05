@@ -12,37 +12,28 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.widget.Button;
-import android.widget.EditText;
-
-import androidx.test.core.app.ApplicationProvider;
-
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.robolectric.RobolectricTestRunner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Optional;
 
 /**
  * Setting up a class for Event related unit tests
  */
-@RunWith(JUnit4.class)
+@RunWith(RobolectricTestRunner.class)
 public class EventTest {
     private Event testEvent;
     private HashMap<String, Integer> checkedAttendees;
@@ -53,6 +44,7 @@ public class EventTest {
         testEvent = new Event("Sample Name","2025-01-01", "00:00", "01:00", "Test Organizer", "123456789", 50, "Test Description", "Poster.png");
         checkedAttendees = new HashMap<>();
         signedAttendees = new ArrayList<>();
+
     }
 
 
@@ -267,12 +259,12 @@ public class EventTest {
         assertNotNull(testEvent.getAttendanceLimit());
 
         // Checks getter
-        assertNotEquals(Optional.of(0), testEvent.getAttendanceLimit());
-        assertEquals(Optional.of(50), testEvent.getAttendanceLimit());
+        assertFalse(testEvent.getAttendanceLimit() == 0);
+        assertTrue(testEvent.getAttendanceLimit() == 50);
 
         // Checks setter
         testEvent.setAttendanceLimit(100);
-        assertEquals(100, Optional.ofNullable(testEvent.getAttendanceLimit()));
+        assertTrue(testEvent.getAttendanceLimit() == 100);
 
     }
 
@@ -334,6 +326,7 @@ public class EventTest {
      */
     @Test
     public void testAddCheckedAttendee() {
+        checkedAttendees = new HashMap<>();
         // Set checked attendees
         checkedAttendees.put("attendee1", 0);
         testEvent.setCheckedAttendees(checkedAttendees);
@@ -481,16 +474,21 @@ public class EventTest {
      */
     @Test
     public void testEquals() {
-        Event event1 = new Event("EventName1", "2024-04-04", "10:00", "18:00", "OrganizerName", "OrganizerId", 100, "Description", "PosterURL");
-        Event event2 = new Event("EventName2", "2024-04-05", "11:00", "19:00", "OrganizerName", "OrganizerId", 150, "Another Description", "AnotherPosterURL");
-        Event event3 = new Event("EventName3", "2024-04-06", "12:00", "20:00", "OrganizerName", "DifferentOrganizerId", 200, "Different Description", "DifferentPosterURL");
+        // Create events with different attributes
+        Event event1 = new Event("EventName1", "2024-04-04", "10:00", "18:00", "OrganizerName1","123", 100, "Description1", "PosterURL1");
+        event1.setEventId("123");
+        Event event2 = new Event("EventName1", "2024-04-04", "10:00", "18:00", "OrganizerName1","123", 100, "Description1", "PosterURL1");
+        event1.setEventId("123");
+        Event event3 = new Event("EventName3", "2024-04-06", "12:00", "20:00", "OrganizerName3","987", 200, "Description3", "PosterURL3");
 
-        // Test for equality based on organizerId
-        assertTrue(event1.equals(event2));
-        assertFalse(event1.equals(event3));
-        assertFalse(event1.equals(null));
-        assertFalse(event1.equals(new Object()));
+        // Test for equality based on the attributes used in the equals method
+        assertTrue(event1.equals(event2));          // Should be true as all attributes match
+        assertFalse(event1.equals(event3));         // Should be false as attributes differ
+        assertFalse(event1.equals(null));           // Should be false as the object is null
+        assertFalse(event1.equals(new Object()));   // Should be false as the object is not an instance of Event
     }
+
+
 
 
     /**

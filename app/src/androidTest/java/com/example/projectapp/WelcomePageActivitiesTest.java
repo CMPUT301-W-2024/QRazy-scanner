@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
  * ensure they correctly switch activities.
  */
 @RunWith(AndroidJUnit4.class)
-public class WelcomePageTest {
+public class WelcomePageActivitiesTest {
 
     @Rule
     public ActivityScenarioRule<MainActivity> activityScenarioRule =

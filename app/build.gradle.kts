@@ -42,7 +42,7 @@ android {
 
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
-    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-firestore:21.4.2")
     implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.github.yuriy-budiyev:code-scanner:2.3.0")
@@ -73,6 +73,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:3.12.4")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.robolectric:robolectric:4.6.1")
 
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.4.0")
     androidTestImplementation("org.mockito:mockito-core:3.12.4")
@@ -80,6 +81,8 @@ dependencies {
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
     androidTestImplementation("androidx.test:rules:1.4.0")
+
+
 
 tasks.withType<Test> {
     useJUnitPlatform()

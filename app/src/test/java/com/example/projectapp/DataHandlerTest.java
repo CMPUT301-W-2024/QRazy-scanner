@@ -63,7 +63,6 @@ public class DataHandlerTest {
     }
 
 
-
     @Test
     public void testAddAttendee() {
         // Call method under test

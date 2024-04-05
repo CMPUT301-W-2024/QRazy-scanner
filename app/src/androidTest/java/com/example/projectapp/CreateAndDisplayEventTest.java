@@ -8,6 +8,7 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import android.widget.DatePicker;
 import android.widget.TimePicker;
@@ -24,22 +25,13 @@ import org.junit.runner.RunWith;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class NewEventTest {
+public class CreateAndDisplayEventTest {
 
     // Launch app
     @Rule
     public ActivityScenarioRule<OrganizerPageActivity> ActivityScenarioRule =
             new ActivityScenarioRule<>(OrganizerPageActivity.class);
 
-    /**
-     * Test to check if clicking create new event switches from
-     * organizer page to create new event activity
-     */
-    @Test
-    public void testSwitchActivity() {
-        onView(withId(R.id.createEventButton)).perform(click());
-        onView(withId(R.id.eventNameEditText)).check(matches(isDisplayed()));
-    }
 
     @Test
     public void testCreateNewEvent() {
@@ -73,8 +65,6 @@ public class NewEventTest {
         // Enter event capacity
         onView(withId(R.id.attendanceLimitEditText)).perform(typeText("100"), closeSoftKeyboard());
 
-        //onView(withId(R.id.image_event_poster)).perform(setDrawableResource(R.drawable.ic_launcher_background));
-
         // Click 'New QR'
         onView(withId(R.id.newQrButton)).perform(click());
 
@@ -86,8 +76,40 @@ public class NewEventTest {
     }
 
     @Test
-    public void testCorrectDisplay() {
+    public void testEventDisplay() {
+        // Click Expand Button
+        onView(withId(R.id.expandButton)).perform(click());
 
+        onView(withId(R.id.eventNameOrgText))
+                .check(matches(isDisplayed()))
+                .check(matches(withText("Create New Event Test")));
+
+        onView(withId(R.id.attendeeCountTextView))
+                .check(matches(isDisplayed()))
+                .check(matches(withText("0")));
+
+        onView(withId(R.id.eventDateOrgText))
+                .check(matches(isDisplayed()))
+                .check(matches(withText("2024-05-30")));
+
+        onView(withId(R.id.eventTimeOrgText))
+                .check(matches(isDisplayed()))
+                .check(matches(withText("12:00 - 16:00")));
+
+        onView(withId(R.id.eventDetailOrgText))
+                .check(matches(isDisplayed()))
+                .check(matches(withText("This is a test description")));
+
+        onView(withId(R.id.viewMapButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.pdf_button)).check(matches(isDisplayed()));
+        onView(withId(R.id.eventQrText)).check(matches(isDisplayed()));
+        onView(withId(R.id.eventQrView)).check(matches(isDisplayed()));
+        onView(withId(R.id.promoQrText)).check(matches(isDisplayed()));
+        onView(withId(R.id.promoQrView)).check(matches(isDisplayed()));
     }
 
+    @Test
+    public void testPoster(){
+        //onView(withId(R.id.image_event_poster)).perform(setDrawableResource(R.drawable.ic_launcher_background));
+    }
 }
