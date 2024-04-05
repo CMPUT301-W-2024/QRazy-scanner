@@ -46,7 +46,7 @@ public class GeopointDialog extends AppCompatActivity implements UpdateEventCall
 
                 // Check location permission and proceed to set location if permission is granted
                 checkLocationPermission();
-                onBackPressed();
+                finish();
             }
         });
 
@@ -54,7 +54,7 @@ public class GeopointDialog extends AppCompatActivity implements UpdateEventCall
             @Override
             public void onClick(View v) {
                 // Handle cancel button if needed
-                onBackPressed(); // Close the dialog
+                finish(); // Close the dialog
             }
         });
     }

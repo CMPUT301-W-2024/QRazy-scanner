@@ -20,13 +20,14 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView event, organizer, announcementContent;
+        private TextView event, organizer, announcementContent, dateTime;
 
         public ViewHolder(View itemView) {
             super(itemView);
             event = (TextView) itemView.findViewById(R.id.announcementEvent);
             organizer = (TextView) itemView.findViewById(R.id.announcementOrganizer);
             announcementContent = (TextView) itemView.findViewById(R.id.announcementContent);
+            dateTime = (TextView) itemView.findViewById(R.id.announcementDateTime);
         }
     }
 
@@ -44,6 +45,7 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
         holder.event.setText(announcement.getEvent());
         holder.organizer.setText(announcement.getOrganizer());
         holder.announcementContent.setText(announcement.getAnnouncement());
+        holder.dateTime.setText(announcement.getDateTime());
     }
 
     @Override
