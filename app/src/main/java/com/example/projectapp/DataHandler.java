@@ -225,22 +225,23 @@ public class DataHandler {
     }
 
     public void addLocalAttendeeListener(LocalAttendeeListenerCallback callback){
-        attendeesRef.whereEqualTo("attendeeId", localAttendee.getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots,
-                                @Nullable FirebaseFirestoreException e) {
-                if (snapshots != null){
-                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                        if (dc.getType() == DocumentChange.Type.REMOVED){
-                            callback.onLocalAttendeeUpdated();
-                        }
-                        else {
-                            localAttendee = dc.getDocument().toObject(Attendee.class);
+        if (localAttendee != null) {
+            attendeesRef.whereEqualTo("attendeeId", localAttendee.getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot snapshots,
+                                    @Nullable FirebaseFirestoreException e) {
+                    if (snapshots != null) {
+                        for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                            if (dc.getType() == DocumentChange.Type.REMOVED) {
+                                callback.onLocalAttendeeUpdated();
+                            } else {
+                                localAttendee = dc.getDocument().toObject(Attendee.class);
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     public void addAttendeeEventsListener(boolean getCheckedIn, AttendeeEventsListenerCallback callback) {
