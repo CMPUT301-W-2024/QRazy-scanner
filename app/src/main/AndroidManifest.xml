@@ -56,10 +56,6 @@
         <activity android:name=".GeopointDialog" />
 
         <activity
-            android:name=".CreateEventActivity"
-            android:exported="true">
-        </activity>
-        <activity
             android:name=".CreateNewEventActivity"
             android:exported="false" />
         <activity

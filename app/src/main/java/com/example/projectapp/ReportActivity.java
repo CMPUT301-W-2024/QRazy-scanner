@@ -33,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -58,7 +59,7 @@ public class ReportActivity extends AppCompatActivity {
     String adate;
     Integer diff1 = 0;
     Integer diff2 = 0;
-    Integer numUnionItems;
+
 
 
     @Override
@@ -81,6 +82,7 @@ public class ReportActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 createPDFandShare();
+                onBackPressed();
             }
         });
 
@@ -120,7 +122,7 @@ public class ReportActivity extends AppCompatActivity {
                 "\nOrganizer: " + organizer +
                 "\nDate: " + adate +
                 "\n" + diff1_text + diff1 +
-                "\n" + diff1_text + diff1 +
+                "\n" + diff2_text + diff2 +
                 "\nEvent Description(Limited at 3000 characters): " + eventDescription;
 
         // Create StaticLayout for the title
@@ -219,7 +221,6 @@ public class ReportActivity extends AppCompatActivity {
         };
 
         ArrayList<String> checkins = new ArrayList<>(event.getCheckedAttendees().keySet());
-
         ArrayList<String> signups = new ArrayList<>(event.getSignedAttendees());
 
         // Find common items
@@ -227,15 +228,12 @@ public class ReportActivity extends AppCompatActivity {
         commonItems.retainAll(signups);
         Integer numCommonItems = commonItems.size();
 
-        // Find union of the lists
-        Set<String> unionItems = new HashSet<>(checkins);
-        unionItems.addAll(signups);
-        numUnionItems = unionItems.size();
 
-        if (numCommonItems>0 && numCommonItems<signups.size()){
+
+        if (numCommonItems>=0 && numCommonItems<signups.size()){
             diff1 = signups.size() - numCommonItems;
         }
-        if (numCommonItems>0 && numCommonItems<checkins.size()){
+        if (numCommonItems>=0 && numCommonItems<checkins.size()){
             diff2 = checkins.size() - numCommonItems;
         }
     }

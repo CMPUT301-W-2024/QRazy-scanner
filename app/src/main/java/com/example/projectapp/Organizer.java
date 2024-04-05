@@ -66,16 +66,4 @@ public class Organizer {
     public void setName(String name) {
         this.name = name;
     }
-
-    /**
-     * add events
-     * @param eventId event's id to add
-     */
-    public void addEvent(String eventId){
-        if (!events.contains(eventId)){
-            events.add(eventId);
-            DocumentReference attendeeRef = FirebaseFirestore.getInstance().collection("organizers").document(organizerId);
-            attendeeRef.update("events", events);
-        }
-    }
 }

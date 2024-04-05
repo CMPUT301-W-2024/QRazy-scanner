@@ -39,8 +39,8 @@ public class EventAttendeesActivity extends AppCompatActivity implements EventAt
         checkedInAttendees = new ArrayList<>();
         signedUpAttendees = new ArrayList<>();
 
-        checkedInAttendeeAdapter = new EventAttendeeAdapter(checkedInAttendees, event);
-        signedUpAttendeeAdapter = new EventAttendeeAdapter(signedUpAttendees, event);
+        checkedInAttendeeAdapter = new EventAttendeeAdapter(checkedInAttendees, event, null);
+        signedUpAttendeeAdapter = new EventAttendeeAdapter(signedUpAttendees, event, null);
 
         checkedInAttendeesListView.setAdapter(checkedInAttendeeAdapter);
         signedUpAttendeesListView.setAdapter(signedUpAttendeeAdapter);
@@ -64,13 +64,10 @@ public class EventAttendeesActivity extends AppCompatActivity implements EventAt
      * @param adapter   The adapter to notify of changes.
      */
     public void addAttendee(Attendee attendee, ArrayList<Attendee> list, EventAttendeeAdapter adapter){
-        for (int i=0; i<list.size(); i++){
-            if (attendee.getAttendeeId() != null && list.get(i).getAttendeeId() != null && (attendee.getAttendeeId()).equals(list.get(i).getAttendeeId())){
-                return;
-            }
+        if (!list.contains(attendee)){
+            list.add(attendee);
+            adapter.notifyDataSetChanged();
         }
-        list.add(attendee);
-        adapter.notifyDataSetChanged();
     }
 
     /**
@@ -80,12 +77,10 @@ public class EventAttendeesActivity extends AppCompatActivity implements EventAt
      * @param adapter   The adapter to notify of changes.
      */
     public void updateAttendee(Attendee attendee, ArrayList<Attendee> list, EventAttendeeAdapter adapter){
-        for (int i=0; i<list.size(); i++){
-            if (attendee.getAttendeeId() != null && (attendee.getAttendeeId()).equals(list.get(i).getAttendeeId())){
-                list.set(i, attendee);
-            }
+        if (list.contains(attendee)){
+            list.set(list.indexOf(attendee), attendee);
+            adapter.notifyDataSetChanged();
         }
-        adapter.notifyDataSetChanged();
     }
 
     /**
@@ -95,14 +90,7 @@ public class EventAttendeesActivity extends AppCompatActivity implements EventAt
      * @param adapter   The adapter to notify of changes.
      */
     public void removeAttendee(Attendee attendee, ArrayList<Attendee> list, EventAttendeeAdapter adapter){
-        Iterator<Attendee> i = list.iterator();
-        while(i.hasNext()){
-            Attendee e = i.next();
-            if (attendee.getAttendeeId() != null && e.getAttendeeId() != null && (e.getAttendeeId()).equals(attendee.getAttendeeId())){
-                i.remove();
-            }
-        }
-        adapter.notifyDataSetChanged();
+        list.remove(attendee);
     }
 
     /**

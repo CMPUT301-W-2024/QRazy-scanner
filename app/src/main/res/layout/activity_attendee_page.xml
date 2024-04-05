@@ -27,7 +27,7 @@
         android:layout_marginEnd="142dp"
         android:layout_toStartOf="@id/menuButton"
         android:fontFamily="@font/bold1"
-        android:padding="16dp"
+        android:padding="10dp"
         android:text="Welcome, "
         android:textSize="25sp" />
 
@@ -36,7 +36,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_below="@id/welcomeText"
-        android:padding="20dp">
+        android:padding="18dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/bold1"
             android:text="My Events"
-            android:textSize="30sp"
+            android:textSize="28sp"
             android:padding="8dp" />
 
         <TextView
@@ -93,14 +93,14 @@
             android:id="@+id/attendeeEventsList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="16dp" />
+            android:paddingBottom="14dp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/bold1"
             android:text="All Events"
-            android:textSize="30sp"
+            android:textSize="28sp"
             android:padding="8dp" />
 
         <TextView
@@ -118,7 +118,7 @@
             android:id="@+id/allEventsList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="16dp" />
+            android:paddingBottom="14dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -140,7 +140,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center|bottom"
-                android:padding="12dp">
+                android:padding="10dp">
 
                 <com.google.android.material.button.MaterialButton
                     style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
@@ -148,7 +148,7 @@
 
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="14dp"
+                    android:padding="10dp"
                     android:text="Check into event"
                     android:layout_marginEnd="8dp"/>
 
@@ -157,7 +157,7 @@
                     android:id="@+id/promoQrCodeButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="14dp"
+                    android:padding="10dp"
                     android:text="promo QR-code" />
             </LinearLayout>
         </LinearLayout>

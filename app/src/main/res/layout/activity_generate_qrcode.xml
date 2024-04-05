@@ -20,10 +20,10 @@
 
     <!-- Use Own QR Code Button -->
     <com.google.android.material.button.MaterialButton
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:id="@+id/useOwnQrButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/bold1"
         android:text="Use Own QR Code"
         android:textSize="15sp"
         app:layout_constraintTop_toBottomOf="@id/qrCodeImageView"
@@ -34,10 +34,10 @@
 
     <!-- Generate Unique QR Code Button -->
     <com.google.android.material.button.MaterialButton
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:id="@+id/generateQrCodeButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/bold1"
         android:text="Generate Unique QR Code"
         android:textSize="15sp"
         app:layout_constraintTop_toBottomOf="@id/useOwnQrButton"
@@ -48,10 +48,10 @@
 
     <!-- Generate Promotion QR Code Button -->
     <com.google.android.material.button.MaterialButton
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:id="@+id/generatePromotionQrCodeButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/bold1"
         android:text="Generate Promotion QR Code"
         android:textSize="15sp"
         app:layout_constraintTop_toBottomOf="@id/generateQrCodeButton"
@@ -62,10 +62,10 @@
 
     <!-- Share QR Code Button -->
     <com.google.android.material.button.MaterialButton
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:id="@+id/shareQrCodeButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/bold1"
         android:text="Share QR Code"
         android:textSize="13sp"
         app:layout_constraintTop_toBottomOf="@id/generatePromotionQrCodeButton"
@@ -76,10 +76,11 @@
 
     <!-- Share Promo QR Button -->
     <com.google.android.material.button.MaterialButton
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:id="@+id/sharePromoQrCodeButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/bold1"
+
         android:text="Share Promo QR"
         android:textSize="13sp"
         app:layout_constraintTop_toBottomOf="@id/generatePromotionQrCodeButton"
@@ -91,10 +92,10 @@
 
     <!-- Home Page Button -->
     <com.google.android.material.button.MaterialButton
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:id="@+id/finishButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/bold1"
         android:text="Home Page"
         android:textSize="15sp"
         app:layout_constraintTop_toBottomOf="@id/shareQrCodeButton"

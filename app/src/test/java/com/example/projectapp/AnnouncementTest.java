@@ -8,8 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-
 public class AnnouncementTest {
     private Announcement announcement;
 
@@ -28,8 +26,8 @@ public class AnnouncementTest {
     @Test
     void testTimeGetterAndSetter() {
         String newTime = "21:00";
-        announcement.setTime(newTime);
-        assertEquals(newTime, announcement.getTime(), "Announcement times do not match");
+        announcement.setDateTime(newTime);
+        assertEquals(newTime, announcement.getDateTime(), "Announcement times do not match");
     }
 
     @Test
