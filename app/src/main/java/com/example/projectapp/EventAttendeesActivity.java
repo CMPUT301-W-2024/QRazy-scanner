@@ -1,21 +1,10 @@
 package com.example.projectapp;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Bundle;
-
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -24,14 +13,12 @@ import java.util.Iterator;
  * Handles separating attendees into lists based on check-in status and
  * sync with Firebase data.
  */
-public class EventAttendeesActivity extends AppCompatActivity {
+public class EventAttendeesActivity extends AppCompatActivity implements EventAttendeesListenerCallback{
 
     private ArrayList<Attendee> checkedInAttendees;
     private ArrayList<Attendee> signedUpAttendees;
     private EventAttendeeAdapter checkedInAttendeeAdapter;
     private EventAttendeeAdapter signedUpAttendeeAdapter;
-    private ListenerRegistration checkedInAttendeeListener;
-    private ListenerRegistration signedUpAttendeeListener;
     private Event event;
 
     @Override
@@ -40,6 +27,8 @@ public class EventAttendeesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_attendees_actvity);
 
         event = (Event) getIntent().getSerializableExtra("EVENT");
+        DataHandler.getInstance().addEventAttendeesListener(event, true, this); // for checked in attendees
+        DataHandler.getInstance().addEventAttendeesListener(event, false, this); // for signed up attendees
 
         RecyclerView checkedInAttendeesListView = findViewById(R.id.checkedInAttendeesList);
         RecyclerView signedUpAttendeesListView = findViewById(R.id.signedUpAttendeesList);
@@ -50,8 +39,8 @@ public class EventAttendeesActivity extends AppCompatActivity {
         checkedInAttendees = new ArrayList<>();
         signedUpAttendees = new ArrayList<>();
 
-        checkedInAttendeeAdapter = new EventAttendeeAdapter(checkedInAttendees, event);
-        signedUpAttendeeAdapter = new EventAttendeeAdapter(signedUpAttendees, event);
+        checkedInAttendeeAdapter = new EventAttendeeAdapter(checkedInAttendees, event, null);
+        signedUpAttendeeAdapter = new EventAttendeeAdapter(signedUpAttendees, event, null);
 
         checkedInAttendeesListView.setAdapter(checkedInAttendeeAdapter);
         signedUpAttendeesListView.setAdapter(signedUpAttendeeAdapter);
@@ -60,15 +49,11 @@ public class EventAttendeesActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        checkedInAttendeeListener = addAttendeesListener(true, checkedInAttendees, checkedInAttendeeAdapter);
-        signedUpAttendeeListener = addAttendeesListener(false, signedUpAttendees, signedUpAttendeeAdapter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        checkedInAttendeeListener.remove();
-        signedUpAttendeeListener.remove();
     }
 
     /**
@@ -79,13 +64,10 @@ public class EventAttendeesActivity extends AppCompatActivity {
      * @param adapter The adapter to notify of changes.
      */
     public void addAttendee(Attendee attendee, ArrayList<Attendee> list, EventAttendeeAdapter adapter){
-        for (int i=0; i<list.size(); i++){
-            if (attendee.getAttendeeId() != null && list.get(i).getAttendeeId() != null && (attendee.getAttendeeId()).equals(list.get(i).getAttendeeId())){
-                return;
-            }
+        if (!list.contains(attendee)){
+            list.add(attendee);
+            adapter.notifyDataSetChanged();
         }
-        list.add(attendee);
-        adapter.notifyDataSetChanged();
     }
 
     /**
@@ -95,12 +77,10 @@ public class EventAttendeesActivity extends AppCompatActivity {
      * @param adapter The adapter to notify of changes.
      */
     public void updateAttendee(Attendee attendee, ArrayList<Attendee> list, EventAttendeeAdapter adapter){
-        for (int i=0; i<list.size(); i++){
-            if (attendee.getAttendeeId() != null && (attendee.getAttendeeId()).equals(list.get(i).getAttendeeId())){
-                list.set(i, attendee);
-            }
+        if (list.contains(attendee)){
+            list.set(list.indexOf(attendee), attendee);
+            adapter.notifyDataSetChanged();
         }
-        adapter.notifyDataSetChanged();
     }
 
     /**
@@ -110,49 +90,36 @@ public class EventAttendeesActivity extends AppCompatActivity {
      * @param adapter The adapter to notify of changes.
      */
     public void removeAttendee(Attendee attendee, ArrayList<Attendee> list, EventAttendeeAdapter adapter){
-        Iterator<Attendee> i = list.iterator();
-        while(i.hasNext()){
-            Attendee e = i.next();
-            if (attendee.getAttendeeId() != null && e.getAttendeeId() != null && (e.getAttendeeId()).equals(attendee.getAttendeeId())){
-                i.remove();
-            }
-        }
-        adapter.notifyDataSetChanged();
+        list.remove(attendee);
     }
 
-    private ListenerRegistration addAttendeesListener(boolean getCheckedIn, ArrayList<Attendee> attendees, EventAttendeeAdapter adapter){
-        CollectionReference attendeeRef = FirebaseFirestore.getInstance().collection("attendees");
-
-        Query query;
-        if (getCheckedIn){
-            query = attendeeRef.orderBy("checkedInEvents." + event.getEventId());
+    @Override
+    public void onEventCheckedAttendeesUpdated(DocumentChange.Type updateType, Attendee attendee) {
+        switch (updateType) {
+            case ADDED:
+                addAttendee(attendee, checkedInAttendees, checkedInAttendeeAdapter);
+                break;
+            case MODIFIED:
+                updateAttendee(attendee, checkedInAttendees, checkedInAttendeeAdapter);
+                break;
+            case REMOVED:
+                removeAttendee(attendee, checkedInAttendees, checkedInAttendeeAdapter);
+                break;
         }
-        else {
-            query = attendeeRef.whereArrayContains("signedUpEvents", event.getEventId());
-        }
+    }
 
-        ListenerRegistration attendeeListener = query.addSnapshotListener(new EventListener<QuerySnapshot>(){
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots,
-                                @Nullable FirebaseFirestoreException e) {
-                if (snapshots != null){
-                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                        Attendee attendee = dc.getDocument().toObject(Attendee.class);
-                        switch (dc.getType()) {
-                            case ADDED:
-                                addAttendee(attendee, attendees, adapter);
-                                break;
-                            case MODIFIED:
-                                updateAttendee(attendee, attendees, adapter);
-                                break;
-                            case REMOVED:
-                                removeAttendee(attendee, attendees, adapter);
-                                break;
-                        }
-                    }
-                }
-            }
-        });
-        return  attendeeListener;
+    @Override
+    public void onEventSignedAttendeesUpdated(DocumentChange.Type updateType, Attendee attendee) {
+        switch (updateType) {
+            case ADDED:
+                addAttendee(attendee, signedUpAttendees, signedUpAttendeeAdapter);
+                break;
+            case MODIFIED:
+                updateAttendee(attendee, signedUpAttendees, signedUpAttendeeAdapter);
+                break;
+            case REMOVED:
+                removeAttendee(attendee, signedUpAttendees, signedUpAttendeeAdapter);
+                break;
+        }
     }
 }

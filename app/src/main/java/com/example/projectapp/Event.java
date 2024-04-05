@@ -8,8 +8,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
@@ -19,8 +21,6 @@ import java.util.UUID;
  */
 public class Event implements Serializable{
     private String eventId;
-    private String promoQrId;
-
     private String name;
     private String date;
     private String startTime;
@@ -34,7 +34,7 @@ public class Event implements Serializable{
     private Integer attendanceLimit;
     private String qrCode;
     private String promoQrCode;
-    private ArrayList<GeoPoint> geopoints;
+    private transient ArrayList<GeoPoint> geopoints;
     private ArrayList<Announcement> announcements;
 
     /**
@@ -68,7 +68,6 @@ public class Event implements Serializable{
         this.description = description;
         this.poster = poster;
         eventId = UUID.randomUUID().toString();
-        promoQrId = "Promo" + eventId;
         checkedAttendees = new HashMap<>();
         signedAttendees = new ArrayList<>();
         geopoints = new ArrayList<>();
@@ -91,24 +90,6 @@ public class Event implements Serializable{
      */
     public void setEventId(String eventId) {
         this.eventId = eventId;
-    }
-
-    /**
-     * Get the event's promotion QR code.
-     *
-     * @return      The event's promotion QR code ID
-     */
-    public String getPromoQrId() {
-        return promoQrId;
-    }
-
-    /**
-     * Sets the event's promotion QR code.
-     *
-     * @param promoQrId      The event's promotion QR code ID
-     */
-    public void setPromoQrId(String promoQrId) {
-        this.promoQrId = promoQrId;
     }
 
     /**
@@ -349,8 +330,6 @@ public class Event implements Serializable{
             Integer checkIns = checkedAttendees.get(attendeeId) + 1;
             checkedAttendees.put(attendeeId, checkIns);
         }
-        DocumentReference eventRef = FirebaseFirestore.getInstance().collection("events").document(eventId);
-        eventRef.update("checkedAttendees", checkedAttendees);
     }
 
     /**
@@ -361,33 +340,7 @@ public class Event implements Serializable{
     public void addSignedAttendee(String attendeeId){
         if (!signedAttendees.contains(attendeeId)){
             signedAttendees.add(attendeeId);
-            DocumentReference eventRef = FirebaseFirestore.getInstance().collection("events").document(eventId);
-            eventRef.update("signedAttendees", signedAttendees);
         }
-    }
-
-    /**
-     * Adds the geographical location from
-     * where the attendee checked in
-     *
-     * @param geopoint        The geographical point of check in.
-     */
-    public void setGeopoint(GeoPoint geopoint){
-        DocumentReference eventRef = FirebaseFirestore.getInstance().collection("events").document(eventId);
-        eventRef.get().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                ArrayList<GeoPoint> existingLatitudes = documentSnapshot.toObject(Event.class).getGeopoints();
-                if (existingLatitudes == null) {
-                    existingLatitudes = new ArrayList<>();
-                }
-                // Add the new latitude to the existing array
-                existingLatitudes.add(geopoint);
-                // Update the Firestore document with the modified latitude array
-                eventRef.update("latitude", existingLatitudes);
-            }
-        }).addOnFailureListener(e -> {
-            // Handle any errors
-        });
     }
 
     /**
@@ -433,10 +386,27 @@ public class Event implements Serializable{
      * @param announcement      A list of the announcements
      */
     public void addAnnouncements(String announcement){
-        LocalTime time = LocalTime.now();
-        announcements.add(new Announcement(announcement, time.toString(), name, organizerName));
-        DocumentReference eventRef = FirebaseFirestore.getInstance().collection("events").document(eventId);
-        eventRef.update("announcements", announcements);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date currentDateTime = new Date();
+        announcements.add(new Announcement(announcement, sdf.format(currentDateTime), name, organizerName));
+    }
+
+    /**
+     * Gets the event's promotional QR code.
+     *
+     * @return      The event's promotional QR code as a String.
+     */
+    public String getPromoQrCode() {
+        return promoQrCode;
+    }
+
+    /**
+     * Sets the event's promotional QR code.
+     *
+     * @param promoQrCode       The new event promotional QR code.
+     */
+    public void setPromoQrCode(String promoQrCode) {
+        this.promoQrCode = promoQrCode;
     }
 
     /**
@@ -471,22 +441,5 @@ public class Event implements Serializable{
         return Objects.hash(eventId);
     }
 
-    /**
-     * Gets the event's promotional QR code.
-     *
-     * @return      The event's promotional QR code as a String.
-     */
-    public String getPromoQrCode() {
-        return promoQrCode;
-    }
-
-    /**
-     * Sets the event's promotional QR code.
-     *
-     * @param promoQrCode       The new event promotional QR code.
-     */
-    public void setPromoQrCode(String promoQrCode) {
-        this.promoQrCode = promoQrCode;
-    }
 }
 
