@@ -8,8 +8,8 @@
 
     <ImageButton
         android:id="@+id/menuButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:src="@drawable/hamburger_button"
@@ -23,53 +23,71 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="-2dp"
+        android:layout_marginEnd="142dp"
         android:layout_toStartOf="@id/menuButton"
-        android:text="Welcome back, [Name]"
         android:fontFamily="@font/bold1"
-        android:textSize="22sp"
-        android:padding="16dp" />
+        android:padding="16dp"
+        android:text="Welcome, "
+        android:textSize="25sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_below="@id/welcomeText"
-        android:padding="16dp">
+        android:padding="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <Button
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:id="@+id/attendeeAllEvent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="All"/>
-            <Button
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:id="@+id/attendeeUpcomingEvent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Upcoming"/>
-            <Button
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:id="@+id/attendeeCompletedEvent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Completed"/>
 
         </LinearLayout>
-        <Button
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:id="@+id/attendeeOngoingEvent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Completed"/>
+            android:text="Ongoing"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/bold1"
             android:text="My Events"
-            android:textSize="18sp"
+            android:textSize="30sp"
             android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/noMyEventsText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="None"
+            android:fontFamily="@font/bold1"
+            android:visibility="gone"
+            android:textSize="22sp"
+            android:padding="25dp"
+            android:gravity="center" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/attendeeEventsList"
@@ -82,8 +100,19 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/bold1"
             android:text="All Events"
-            android:textSize="18sp"
+            android:textSize="30sp"
             android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/noAllEventsText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="None"
+            android:fontFamily="@font/bold1"
+            android:visibility="gone"
+            android:padding="25dp"
+            android:textSize="22sp"
+            android:gravity="center" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/allEventsList"
@@ -111,26 +140,25 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center|bottom"
-                android:layout_alignParentBottom="true"
-                android:padding="8dp">
+                android:padding="12dp">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                     android:id="@+id/scanButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Check into event"
-                    android:padding="12dp"
-                    android:textAppearance="?attr/textAppearanceButton" />
 
-                <Button
-                    android:id="@+id/promoQrCodeButton"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/promo_qr_code"
-                    android:padding="12dp"
-                    android:textAppearance="?attr/textAppearanceButton" />
+                    android:padding="14dp"
+                    android:text="Check into event"
+                    android:layout_marginEnd="8dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:id="@+id/promoQrCodeButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="14dp"
+                    android:text="promo QR-code" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

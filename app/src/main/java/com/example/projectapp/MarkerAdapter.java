@@ -29,30 +29,10 @@ public class MarkerAdapter {
 
     private FirebaseFirestore db;
     private String eventId;
-    private FirestoreUpdateListener firestoreUpdateListener;
 
     public MarkerAdapter(String aeventId) {
         db = FirebaseFirestore.getInstance();
         eventId = aeventId;
-    }
-    public interface FirestoreUpdateListener {
-        void onUpdateFirestore();
-    }
-
-
-    public void saveMarkerToFirestore(OverlayItem overlayItem) {
-        CollectionReference markersRef = db.collection("events");
-        markersRef.add(overlayItemToMap(overlayItem))
-                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "Marker added to Firestore");
-                        } else {
-                            Log.e(TAG, "Error adding marker to Firestore", task.getException());
-                        }
-                    }
-                });
     }
 
     public void retrieveMarkersFromFirestore(final MarkerRetrievalListener listener) {
@@ -103,21 +83,6 @@ public class MarkerAdapter {
         return overlayItems;
     }
 
-
-
-    private Object overlayItemToMap(OverlayItem overlayItem) {
-        Map<String, Object> data = new HashMap<>();
-        data.put("title", overlayItem.getTitle());
-        data.put("description", overlayItem.getSnippet());
-
-        List<GeoPoint> geoPoints = new ArrayList<>();
-        geoPoints.add(new GeoPoint(overlayItem.getPoint().getLatitude(), overlayItem.getPoint().getLongitude()));
-        // Add more GeoPoints if needed
-
-        data.put("geopoints", geoPoints);
-
-        return data;
-    }
 
     public interface MarkerRetrievalListener {
         void onMarkersRetrieved(List<OverlayItem> overlayItems);

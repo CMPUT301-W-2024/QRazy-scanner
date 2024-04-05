@@ -46,8 +46,9 @@ public class MapActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        markerAdapter = new MarkerAdapter((String) getIntent().getSerializableExtra("eventId"));
+
         itemizedOverlay = new ItemizedIconOverlay<>(this, new ArrayList<>(), null);
+        markerAdapter = new MarkerAdapter((String) getIntent().getSerializableExtra("EVENT_ID"));
 
         // Configure the user agent
         Configuration.getInstance().setUserAgentValue("Project app");

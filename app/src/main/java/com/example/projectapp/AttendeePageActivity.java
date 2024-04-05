@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -15,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,16 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.content.pm.PackageManager;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -45,7 +36,7 @@ import java.util.Date;
  * It provides functionality to view events the attendee is participating in, and to view all available events.
  * Attendees can interact with the events, such as signing up for them.
  */
-public class AttendeePageActivity extends AppCompatActivity implements ProfileDeletedCallback{
+public class AttendeePageActivity extends AppCompatActivity implements ProfileDeletedListenerCallback, AttendeeEventsListenerCallback, AllEventsListenerCallback, GetEventCallback {
     private ArrayList<Event> allEventsFiltered;
     private ArrayList<Event> attendeeEventsFiltered;
     private ArrayList<Event> allEventsFull;
@@ -54,11 +45,9 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     private AttendeeEventAdapter attendeeEventsAdapter;
     private AttendeeEventAdapter allEventsAdapter;
     private AnnouncementAdapter announcementAdapter;
-    private ListenerRegistration attendeeEventsListener;
-    private ListenerRegistration allEventsListener;
     private ArrayList<Announcement> announcements;
-    private boolean enableListeners;
-    private DataHandler dataHandler = DataHandler.getInstance();
+    private boolean active;
+    private final DataHandler dataHandler = DataHandler.getInstance();
 
     /**
      * Initializes the activity, sets up RecyclerViews for displaying events.
@@ -76,6 +65,9 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         getNotificationPermission();
 
         dataHandler.addProfileDeletedListener(this);
+        dataHandler.addAttendeeEventsListener(true,this); // for checked in events
+        dataHandler.addAttendeeEventsListener(false,this); // for signed up events
+        dataHandler.addAllEventsListener(this);
 
         RecyclerView attendeeEventsList = findViewById(R.id.attendeeEventsList);
         RecyclerView allEventsList = findViewById(R.id.allEventsList);
@@ -85,6 +77,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         Button filterCompletedButton = findViewById(R.id.attendeeCompletedEvent);
         Button filterOngoingButton = findViewById(R.id.attendeeOngoingEvent);
         ImageButton menuButton = findViewById(R.id.menuButton);
+        TextView welcomeText = findViewById(R.id.welcomeText);
 
         attendeeEventsFiltered = new ArrayList<>();
         allEventsFiltered = new ArrayList<>();
@@ -95,6 +88,8 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         attendeeEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         allEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         announcementsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        String userName = dataHandler.getAttendee().getName();
+        welcomeText.setText("Welcome, " + userName);
 
         attendeeEventsAdapter = new AttendeeEventAdapter(attendeeEventsFiltered, new AttendeeEventAdapter.OnItemClickListener() {
             @Override
@@ -106,9 +101,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(AttendeePageActivity.this, ProfileEditActivity.class);
-
                 startActivity(intent);
             }
         });
@@ -167,9 +160,8 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
 
         String eventId = getIntent().getStringExtra("EVENT_ID");
         if (eventId != null && !eventId.trim().isEmpty()) {
-            fetchEventAndShowDetails(eventId);
+            dataHandler.getEvent(eventId, this);
         }
-
 
     }
     /**
@@ -179,9 +171,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     @Override
     protected void onPause() {
         super.onPause();
-        enableListeners = false;
-        attendeeEventsListener.remove();
-        allEventsListener.remove();
+        active = false;
     }
 
     /**
@@ -191,9 +181,8 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     @Override
     protected void onResume() {
         super.onResume();
-        enableListeners = true;
-        addAttendeeEventsListener();
-        addAllEventsListener();
+        active = true;
+        updateEventListVisibility();
     }
 
     public void addEvent(Event event, ArrayList<Event> list){
@@ -231,68 +220,47 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         announcementAdapter.notifyDataSetChanged();
     }
 
-    private void addAttendeeEventsListener() {
-        CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
-        attendeeEventsListener = eventsRef.whereArrayContains("signedAttendees", dataHandler.getAttendee().getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots,
-                                @Nullable FirebaseFirestoreException e) {
-                if (snapshots != null) {
-                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                        Event event = dc.getDocument().toObject(Event.class);
-                        switch (dc.getType()) {
-                            case ADDED:
-                                addEvent(event, attendeeEventsFull);
-                                filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
-                                addAnnouncements(event);
-                                break;
-                            case MODIFIED:
-                                updateEvent(event, attendeeEventsFull);
-                                filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
-                                updateAnnouncements(event);
-                                break;
-                            case REMOVED:
-                                removeEvent(event, attendeeEventsFull);
-                                filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
-                                removeAnnouncements(event);
-                                break;
+    @Override
+    public void onAttendeeEventsUpdated(DocumentChange.Type updateType, Event event) {
 
-                        }
-                    }
-                }
-            }
-        });
+        switch (updateType) {
+            case ADDED:
+                addEvent(event, attendeeEventsFull);
+                filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
+                addAnnouncements(event);
+                break;
+            case MODIFIED:
+                updateEvent(event, attendeeEventsFull);
+                filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
+                updateAnnouncements(event);
+                break;
+            case REMOVED:
+                removeEvent(event, attendeeEventsFull);
+                filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
+                removeAnnouncements(event);
+                break;
+
+        }
     }
 
-
-    private void addAllEventsListener(){
-        CollectionReference eventsRef = FirebaseFirestore.getInstance().collection("events");
-        allEventsListener = eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>(){
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots,
-                                @Nullable FirebaseFirestoreException e) {
-                if (snapshots != null){
-                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                        Event event = dc.getDocument().toObject(Event.class);
-                        switch (dc.getType()) {
-                            case ADDED:
-                                addEvent(event, allEventsFull);
-                                filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
-                                break;
-                            case MODIFIED:
-                                updateEvent(event, allEventsFull);
-                                filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
-                                break;
-                            case REMOVED:
-                                removeEvent(event, allEventsFull);
-                                filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
-                                break;
-                        }
-                    }
-                }
-            }
-        });
+    @Override
+    public void onAllEventsUpdated(DocumentChange.Type updateType, Event event) {
+        switch (updateType) {
+            case ADDED:
+                addEvent(event, allEventsFull);
+                filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
+                break;
+            case MODIFIED:
+                updateEvent(event, allEventsFull);
+                filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
+                break;
+            case REMOVED:
+                removeEvent(event, allEventsFull);
+                filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
+                break;
+        }
     }
+
     /**
      * Displays a dialog with details of an event. Allows the user to view more information about the event.
      * If the event is available for sign-up, it displays a sign-up button.
@@ -340,7 +308,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
                     if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().size() < event.getAttendanceLimit()){
                         event.addSignedAttendee(dataHandler.getAttendee().getAttendeeId());
                         dataHandler.getAttendee().addSignedEvent(event.getEventId());
-                        FirebaseMessaging.getInstance().subscribeToTopic(event.getEventId());
+                        dataHandler.subscribeToNotis(event.getEventId());
                         eventDetailDialog.dismiss();
                     }
                     else {
@@ -354,9 +322,11 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     }
 
     private void getNotificationPermission(){
-        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED){
-            // permission is not already granted
-            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+        if (Build.VERSION.SDK_INT >= 33){
+            if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED){
+                // permission is not already granted
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
         }
     }
 
@@ -371,9 +341,9 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
 
     @Override
     public void onProfileDeleted() {
-        if (enableListeners){
+        if (active){
             restart();
-            unsubscribeFromNotis();
+            //unsubscribeFromNotis();
         }
     }
 
@@ -381,12 +351,6 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         Intent intent = new Intent(this, MainActivity.class);
         this.startActivity(intent);
         this.finishAffinity();
-    }
-
-    private void unsubscribeFromNotis(){
-        for (Event event : attendeeEventsFiltered){
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(event.getEventId());
-        }
     }
 
     private void filterEvents(ArrayList<Event> events, ArrayList<Event> eventsFull, AttendeeEventAdapter adapter) {
@@ -409,7 +373,6 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
                 if (filter.equals("Upcoming") && currentDateTime.before(eventStartDateTime)) {
                     events.add(event);
                 } else if (filter.equals("Complete") && currentDateTime.after(eventEndDateTime)) {
-                    System.out.println("Got till here:  " + eventEndDateTime.toString());
                     events.add(event);
                 } else if (filter.equals("Ongoing") && currentDateTime.after(eventStartDateTime) && currentDateTime.before(eventEndDateTime)){
                     events.add(event);
@@ -417,25 +380,35 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
             }
         }
         adapter.notifyDataSetChanged();
+        updateEventListVisibility();
     }
 
-    private void fetchEventAndShowDetails(String eventId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("events").document(eventId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    Event event = documentSnapshot.toObject(Event.class);
-                    if (event != null) {
-                        showDialogWithEventDetails(event, true);
-                    }
-                } else {
-                    Toast.makeText(AttendeePageActivity.this, "Event not found", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }).addOnFailureListener(e -> {
+    @Override
+    public void onGetEvent(Event event) {
+        if (event == null){
             Toast.makeText(AttendeePageActivity.this, "Error fetching event details", Toast.LENGTH_SHORT).show();
-        });
+            return;
+        }
+        showDialogWithEventDetails(event, true);
     }
+
+    private void updateEventListVisibility() {
+        TextView noMyEventsText = findViewById(R.id.noMyEventsText);
+        TextView noAllEventsText = findViewById(R.id.noAllEventsText);
+
+        if (attendeeEventsFiltered.isEmpty()) {
+            noMyEventsText.setVisibility(View.VISIBLE);
+        } else {
+            noMyEventsText.setVisibility(View.GONE);
+        }
+
+        if (allEventsFiltered.isEmpty()) {
+            noAllEventsText.setVisibility(View.VISIBLE);
+        } else {
+            noAllEventsText.setVisibility(View.GONE);
+        }
+    }
+
 }
+
 

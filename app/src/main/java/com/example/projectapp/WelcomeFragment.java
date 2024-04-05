@@ -37,8 +37,6 @@ public class WelcomeFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.welcome_fragment, container, false);
         dataHandler = DataHandler.getInstance();
 
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder().setLocalCacheSettings(MemoryCacheSettings.newBuilder().build()).build();
-        db.setFirestoreSettings(settings);
 
         // Initialize button on the welcome screen
         Button joinEventButton = rootView.findViewById(R.id.joinEventButton);
