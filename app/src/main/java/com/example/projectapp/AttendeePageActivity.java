@@ -34,13 +34,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Activity to display events to attendees.
  * It provides functionality to view events the attendee is participating in, and to view all available events.
  * Attendees can interact with the events, such as signing up for them.
  */
-public class AttendeePageActivity extends AppCompatActivity implements ProfileDeletedListenerCallback, AttendeeEventsListenerCallback, AllEventsListenerCallback {
+public class AttendeePageActivity extends AppCompatActivity implements ProfileDeletedListenerCallback, AttendeeEventsListenerCallback, AllEventsListenerCallback, UpdateAttendeeCallback, UpdateEventCallback {
     private ArrayList<Event> allEventsFiltered;
     private ArrayList<Event> attendeeEventsFiltered;
     private ArrayList<Event> allEventsFull;
@@ -220,47 +222,6 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         announcementAdapter.notifyDataSetChanged();
     }
 
-    @Override
-    public void onAttendeeEventsUpdated(DocumentChange.Type updateType, Event event) {
-
-        switch (updateType) {
-            case ADDED:
-                addEvent(event, attendeeEventsFull);
-                filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
-                addAnnouncements(event);
-                break;
-            case MODIFIED:
-                updateEvent(event, attendeeEventsFull);
-                filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
-                updateAnnouncements(event);
-                break;
-            case REMOVED:
-                removeEvent(event, attendeeEventsFull);
-                filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
-                removeAnnouncements(event);
-                break;
-
-        }
-    }
-
-    @Override
-    public void onAllEventsUpdated(DocumentChange.Type updateType, Event event) {
-        switch (updateType) {
-            case ADDED:
-                addEvent(event, allEventsFull);
-                filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
-                break;
-            case MODIFIED:
-                updateEvent(event, allEventsFull);
-                filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
-                break;
-            case REMOVED:
-                removeEvent(event, allEventsFull);
-                filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
-                break;
-        }
-    }
-
     /**
      * Displays a dialog with details of an event. Allows the user to view more information about the event.
      * If the event is available for sign-up, it displays a sign-up button.
@@ -304,21 +265,35 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
             signUpButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // only add if attendance limit is not reached
-                    if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().size() < event.getAttendanceLimit()){
-                        event.addSignedAttendee(dataHandler.getLocalAttendee().getAttendeeId());
-                        dataHandler.getLocalAttendee().addSignedEvent(event.getEventId());
-                        dataHandler.subscribeToNotis(event.getEventId());
-                        eventDetailDialog.dismiss();
-                    }
-                    else {
-                        Toast.makeText(AttendeePageActivity.this, "Event has reached attendance limit", Toast.LENGTH_SHORT).show();
-                    }
+                    signUp(event);
+                    eventDetailDialog.dismiss();
                 }
             });
         }
 
         eventDetailDialog.show();
+    }
+
+    private void signUp(Event event){
+        Attendee attendee = dataHandler.getLocalAttendee();
+
+        // gets set of all checked and signed up attendees
+        Set<String> unionAttendees = new HashSet<>(event.getCheckedAttendees().keySet());
+        unionAttendees.addAll(event.getSignedAttendees());
+
+        // only add if attendance limit is not reached
+        if (event.getAttendanceLimit() == 0 || unionAttendees.size() < event.getAttendanceLimit()){
+            event.addSignedAttendee(attendee.getAttendeeId());
+            dataHandler.updateEvent(event.getEventId(), "signedAttendees", event.getSignedAttendees(), this);
+
+            attendee.addSignedEvent(event.getEventId());
+            dataHandler.updateAttendee(attendee.getAttendeeId(), "signedUpEvents", attendee.getSignedUpEvents(), this);
+
+            dataHandler.subscribeToNotis(event.getEventId());
+        }
+        else {
+            Toast.makeText(AttendeePageActivity.this, "Event has reached attendance limit", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void getNotificationPermission(){
@@ -337,6 +312,61 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         }
         byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+    }
+
+    @Override
+    public void onAttendeeEventsUpdated(DocumentChange.Type updateType, Event event) {
+
+        switch (updateType) {
+            case ADDED:
+                addEvent(event, attendeeEventsFull);
+                filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
+                addAnnouncements(event);
+                break;
+            case MODIFIED:
+                updateEvent(event, attendeeEventsFull);
+                filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
+                updateAnnouncements(event);
+                break;
+            case REMOVED:
+                removeEvent(event, attendeeEventsFull);
+                filterEvents(attendeeEventsFiltered, attendeeEventsFull, attendeeEventsAdapter);
+                removeAnnouncements(event);
+                break;
+
+        }
+    }
+
+    @Override
+    public void onAllEventsUpdated(DocumentChange.Type updateType, Event event) {
+        switch (updateType) {
+            case ADDED:
+                addEvent(event, allEventsFull);
+                filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
+                break;
+            case MODIFIED:
+                updateEvent(event, allEventsFull);
+                filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
+                break;
+            case REMOVED:
+                removeEvent(event, allEventsFull);
+                filterEvents(allEventsFiltered, allEventsFull, allEventsAdapter);
+                break;
+        }
+    }
+
+    @Override
+    public void onUpdateAttendee(String attendeeId) {
+        if (attendeeId == null){
+            Toast.makeText(this, "Error reaching firebase", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onUpdateEvent(String eventId) {
+        if (eventId == null){
+            Toast.makeText(this, "Error reaching firebase", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

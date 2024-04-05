@@ -330,8 +330,6 @@ public class Event implements Serializable{
             Integer checkIns = checkedAttendees.get(attendeeId) + 1;
             checkedAttendees.put(attendeeId, checkIns);
         }
-        DocumentReference eventRef = FirebaseFirestore.getInstance().collection("events").document(eventId);
-        eventRef.update("checkedAttendees", checkedAttendees);
     }
 
     /**
@@ -342,8 +340,6 @@ public class Event implements Serializable{
     public void addSignedAttendee(String attendeeId){
         if (!signedAttendees.contains(attendeeId)){
             signedAttendees.add(attendeeId);
-            DocumentReference eventRef = FirebaseFirestore.getInstance().collection("events").document(eventId);
-            eventRef.update("signedAttendees", signedAttendees);
         }
     }
 
@@ -393,8 +389,6 @@ public class Event implements Serializable{
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date currentDateTime = new Date();
         announcements.add(new Announcement(announcement, sdf.format(currentDateTime), name, organizerName));
-        DocumentReference eventRef = FirebaseFirestore.getInstance().collection("events").document(eventId);
-        eventRef.update("announcements", announcements);
     }
 
     /**

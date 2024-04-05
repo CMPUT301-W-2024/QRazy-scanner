@@ -14,10 +14,13 @@ import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
 import com.google.zxing.Result;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Handle Scanning QR Code
  */
-public class ScanActivity extends AppCompatActivity implements GetEventCallback, GetQrCodeEventCallback, UpdateEventCallback {
+public class ScanActivity extends AppCompatActivity implements GetEventCallback, GetQrCodeEventCallback, UpdateEventCallback, UpdateAttendeeCallback {
 
     private CodeScanner mCodeScanner;
     private final int CAMERA_PERMISSION_CODE = 100;
@@ -78,12 +81,24 @@ public class ScanActivity extends AppCompatActivity implements GetEventCallback,
     }
 
 
-    private void checkLimit(Event event){
+    private void checkIn(Event event){
+        Attendee attendee = dataHandler.getLocalAttendee();
+
+        // gets set of all checked and signed up attendees
+        Set<String> unionAttendees = new HashSet<>(event.getCheckedAttendees().keySet());
+        unionAttendees.addAll(event.getSignedAttendees());
+
         // if no attendance limit or signed attendees is less than limit then check in
-        if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().contains(dataHandler.getLocalAttendee().getAttendeeId()) || event.getAttendance() + event.getSignedAttendees().size() < event.getAttendanceLimit()){
-            event.addCheckedAttendee(dataHandler.getLocalAttendee().getAttendeeId());
-            dataHandler.getLocalAttendee().addCheckedEvent(event.getEventId());
+        if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().contains(attendee.getAttendeeId()) || unionAttendees.size() < event.getAttendanceLimit()){
+
+            event.addCheckedAttendee(attendee.getAttendeeId());
+            dataHandler.updateEvent(event.getEventId(), "checkedAttendees", event.getCheckedAttendees(), this);
+
+            attendee.addCheckedEvent(event.getEventId());
+            dataHandler.updateAttendee(attendee.getAttendeeId(), "checkedInEvents", attendee.getCheckedInEvents(), this);
+
             dataHandler.subscribeToNotis(event.getEventId());
+
             Intent intent1 = new Intent(ScanActivity.this, GeopointDialog.class);
             intent1.putExtra("eventId", event.getEventId());
             startActivity(intent1);
@@ -107,7 +122,7 @@ public class ScanActivity extends AppCompatActivity implements GetEventCallback,
         }
         else {
             if (checkInto){
-                checkLimit(event);
+                checkIn(event);
             }
             else {
                 Toast.makeText(ScanActivity.this, "Qr Code is already in use", Toast.LENGTH_SHORT) .show();
@@ -130,12 +145,15 @@ public class ScanActivity extends AppCompatActivity implements GetEventCallback,
 
     @Override
     public void onUpdateEvent(String eventId) {
-        if (eventId != null){
-            Toast.makeText(this, "Qr code saved", Toast.LENGTH_SHORT).show();
-            finish();
+        if (eventId == null){
+            Toast.makeText(this, "Error reaching firebase", Toast.LENGTH_SHORT).show();
         }
-        else {
-            Toast.makeText(this, "Error saving Qr code", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onUpdateAttendee(String attendeeId) {
+        if (attendeeId == null){
+            Toast.makeText(this, "Error reaching firebase", Toast.LENGTH_SHORT).show();
         }
     }
 

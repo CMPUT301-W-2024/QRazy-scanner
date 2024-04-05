@@ -167,9 +167,10 @@ public class DataHandler {
                 .addOnFailureListener(e -> callback.onUpdateEvent(null));
     }
 
-    public void updateAttendee(String attendeeId, String field, String value){
+    public void updateAttendee(String attendeeId, String field, Object value, UpdateAttendeeCallback callback){
         DocumentReference attendeeDocRef = attendeesRef.document(attendeeId);
-        attendeeDocRef.update(field, value);
+        attendeeDocRef.update(field, value).addOnSuccessListener(aVoid -> callback.onUpdateAttendee(attendeeId))
+                .addOnFailureListener(e -> callback.onUpdateAttendee(null));;
     }
 
     public void subscribeToNotis(String eventId){
@@ -339,7 +340,7 @@ public class DataHandler {
     }
 
 
-    public void requestAPI(Event event, String announcement) throws Exception{
+    public void sendNotification(Event event, String announcement) throws Exception{
         String projectId = "qrazy-scanner";
         String topic = event.getEventId();
 

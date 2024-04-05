@@ -1,10 +1,6 @@
 package com.example.projectapp;
 
 import androidx.annotation.Nullable;
-
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -172,8 +168,6 @@ public class Attendee {
             Integer checkIns = checkedInEvents.get(eventId) + 1;
             checkedInEvents.put(eventId, checkIns);
         }
-        DocumentReference eventRef = FirebaseFirestore.getInstance().collection("attendees").document(attendeeId);
-        eventRef.update("checkedInEvents", checkedInEvents);
     }
 
     /**
@@ -183,8 +177,6 @@ public class Attendee {
     public void addSignedEvent(String eventId){
         if (!signedUpEvents.contains(eventId)){
             signedUpEvents.add(eventId);
-            DocumentReference attendeeRef = FirebaseFirestore.getInstance().collection("attendees").document(attendeeId);
-            attendeeRef.update("signedUpEvents", signedUpEvents);
         }
     }
 
