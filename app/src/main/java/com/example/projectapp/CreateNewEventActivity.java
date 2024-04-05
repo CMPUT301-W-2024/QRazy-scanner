@@ -132,6 +132,11 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
             return;
         }
 
+        if (!attendanceLimitStr.isEmpty() && Integer.parseInt(attendanceLimitStr) == 0){
+            Toast.makeText(CreateNewEventActivity.this, "Attendance limit can't be 0", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date currentDateTime = new Date();
         Date eventStartParsed;
@@ -153,7 +158,7 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
 
         // Set the event details to the newEvent object
 
-        Event newEvent = new Event(eventName, eventDate, eventStartTime, eventEndTime, dataHandler.getOrganizer().getName(), dataHandler.getOrganizer().getOrganizerId(), attendanceLimit, eventDescription, encodedImage);
+        Event newEvent = new Event(eventName, eventDate, eventStartTime, eventEndTime, dataHandler.getLocalOrganizer().getName(), dataHandler.getLocalOrganizer().getOrganizerId(), attendanceLimit, eventDescription, encodedImage);
 
         dataHandler.addEvent(newEvent, this);
     }
@@ -171,7 +176,7 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
             finish();
         }
         else {
-            Toast.makeText(CreateNewEventActivity.this, "Failed to save event", Toast.LENGTH_SHORT).show();
+            Toast.makeText(CreateNewEventActivity.this, "Failed to save event, image quality might be too high", Toast.LENGTH_SHORT).show();
         }
     }
 

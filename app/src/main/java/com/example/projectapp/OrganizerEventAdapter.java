@@ -17,11 +17,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -30,7 +29,7 @@ import java.util.List;
  * event details, showing attendance counts, and providing expandable sections to
  * display QR codes.
  */
-public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAdapter.ViewHolder> {
+public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAdapter.ViewHolder> implements UpdateEventCallback{
     private List<Event> events;
     private Context context;
 
@@ -120,8 +119,9 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     try {
-                        DataHandler.getInstance().requestAPI(event, input.getText().toString());
+                        DataHandler.getInstance().sendNotification(event, input.getText().toString());
                         event.addAnnouncements(input.getText().toString());
+                        DataHandler.getInstance().updateEvent(event.getEventId(), "announcements", event.getAnnouncements(), OrganizerEventAdapter.this);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -171,4 +171,13 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         }
     }
 
+    @Override
+    public void onUpdateEvent(String eventId) {
+        if (eventId != null){
+            Toast.makeText(context, "Announcement made", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(context, "Error accessing firebase", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
