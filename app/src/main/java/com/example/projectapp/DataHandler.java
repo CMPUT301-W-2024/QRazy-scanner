@@ -1,5 +1,7 @@
 package com.example.projectapp;
 
+import android.widget.LinearLayout;
+
 import androidx.annotation.Nullable;
 
 import com.google.auth.oauth2.GoogleCredentials;
@@ -7,6 +9,7 @@ import com.google.common.hash.Hashing;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,7 +26,9 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -189,6 +194,18 @@ public class DataHandler {
                 .addOnFailureListener(e -> callback.onUpdateAttendee(null));;
     }
 
+    public void deleteAttendee(String attendeeId, DeleteAttendeeCallback callback){
+        DocumentReference attendeeDocRef = attendeesRef.document(attendeeId);
+        attendeeDocRef.delete().addOnSuccessListener(aVoid -> callback.onDeleteAttendee(attendeeId))
+                .addOnFailureListener(e -> callback.onDeleteAttendee(null));
+    }
+
+    public void deleteEvent(String eventId, DeleteEventCallback callback){
+        DocumentReference eventDocRef = eventsRef.document(eventId);
+        eventDocRef.delete().addOnSuccessListener(aVoid -> callback.onDeleteEvent(eventId))
+                .addOnFailureListener(e -> callback.onDeleteEvent(null));
+    }
+
     public void getQRCode(String eventId, String qrCodeType,GetQrCodeCallback callback) {
         DocumentReference eventDocRef = eventsRef.document(eventId);
 
@@ -272,7 +289,7 @@ public class DataHandler {
                 if (snapshots != null){
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         Attendee attendee = dc.getDocument().toObject(Attendee.class);
-                        callback.onAttendeesUpdated(attendee);
+                        callback.onAttendeesUpdated(dc.getType(), attendee);
                     }
                 }
             }
@@ -324,20 +341,19 @@ public class DataHandler {
         });
     }
 
-
-    // Image-related functions
-
-    private void addImagesListener(String collection, String field) {
+    public void addImagesListener(String collection, String field, LinearLayout layout, ImagesListenerCallback callback) {
         db.collection(collection).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
                 if (snapshots != null) {
-                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                        String encodedImage = dc.getString(field);
+                    HashMap<String, String> images = new HashMap<>();
+                    for (DocumentSnapshot document : snapshots.getDocuments()) {
+                        String encodedImage = document.getString(field);
                         if (encodedImage != null && !encodedImage.isEmpty()) {
-
+                            images.put(document.getId(), encodedImage);
                         }
                     }
+                    callback.onImagesUpdated(images, layout,collection, field);
                 }
             }
         });

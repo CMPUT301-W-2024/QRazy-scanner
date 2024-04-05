@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Base64;
 import android.util.Log;
@@ -15,14 +17,20 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-public class Admin extends AppCompatActivity implements EventsListenerCallback, AttendeesListenerCallback {
+import java.util.ArrayList;
+import java.util.HashMap;
 
-    LinearLayout eventsLayout, attendeesLayout, postersLayout, profilePicsLayout, qrCodesLayout;
+public class Admin extends AppCompatActivity implements EventsListenerCallback, AttendeesListenerCallback, ImagesListenerCallback, UpdateEventCallback, UpdateAttendeeCallback, DeleteEventCallback, DeleteAttendeeCallback {
+    private ArrayList<Event> events;
+    private ArrayList<Attendee> attendees;
+    private AttendeeEventAdapter eventsAdapter;
+    private EventAttendeeAdapter attendeesAdapter;
+    RecyclerView eventsLayout, attendeesLayout;
+    LinearLayout  postersLayout, profilePicsLayout, qrCodesLayout;
     private final DataHandler dataHandler = DataHandler.getInstance();
 
     @Override
@@ -38,158 +46,188 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
 
         dataHandler.addEventsListener(this);
         dataHandler.addAttendeesListener(this);
-        dataHandler.addImagesListener();
-/*        loadImagesFromFirebase("events", "poster", R.id.adminPostersLayout);
-        loadImagesFromFirebase("attendees", "profilePic", R.id.adminProfilePicsLayout);*/
+        dataHandler.addImagesListener("events", "poster", postersLayout, this);
+        dataHandler.addImagesListener("attendees", "profilePic", profilePicsLayout, this);
+        dataHandler.addImagesListener("events", "qrCode", qrCodesLayout, this);
+        dataHandler.addImagesListener("events", "promoQrCode", qrCodesLayout, this);
+
+        eventsLayout.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        attendeesLayout.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+
+        events = new ArrayList<>();
+        attendees = new ArrayList<>();
+
+        eventsAdapter = new AttendeeEventAdapter(events, new AttendeeEventAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Event event) {
+                showDialogWithEventDetails(event);
+            }
+        });
+
+        attendeesAdapter = new EventAttendeeAdapter(attendees, null, new EventAttendeeAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Attendee attendee) {
+                showDialogWithAttendeeDetails(attendee);
+            }
+        });
+
+        eventsLayout.setAdapter(eventsAdapter);
+        attendeesLayout.setAdapter(attendeesAdapter);
     }
+
 
     @Override
     public void onEventsUpdated(DocumentChange.Type updateType, Event event) {
-        addEventToScrollView(event);
-
-        String poster = event.getPoster();
-        String qrCode = event.getQrCode();
-        String promoQrCode = event.getPromoQrCode();
-
-        if (poster != null && !poster.isEmpty()){
-            addImageToLayout(poster, postersLayout, event, null, "poster");
+        switch (updateType) {
+            case ADDED:
+                if (!events.contains(event)){
+                    events.add(event);
+                }
+                break;
+            case MODIFIED:
+                if (events.contains(event)){
+                    events.set(events.indexOf(event), event);
+                }
+                break;
+            case REMOVED:
+                events.remove(event);
+                break;
         }
-        if (qrCode != null && !qrCode.isEmpty()){
-            addImageToLayout(qrCode, qrCodesLayout, event, null, "qrCode");
-        }
-        if (promoQrCode != null && !promoQrCode.isEmpty()){
-            addImageToLayout(promoQrCode, qrCodesLayout, event, null, "promoQrCode");
-        }
+        eventsAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onAttendeesUpdated(Attendee attendee) {
-        addAttendeeToScrollView(attendee);
+    public void onAttendeesUpdated(DocumentChange.Type updateType, Attendee attendee) {
+        switch (updateType) {
+            case ADDED:
+                if (!attendees.contains(attendee)){
+                    attendees.add(attendee);
+                }
+                break;
+            case MODIFIED:
+                if (attendees.contains(attendee)){
+                    attendees.set(attendees.indexOf(attendee), attendee);
+                }
+                break;
+            case REMOVED:
+                attendees.remove(attendee);
+                break;
+        }
+        attendeesAdapter.notifyDataSetChanged();
+    }
 
-        String profilePic = attendee.getProfilePic();
-
-        if (profilePic != null && !profilePic.isEmpty()){
-            addImageToLayout(profilePic, profilePicsLayout, null, attendee, "profilePic");
+    @Override
+    public void onImagesUpdated(HashMap<String, String> images, LinearLayout layout,String collection, String field) {
+        layout.removeAllViews();
+        for (String document : images.keySet()){
+            addImageToLayout(images.get(document), layout, document,collection, field);
         }
     }
 
-    void addEventToScrollView(Event event) {
-        View eventView = LayoutInflater.from(this).inflate(R.layout.event_widget, eventsLayout, false);
-        TextView eventNameView = eventView.findViewById(R.id.eventNameText);
-        eventNameView.setText(event.getName());
-        TextView eventOrganizerView = eventView.findViewById(R.id.eventOrganizerNameText);
-        eventOrganizerView.setText(event.getOrganizerName());
-        TextView eventInfoView = eventView.findViewById(R.id.eventInfoText);
-        eventInfoView.setText(event.getDescription());
-
-        // Assuming your Event class has a method to get the encoded image string
-        String encodedImage = event.getPoster();
-
-        eventView.setOnClickListener(v -> showDialogWithEventDetails(event.getName(), event.getOrganizerName(), event.getDescription(), encodedImage));
-        eventsLayout.addView(eventView);
-    }
-
-    void deleteEventByNameAndDetails(String eventName, String eventOrganizer, String eventDescription) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("events")
-                .whereEqualTo("name", eventName)
-                .whereEqualTo("organizer", eventOrganizer)
-                .whereEqualTo("description", eventDescription)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            db.collection("events").document(document.getId()).delete()
-                                    .addOnSuccessListener(aVoid -> Log.d("Admin", "Event successfully deleted!"))
-                                    .addOnFailureListener(e -> Log.w("Admin", "Error deleting event", e));
-                        }
-                    } else {
-                        Log.w("Admin", "Error getting documents: ", task.getException());
-                    }
-                });
-    }
-
-    private void showDialogWithEventDetails(String name, String organizer, String description, String encodedImageString) {
+    /**
+     * Displays a dialog with details of an event. Allows the user to view more information about the event.
+     * If the event is available for sign-up, it displays a sign-up button.
+     * @param event The Event object containing details to be displayed.
+     */
+    private void showDialogWithEventDetails(Event event) {
         Dialog eventDetailDialog = new Dialog(this);
         eventDetailDialog.setContentView(R.layout.event_dialog);
 
+
         TextView eventNameView = eventDetailDialog.findViewById(R.id.dialogEventName);
-        eventNameView.setText(name);
         TextView eventOrganizerView = eventDetailDialog.findViewById(R.id.dialogEventOrganizer);
-        eventOrganizerView.setText(organizer);
         TextView eventDescriptionView = eventDetailDialog.findViewById(R.id.dialogEventDescription);
-        eventDescriptionView.setText(description);
-
+        TextView eventDateView = eventDetailDialog.findViewById(R.id.dialogEventDate);
+        TextView eventTimeView = eventDetailDialog.findViewById(R.id.dialogEventTime);
         ImageView eventPosterView = eventDetailDialog.findViewById(R.id.dialogEventPoster);
-        Bitmap imageBitmap = stringToBitmap(encodedImageString);
-        if (imageBitmap != null) {
-            eventPosterView.setImageBitmap(imageBitmap);
-        }
-
         Button closeButton = eventDetailDialog.findViewById(R.id.dialogEventCloseButton);
-        closeButton.setOnClickListener(v -> eventDetailDialog.dismiss());
         Button deleteButton = eventDetailDialog.findViewById(R.id.dialogEventDeleteButton);
-        deleteButton.setVisibility(View.VISIBLE);
-        deleteButton.setOnClickListener(v -> {
-            deleteEventByNameAndDetails(name, organizer, description);
-            eventDetailDialog.dismiss();
+
+
+        eventNameView.setText(event.getName());
+
+        eventOrganizerView.setText(event.getOrganizerName());
+
+        eventDescriptionView.setText(event.getDescription());
+
+        if (event.getPoster() != null){
+            eventPosterView.setImageBitmap(stringToBitmap(event.getPoster()));
+        }
+        eventDateView.setText(event.getDate());
+        eventTimeView.setText(event.getStartTime() + " - " + event.getEndTime());
+
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                eventDetailDialog.dismiss();
+            }
         });
+
+        deleteButton.setVisibility(View.VISIBLE);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dataHandler.deleteEvent(event.getEventId(), Admin.this);
+                eventDetailDialog.dismiss();
+            }
+        });
+
         eventDetailDialog.show();
     }
 
-    void addAttendeeToScrollView(Attendee attendee) {
-        View attendeeView = LayoutInflater.from(this).inflate(R.layout.profile_widget, attendeesLayout, false);
-        TextView attendeeNameView = attendeeView.findViewById(R.id.attendee);
-        attendeeNameView.setText(attendee.getName());
-        attendeeView.setOnClickListener(v -> showDialogWithAttendeeDetails(attendee.getAttendeeId(), attendee.getName(), attendee.getContactInfo(), attendee.getProfilePic()));
-        attendeesLayout.addView(attendeeView);
-    }
-
-    void deleteAttendeeById(String attendeeId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("attendees").document(attendeeId).delete()
-                .addOnSuccessListener(aVoid -> Log.d("Admin", "Attendee successfully deleted!"))
-                .addOnFailureListener(e -> Log.w("Admin", "Error deleting attendee", e));
-    }
-
-    private void showDialogWithAttendeeDetails(String attendeeId, String name, String contactInfo, String encodedImageString) {
+    private void showDialogWithAttendeeDetails(Attendee attendee) {
         Dialog detailDialog = new Dialog(this);
         detailDialog.setContentView(R.layout.attendee_dialog);
         TextView nameView = detailDialog.findViewById(R.id.dialog_name);
-        nameView.setText(name);
+        nameView.setText(attendee.getName());
         TextView contactInfoView = detailDialog.findViewById(R.id.dialog_contact_info);
-        contactInfoView.setText(contactInfo);
+        contactInfoView.setText(attendee.getContactInfo());
         ImageView profilePicView = detailDialog.findViewById(R.id.dialog_profile_pic);
-        Bitmap imageBitmap = stringToBitmap(encodedImageString);
+        Bitmap imageBitmap = stringToBitmap(attendee.getProfilePic());
         if (imageBitmap != null) {
             profilePicView.setImageBitmap(imageBitmap);
         }
         Button closeButton = detailDialog.findViewById(R.id.dialog_close_button);
         closeButton.setOnClickListener(v -> detailDialog.dismiss());
         Button deleteButton = detailDialog.findViewById(R.id.dialog_delete_button);
+
         deleteButton.setOnClickListener(v -> {
-            deleteAttendeeById(attendeeId);
+            dataHandler.deleteAttendee(attendee.getAttendeeId(), this);
             detailDialog.dismiss();
         });
+
         detailDialog.show();
     }
 
-    void addImageToLayout(String encodedImageString, LinearLayout layout, Event event, Attendee attendee, String field) {
+    private void showDialogWithImage(Bitmap image, String documentId, String field, String collection) {
+        Dialog imageDialog = new Dialog(this);
+        imageDialog.setContentView(R.layout.image_dialog);
+
+        ImageView imageView = imageDialog.findViewById(R.id.dialog_image_view);
+        imageView.setImageBitmap(image);
+
+        Button deleteButton = imageDialog.findViewById(R.id.delete_image_button);
+        deleteButton.setOnClickListener(v -> {
+            deleteImage(documentId, field, collection);
+            imageDialog.dismiss();
+        });
+
+        imageDialog.show();
+    }
+
+    void addImageToLayout(String encodedImageString, LinearLayout layout, String documentId, String field, String collection) {
         View imageLayoutView = LayoutInflater.from(this).inflate(R.layout.image_layout, null, false);
         ImageView imageView = imageLayoutView.findViewById(R.id.image_view);
-
         Bitmap imageBitmap = stringToBitmap(encodedImageString);
         if (imageBitmap != null) {
             imageView.setImageBitmap(imageBitmap);
 
             // Set OnClickListener to show the image in a dialog when clicked
-            imageView.setOnClickListener(v -> showDialogWithImage(imageBitmap, event, attendee, field));
+            imageView.setOnClickListener(v -> showDialogWithImage(imageBitmap, documentId, field, collection));
             layout.addView(imageLayoutView);
         }
 
     }
-
-
 
     Bitmap stringToBitmap(String encodedString) {
         if (encodedString == null || encodedString.isEmpty()) {
@@ -200,32 +238,53 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
-    private void showDialogWithImage(Bitmap image, Event event, Attendee attendee, String field) {
-        Dialog imageDialog = new Dialog(this);
-        imageDialog.setContentView(R.layout.image_dialog);
-
-        ImageView imageView = imageDialog.findViewById(R.id.dialog_image_view);
-        imageView.setImageBitmap(image);
-
-        Button deleteButton = imageDialog.findViewById(R.id.delete_image_button);
-        deleteButton.setOnClickListener(v -> {
-            deleteImage(event, attendee, field);
-            imageDialog.dismiss();
-        });
-
-        imageDialog.show();
-    }
-
-    void deleteImage(Event event, Attendee attendee, String field) {
-        if (event != null){
-            //dataHandler.updateEvent(event.getEventId(), field, null, this);
+    void deleteImage(String documentId, String field, String collection) {
+        if (collection.equals("event")){
+            dataHandler.updateEvent(documentId, field, null, this);
         }
         else {
-            //dataHandler.updateAttendee(attendee.getAttendeeId(), field, null, this);
+            dataHandler.updateAttendee(documentId, field, null, this);
         }
     }
 
+    @Override
+    public void onUpdateAttendee(String attendeeId) {
+        if (attendeeId == null){
+            Toast.makeText(this, "Couldn't delete image", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, "Image deleted", Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    @Override
+    public void onUpdateEvent(String eventId) {
+        if (eventId == null){
+            Toast.makeText(this, "Couldn't delete image", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, "Image deleted", Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    @Override
+    public void onDeleteAttendee(String attendeeId) {
+        if (attendeeId == null){
+            Toast.makeText(this, "Couldn't delete attendee", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, "Attendee deleted", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onDeleteEvent(String eventId) {
+        if (eventId == null){
+            Toast.makeText(this, "Couldn't delete event", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, "Event deleted", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
 

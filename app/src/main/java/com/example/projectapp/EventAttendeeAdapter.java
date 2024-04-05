@@ -18,6 +18,11 @@ public class EventAttendeeAdapter extends RecyclerView.Adapter<EventAttendeeAdap
 
     private List<Attendee> attendees;
     private Event event;
+    private EventAttendeeAdapter.OnItemClickListener listener;
+
+    public interface OnItemClickListener {
+        void onItemClick(Attendee attendee);
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView nameText, emailText, phoneText, checkInText;
@@ -30,6 +35,14 @@ public class EventAttendeeAdapter extends RecyclerView.Adapter<EventAttendeeAdap
             checkInText = (TextView) view.findViewById(R.id.attendeeCheckInText);
         }
 
+        public void bind(final Attendee attendee,final EventAttendeeAdapter.OnItemClickListener listener) {
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    listener.onItemClick(attendee);
+                }
+            });
+        }
+
     }
 
     /**
@@ -37,9 +50,10 @@ public class EventAttendeeAdapter extends RecyclerView.Adapter<EventAttendeeAdap
      *
      * @param attendees list containing the data to populate views to be used
      */
-    public EventAttendeeAdapter(List<Attendee> attendees, Event event) {
+    public EventAttendeeAdapter(List<Attendee> attendees, Event event, OnItemClickListener listener) {
         this.attendees = attendees;
         this.event = event;
+        this.listener = listener;
     }
 
     // Create new views (invoked by the layout manager)
@@ -55,15 +69,21 @@ public class EventAttendeeAdapter extends RecyclerView.Adapter<EventAttendeeAdap
     @Override
     public void onBindViewHolder(EventAttendeeAdapter.ViewHolder viewHolder, final int position) {
         Attendee attendee = attendees.get(position);
+        viewHolder.bind(attendee, listener);
+
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         viewHolder.nameText.setText(attendee.getName());
         viewHolder.emailText.setText("Homepage: " + attendee.getHomepage());
         viewHolder.phoneText.setText("Contact Info: " + attendee.getContactInfo());
+        viewHolder.checkInText.setVisibility(View.GONE);
 
-        Integer checkIns = attendee.getCheckedInEvents().get(event.getEventId());
-        if (checkIns != null){
-            viewHolder.checkInText.setText("Check Ins: " + checkIns.toString());
+        if (event != null){
+            viewHolder.checkInText.setVisibility(View.VISIBLE);
+            Integer checkIns = attendee.getCheckedInEvents().get(event.getEventId());
+            if (checkIns != null){
+                viewHolder.checkInText.setText("Check Ins: " + checkIns.toString());
+            }
         }
     }
 

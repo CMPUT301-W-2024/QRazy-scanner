@@ -83,7 +83,6 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         Button filterCompletedButton = findViewById(R.id.attendeeCompletedEvent);
         Button filterOngoingButton = findViewById(R.id.attendeeOngoingEvent);
         ImageButton menuButton = findViewById(R.id.menuButton);
-        TextView welcomeText = findViewById(R.id.welcomeText);
 
         attendeeEventsFiltered = new ArrayList<>();
         allEventsFiltered = new ArrayList<>();
@@ -94,8 +93,6 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         attendeeEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         allEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         announcementsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        String userName = dataHandler.getLocalAttendee().getName();
-        welcomeText.setText("Welcome, " + userName);
 
         attendeeEventsAdapter = new AttendeeEventAdapter(attendeeEventsFiltered, new AttendeeEventAdapter.OnItemClickListener() {
             @Override
@@ -184,6 +181,9 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
     protected void onResume() {
         super.onResume();
         active = true;
+        String userName = dataHandler.getLocalAttendee().getName();
+        TextView welcomeText = findViewById(R.id.welcomeText);
+        welcomeText.setText("Welcome, " + userName);
         updateEventListVisibility();
     }
 
@@ -194,7 +194,9 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
     }
 
     public void updateEvent(Event event, ArrayList<Event> list){
-        list.set(list.indexOf(event), event);
+        if (list.contains(event)){
+            list.set(list.indexOf(event), event);
+        }
     }
 
     public void removeEvent(Event event, ArrayList<Event> list){
@@ -248,8 +250,9 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         eventOrganizerView.setText(event.getOrganizerName());
 
         eventDescriptionView.setText(event.getDescription());
-
-        eventPosterView.setImageBitmap(stringToBitmap(event.getPoster()));
+        if (event.getPoster() != null){
+            eventPosterView.setImageBitmap(stringToBitmap(event.getPoster()));
+        }
         eventDateView.setText(event.getDate());
         eventTimeView.setText(event.getStartTime() + " - " + event.getEndTime());
 
