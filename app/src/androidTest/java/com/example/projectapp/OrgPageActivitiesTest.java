@@ -9,6 +9,7 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import android.widget.DatePicker;
 import android.widget.TimePicker;
@@ -33,7 +34,7 @@ public class OrgPageActivitiesTest {
         onView(withId(R.id.createEventButton)).perform(click());
         onView(withId(R.id.eventNameEditText)).perform(typeText("test"), closeSoftKeyboard());
         onView(withId(R.id.eventDateEditText)).perform(click());
-        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2024, 05, 30));
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2024, 5, 30));
         onView(withId(android.R.id.button1)).perform(click());
         onView(withId(R.id.eventStartTimeEditText)).perform(click());
         onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))).perform(PickerActions.setTime(12, 0));
@@ -72,8 +73,10 @@ public class OrgPageActivitiesTest {
     @Test
     public void testMapActivity() {
         onView(withId(R.id.organizerNameEditText)).check(matches(isDisplayed()));
+        onView(withId(R.id.expandButton)).perform(click());
 
         onView(withId(R.id.viewMapButton)).perform(click());
+        onView(withText("Allow")).perform(click());
         onView(withId(R.id.mapview)).check(matches(isDisplayed()));
         onView(withId(R.id.goBackButton)).perform(click());
 
@@ -81,7 +84,7 @@ public class OrgPageActivitiesTest {
     }
 
     /**
-     * Test to check if clicking map button switches from
+     * Test to check if clicking 'Live attendee count' switches from
      * 'Organizer Page' activity to 'Event Attendees' activity and
      * back to 'Organizer Page'
      */
