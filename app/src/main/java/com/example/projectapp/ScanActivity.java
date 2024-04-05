@@ -33,6 +33,14 @@ public class ScanActivity extends AppCompatActivity {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final DataHandler dataHandler = DataHandler.getInstance();
 
+    /**
+     * Sets up the activity with a QR code scanner and handles QR code processing.
+     * Depending on the 'usage' intent extra, it checks in attendees, reuses QR codes, or processes promo QRs.
+     *
+     * @param savedInstanceState
+     *      Contains data supplied in onSaveInstanceState(Bundle)
+     *      if activity is re-initialized.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,22 +86,26 @@ public class ScanActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Resumes the camera preview when the activity is resumed.
+     */
     @Override
     protected void onResume() {
         super.onResume();
         mCodeScanner.startPreview();
     }
 
+    /**
+     * Releases camera resources and pauses the camera preview when the activity is paused.
+     */
     @Override
     protected void onPause() {
         mCodeScanner.releaseResources();
         super.onPause();
     }
 
-    // Gets permission for camera if needed
-
     /**
-     * Check for camera's permission
+     * Checks for camera permission and requests it if not already granted.
      */
     public void checkPermission(){
         if(ContextCompat.checkSelfPermission(ScanActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -102,7 +114,14 @@ public class ScanActivity extends AppCompatActivity {
         }
     }
 
-    // What to do if permission granted or not granted
+    /**
+     * Handles the result of the camera permission request.
+     * Displays a toast message indicating whether the permission was granted or denied.
+     *
+     * @param requestCode  The request code passed in requestPermissions(android.app.Activity, String[], int)
+     * @param permissions  The requested permissions.
+     * @param grantResults The grant results for the corresponding permissions.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
     {
@@ -118,7 +137,12 @@ public class ScanActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * Checks event attendance limit and processes check-in.
+     *
+     * @param event
+     *      The event to check.
+     */
     private void checkLimit(Event event){
         // if no attendance limit or signed attendees is less than limit then check in
         if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().contains(dataHandler.getAttendee().getAttendeeId()) || event.getAttendance() + event.getSignedAttendees().size() < event.getAttendanceLimit()){
@@ -137,6 +161,12 @@ public class ScanActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Verifies if QR code exists and performs actions based on check-in status.
+     *
+     * @param qrData    The QR data to check.
+     * @param checkInto Flag for check-in process.
+     */
     private void checkIfCodeExists(String qrData, boolean checkInto){
         db.collection("events").where(Filter.or(Filter.equalTo("eventId", qrData), Filter.equalTo("qrCode", hashEventCode(qrData)))).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()){
@@ -170,11 +200,25 @@ public class ScanActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Sets the hashed QR code for an event in the database.
+     *
+     * @param eventId The ID of the event.
+     * @param qrData  The QR data to hash and set.
+     */
     private void setEventQrCode(String eventId, String qrData){
         qrData = hashEventCode(qrData);
         db.collection("events").document(eventId).update("qrCode", qrData);
     }
 
+    /**
+     * Hashes a string using SHA-256.
+     *
+     * @param code
+     *      The string to hash.
+     * @return
+     *      The hashed string.
+     */
     private String hashEventCode(String code){
         return Hashing.sha256()
                 .hashString(code, StandardCharsets.UTF_8)
