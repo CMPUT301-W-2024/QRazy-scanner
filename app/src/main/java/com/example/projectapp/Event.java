@@ -34,7 +34,7 @@ public class Event implements Serializable{
     private Integer attendanceLimit;
     private String qrCode;
     private String promoQrCode;
-    private ArrayList<GeoPoint> geopoints;
+    private transient ArrayList<GeoPoint> geopoints;
     private ArrayList<Announcement> announcements;
 
     /**
