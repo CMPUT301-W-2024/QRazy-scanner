@@ -91,14 +91,14 @@ public class DataHandler {
      * @param attendee
      *      The Attendee object representing the data to add.
      */
-    public void addAttendee(Attendee attendee, AddAttendeeCallback callback){
+    public void addAttendee(Attendee attendee, boolean newAttendee,AddAttendeeCallback callback){
         DocumentReference attendeeDocRef = attendeesRef.document(attendee.getAttendeeId());
 
         attendeeDocRef.set(attendee).addOnSuccessListener(aVoid -> {
-                    callback.onAddAttendee(attendee);
+                    callback.onAddAttendee(attendee, newAttendee);
                 })
                 .addOnFailureListener(e -> {
-                    callback.onAddAttendee(null);
+                    callback.onAddAttendee(null, newAttendee);
                 });;
     }
 

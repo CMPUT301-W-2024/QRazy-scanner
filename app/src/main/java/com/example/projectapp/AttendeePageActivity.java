@@ -93,7 +93,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         allEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         announcementsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         String userName = dataHandler.getLocalAttendee().getName();
-        welcomeText.setText("Welcome back, " + userName);
+        welcomeText.setText("Welcome, " + userName);
 
         attendeeEventsAdapter = new AttendeeEventAdapter(attendeeEventsFiltered, new AttendeeEventAdapter.OnItemClickListener() {
             @Override
@@ -105,9 +105,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(AttendeePageActivity.this, ProfileEditActivity.class);
-
                 startActivity(intent);
             }
         });
@@ -161,7 +159,6 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
                 Intent intent = new Intent(AttendeePageActivity.this, ScanActivity.class);
                 intent.putExtra("usage", "promoQr");
                 activityResultLauncher.launch(intent);
-               //startActivity(intent);
             }
         });
 
@@ -345,8 +342,8 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     @Override
     public void onProfileDeleted() {
         if (active){
+            dataHandler.setLocalAttendee(null);
             restart();
-            //unsubscribeFromNotis();
         }
     }
 

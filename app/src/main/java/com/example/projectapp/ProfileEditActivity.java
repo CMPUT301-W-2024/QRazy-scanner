@@ -1,7 +1,9 @@
 package com.example.projectapp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -19,19 +21,23 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class ProfileEditActivity extends AppCompatActivity implements AddAttendeeCallback{
+public class ProfileEditActivity extends AppCompatActivity implements AddAttendeeCallback, ProfileDeletedListenerCallback{
     private ImageView avatar;
     private String encodedImage;
     private ActivityResultLauncher<Intent> resultLauncher;
     private EditText userNameEditText, emailEditText, phoneEditText;
-    private Button saveButton;
+    private Button saveButton, deleteButton;
     private Attendee currentAttendee;
-    private DataHandler dataHandler = DataHandler.getInstance();
+    private final DataHandler dataHandler = DataHandler.getInstance();
+    private boolean active;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +50,15 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         emailEditText = findViewById(R.id.emailEditText);
         phoneEditText = findViewById(R.id.phoneEditText);
         saveButton = findViewById(R.id.saveButton);
+        deleteButton = findViewById(R.id.delete_button);
         registerResult();
 
         currentAttendee = dataHandler.getLocalAttendee();
+
         if (currentAttendee != null){
             loadAttendeeInfo();
+            updateDeleteButtonVisibility();
+            dataHandler.addProfileDeletedListener(this);
         }
 
         avatarButton.setOnClickListener(v -> pickImage());
@@ -57,16 +67,59 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
             @Override
             public void onClick(View v) {
                 saveProfileChanges();
+                updateDeleteButtonVisibility();
+            }
+        });
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteProfilePicAndGenerateNewOne();
+                updateDeleteButtonVisibility();
             }
         });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        active = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        active = false;
+    }
+
+    private void deleteProfilePicAndGenerateNewOne() {
+        Bitmap generatedProfilePic = IdenticonGenerator.generate(currentAttendee.getName(), 128);
+        if (generatedProfilePic != null) {
+            avatar.setImageBitmap(generatedProfilePic);
+            encodedImage = bitmapToString(generatedProfilePic);
+        }
+    }
+
+
+
+    private void updateDeleteButtonVisibility() {
+        if (currentAttendee != null && isUploadedProfilePic(currentAttendee.getProfilePic())) {
+            deleteButton.setVisibility(View.VISIBLE);
+        } else {
+            deleteButton.setVisibility(View.GONE);
+        }
+    }
+
+    private boolean isUploadedProfilePic(String profilePic) {
+        return profilePic != null && profilePic.length() > 1000;
+    }
+
 
     private void loadAttendeeInfo() {
         userNameEditText.setText(currentAttendee.getName());
         emailEditText.setText(currentAttendee.getHomepage());
         phoneEditText.setText(currentAttendee.getContactInfo());
 
-        String encodedImage = currentAttendee.getProfilePic();
+        encodedImage = currentAttendee.getProfilePic();
         if (encodedImage != null && !encodedImage.isEmpty()) {
             Bitmap bitmap = stringToBitmap(encodedImage);
             if (bitmap != null) {
@@ -85,34 +138,37 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
             return; // Stop execution if any of the fields is empty
         }
 
-        if (currentAttendee == null){
-            currentAttendee = new Attendee();
-            dataHandler.setLocalAttendee(currentAttendee);
-        }
-
-        currentAttendee.setName(name);
-        currentAttendee.setHomepage(email);
-        currentAttendee.setContactInfo(phone);
-
-        if (encodedImage != null && !encodedImage.isEmpty()) {
-            currentAttendee.setProfilePic(encodedImage);
-        }
-        else {
+        if (encodedImage == null || encodedImage.isEmpty()) {
             Bitmap generatedProfilePic = IdenticonGenerator.generate(name, 128);
             if (generatedProfilePic != null) {
                 encodedImage = bitmapToString(generatedProfilePic);
             }
         }
 
-        dataHandler.addAttendee(currentAttendee, this);
+        // create new attendee, first time using app
+        if (currentAttendee == null){
+            currentAttendee = new Attendee(encodedImage, name, email, phone);
+            dataHandler.setLocalAttendee(currentAttendee);
+            saveLocalAttendeeId();
+            dataHandler.addAttendee(currentAttendee, true, this);
+        }
+        else {
+            currentAttendee.setName(name);
+            currentAttendee.setHomepage(email);
+            currentAttendee.setContactInfo(phone);
+            currentAttendee.setProfilePic(encodedImage);
+            dataHandler.addAttendee(currentAttendee, false, this);
+        }
     }
 
     @Override
-    public void onAddAttendee(Attendee attendee) {
+    public void onAddAttendee(Attendee attendee, boolean newAttendee) {
         if (attendee != null){
             Toast.makeText(this, "Updated profile", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, AttendeePageActivity.class);
-            startActivity(intent);
+            if (newAttendee){
+                Intent intent = new Intent(this, AttendeePageActivity.class);
+                startActivity(intent);
+            }
             finish();
         }
         else {
@@ -121,7 +177,10 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
     }
 
     private void pickImage() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent intent = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R && android.os.ext.SdkExtensions.getExtensionVersion(android.os.Build.VERSION_CODES.R) >= 2) {
+            intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+        }
         resultLauncher.launch(intent);
     }
 
@@ -196,5 +255,29 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
                 }
             }
         }
+    }
+
+    @Override
+    public void onProfileDeleted() {
+        if (active){
+            dataHandler.setLocalAttendee(null);
+            restart();
+        }
+    }
+
+    private void restart(){
+        Intent intent = new Intent(this, MainActivity.class);
+        this.startActivity(intent);
+        this.finishAffinity();
+    }
+
+    /**
+     * save attendee ID
+     */
+    public void saveLocalAttendeeId(){
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("AttendeePref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("attendeeId", dataHandler.getLocalAttendee().getAttendeeId());
+        editor.apply();
     }
 }
