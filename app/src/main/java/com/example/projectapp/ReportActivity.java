@@ -34,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -83,6 +84,7 @@ public class ReportActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 createPDFandShare();
+                onBackPressed();
             }
         });
 
@@ -122,7 +124,7 @@ public class ReportActivity extends AppCompatActivity {
                 "\nOrganizer: " + organizer +
                 "\nDate: " + adate +
                 "\n" + diff1_text + diff1 +
-                "\n" + diff1_text + diff1 +
+                "\n" + diff2_text + diff2 +
                 "\nEvent Description(Limited at 3000 characters): " + eventDescription;
 
         // Create StaticLayout for the title
@@ -237,8 +239,9 @@ public class ReportActivity extends AppCompatActivity {
                                 ArrayList<String> checkins = new ArrayList<>();
                                 if (data.containsKey("checkedAttendees")) {
                                     Object checkedAttendeesObject = data.get("checkedAttendees");
-                                    if (checkedAttendeesObject instanceof ArrayList<?>) {
-                                        checkins.addAll((ArrayList<String>) checkedAttendeesObject);
+                                    if (checkedAttendeesObject instanceof HashMap<?, ?>) {
+                                        HashMap<String, Integer> checkedAttendeesMap = (HashMap<String, Integer>) checkedAttendeesObject;
+                                        checkins.addAll(checkedAttendeesMap.keySet());
                                     }
                                 }
 
@@ -260,10 +263,10 @@ public class ReportActivity extends AppCompatActivity {
                                 unionItems.addAll(signups);
                                 numUnionItems = unionItems.size();
 
-                                if (numCommonItems>0 && numCommonItems<signups.size()){
+                                if (numCommonItems>=0 && numCommonItems<signups.size()){
                                     diff1 = signups.size() - numCommonItems;
                                 }
-                                if (numCommonItems>0 && numCommonItems<checkins.size()){
+                                if (numCommonItems>=0 && numCommonItems<checkins.size()){
                                     diff2 = checkins.size() - numCommonItems;
                                 }
 

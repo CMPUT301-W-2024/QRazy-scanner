@@ -40,12 +40,14 @@ public class MapActivity extends AppCompatActivity {
     private MapController mMapController;
     private MarkerAdapter markerAdapter;
     private Button backButton;
+    private ItemizedIconOverlay<OverlayItem> itemizedOverlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         markerAdapter = new MarkerAdapter((String) getIntent().getSerializableExtra("eventId"));
+        itemizedOverlay = new ItemizedIconOverlay<>(this, new ArrayList<>(), null);
 
         // Configure the user agent
         Configuration.getInstance().setUserAgentValue("Project app");
@@ -127,14 +129,13 @@ public class MapActivity extends AppCompatActivity {
         // Use the default marker
         Drawable marker = getResources().getDrawable(android.R.drawable.ic_dialog_map);
 
-        // Create an empty overlay for markers
-        ItemizedIconOverlay<OverlayItem> itemizedOverlay = new ItemizedIconOverlay<>(this, new ArrayList<>(), null);
 
         // Retrieve markers from Firestore and add them to the overlay
 
         markerAdapter.retrieveMarkersFromFirestore(new MarkerAdapter.MarkerRetrievalListener() {
             @Override
             public void onMarkersRetrieved(List<OverlayItem> overlayItems) {
+                itemizedOverlay = new ItemizedIconOverlay<>(MapActivity.this, new ArrayList<>(), null);
                 // Clear existing items
                 itemizedOverlay.removeAllItems();
 
