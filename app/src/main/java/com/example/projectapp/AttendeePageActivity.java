@@ -52,9 +52,10 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     /**
      * Initializes the activity, sets up RecyclerViews for displaying events.
      *
-     * @param savedInstanceState    If the activity is being re-initialized after
-     *                              being shut down, this Bundle contains the data
-     *                              most recently supplied in onSaveInstanceState.
+     * @param savedInstanceState
+     *      If the activity is being re-initialized after
+     *      being shut down, this Bundle contains the data
+     *      most recently supplied in onSaveInstanceState.
      */
 
     @Override
@@ -164,6 +165,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         }
 
     }
+
     /**
      * Removes event listeners when the activity is paused
      *  to avoid unnecessary background processing.
@@ -185,25 +187,57 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         updateEventListVisibility();
     }
 
+    /**
+     * Adds an event to the list if it is not already present.
+     *
+     * @param event The event to be added.
+     * @param list  The list of events where the event will be added.
+     */
     public void addEvent(Event event, ArrayList<Event> list){
         if (!list.contains(event)){
             list.add(event);
         }
     }
 
+    /**
+     * Updates the information of an existing event in the list.
+     *
+     * @param event The event with updated information.
+     * @param list  The list of events where the event information will be updated.
+     */
     public void updateEvent(Event event, ArrayList<Event> list){
         list.set(list.indexOf(event), event);
     }
 
+    /**
+     * Removes an event from the list.
+     *
+     * @param event The event to be removed.
+     * @param list  The list of events from which the event will be removed.
+     */
     public void removeEvent(Event event, ArrayList<Event> list){
         list.remove(event);
     }
 
+    /**
+     * Adds announcements from an event to the global
+     * announcements list and notifies the adapter.
+     *
+     * @param event
+     *      The event to which announcements will be added.
+     */
     private void addAnnouncements(Event event){
         announcements.addAll(event.getAnnouncements());
         announcementAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Updates the global announcements list with new
+     * announcements from an event and notifies the adapter.
+     *
+     * @param event
+     *      The event whose announcements will be used for updating.
+     */
     private void updateAnnouncements(Event event){
         for (int i=0; i < event.getAnnouncements().size(); i++){
             if (!announcements.contains(event.getAnnouncements().get(i))){
@@ -213,6 +247,13 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         announcementAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Removes announcements associated with an event from
+     * the global announcements list and notifies the adapter.
+     *
+     * @param event
+     *      The event whose announcements will be removed.
+     */
     private void removeAnnouncements(Event event){
         for (int i=0; i < event.getAnnouncements().size(); i++){
             announcements.remove(event.getAnnouncements().get(i));
@@ -220,6 +261,13 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         announcementAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Handles updates to attendee events and performs corresponding
+     * actions such as adding, updating, or removing events and announcements.
+     *
+     * @param updateType The type of update that occurred (ADDED, MODIFIED, REMOVED).
+     * @param event      The event that was updated.
+     */
     @Override
     public void onAttendeeEventsUpdated(DocumentChange.Type updateType, Event event) {
 
@@ -243,6 +291,14 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         }
     }
 
+    /**
+     * Responds to updates on all events and performs corresponding
+     * actions such as adding, updating, or removing events.
+     * It also filters the events list accordingly.
+     *
+     * @param updateType The type of update that occurred (ADDED, MODIFIED, REMOVED).
+     * @param event      The event that was updated.
+     */
     @Override
     public void onAllEventsUpdated(DocumentChange.Type updateType, Event event) {
         switch (updateType) {
@@ -262,9 +318,11 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     }
 
     /**
-     * Displays a dialog with details of an event. Allows the user to view more information about the event.
+     * Displays a dialog with details of an event.
+     * Allows the user to view more information about the event.
      * If the event is available for sign-up, it displays a sign-up button.
-     * @param event The Event object containing details to be displayed.
+     *
+     * @param event     The Event object containing details to be displayed.
      * @param canSignUp Boolean to indicate if the sign-up option should be available for this event.
      */
     private void showDialogWithEventDetails(Event event, boolean canSignUp) {
@@ -321,6 +379,9 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         eventDetailDialog.show();
     }
 
+    /**
+     * Requests notification permissions from the user if not already granted.
+     */
     private void getNotificationPermission(){
         if (Build.VERSION.SDK_INT >= 33){
             if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED){
@@ -330,6 +391,14 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         }
     }
 
+    /**
+     * Converts a Base64 encoded string to a Bitmap object.
+     *
+     * @param encodedString
+     *      The Base64 encoded string representing the bitmap.
+     * @return
+     *      The decoded Bitmap object, or null if the input string is null or empty.
+     */
     private Bitmap stringToBitmap(String encodedString) {
         if (encodedString == null || encodedString.isEmpty()) {
             Log.e("Admin", "Encoded string is null or empty");
@@ -339,6 +408,10 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
+    /**
+     * Handles the user profile deletion event.
+     * If the profile is active, restarts the application.
+     */
     @Override
     public void onProfileDeleted() {
         if (active){
@@ -347,12 +420,22 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         }
     }
 
+    /**
+     * Restarts the current activity by starting the main activity and finishing the current one.
+     */
     private void restart(){
         Intent intent = new Intent(this, MainActivity.class);
         this.startActivity(intent);
         this.finishAffinity();
     }
 
+    /**
+     * Filters events based on a specified criterion and updates the events list accordingly.
+     *
+     * @param events       The list of events to be filtered.
+     * @param eventsFull   The full list of events.
+     * @param adapter      The adapter used to display the events.
+     */
     private void filterEvents(ArrayList<Event> events, ArrayList<Event> eventsFull, AttendeeEventAdapter adapter) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date currentDateTime = new Date();
@@ -383,6 +466,13 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         updateEventListVisibility();
     }
 
+    /**
+     * Callback method triggered when an event is fetched.
+     * If the event is null, a toast message is shown.
+     * If the event is not null, a dialog with the event details is displayed.
+     *
+     * @param event The event that was fetched.
+     */
     @Override
     public void onGetEvent(Event event) {
         if (event == null){
@@ -392,6 +482,11 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         showDialogWithEventDetails(event, true);
     }
 
+    /**
+     * Updates the visibility of event lists based on whether they are empty or not.
+     * If an event list is empty, the corresponding 'no events' text view is shown;
+     * otherwise, it is hidden.
+     */
     private void updateEventListVisibility() {
         TextView noMyEventsText = findViewById(R.id.noMyEventsText);
         TextView noAllEventsText = findViewById(R.id.noAllEventsText);
