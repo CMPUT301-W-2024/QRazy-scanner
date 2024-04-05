@@ -42,7 +42,7 @@ import java.util.Set;
  * It provides functionality to view events the attendee is participating in, and to view all available events.
  * Attendees can interact with the events, such as signing up for them.
  */
-public class AttendeePageActivity extends AppCompatActivity implements ProfileDeletedListenerCallback, AttendeeEventsListenerCallback, AllEventsListenerCallback, UpdateAttendeeCallback, UpdateEventCallback {
+public class AttendeePageActivity extends AppCompatActivity implements LocalAttendeeListenerCallback, AttendeeEventsListenerCallback, EventsListenerCallback, UpdateAttendeeCallback, UpdateEventCallback {
     private ArrayList<Event> allEventsFiltered;
     private ArrayList<Event> attendeeEventsFiltered;
     private ArrayList<Event> allEventsFull;
@@ -70,10 +70,10 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
 
         getNotificationPermission();
 
-        dataHandler.addProfileDeletedListener(this);
+        dataHandler.addLocalAttendeeListener(this);
         dataHandler.addAttendeeEventsListener(true,this); // for checked in events
         dataHandler.addAttendeeEventsListener(false,this); // for signed up events
-        dataHandler.addAllEventsListener(this);
+        dataHandler.addEventsListener(this);
 
         RecyclerView attendeeEventsList = findViewById(R.id.attendeeEventsList);
         RecyclerView allEventsList = findViewById(R.id.allEventsList);
@@ -338,7 +338,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     }
 
     @Override
-    public void onAllEventsUpdated(DocumentChange.Type updateType, Event event) {
+    public void onEventsUpdated(DocumentChange.Type updateType, Event event) {
         switch (updateType) {
             case ADDED:
                 addEvent(event, allEventsFull);
@@ -370,7 +370,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     }
 
     @Override
-    public void onProfileDeleted() {
+    public void onLocalAttendeeUpdated() {
         if (active){
             dataHandler.setLocalAttendee(null);
             restart();

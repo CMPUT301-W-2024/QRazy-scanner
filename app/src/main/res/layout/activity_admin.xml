@@ -31,7 +31,7 @@
         app:layout_constraintHeight_percent="0.25">
 
         <LinearLayout
-            android:id="@+id/horizontalLayout"
+            android:id="@+id/adminEventsLayout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="horizontal"/>
@@ -62,7 +62,7 @@
         app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintHeight_percent="0.25">
         <LinearLayout
-            android:id="@+id/verticalLayout"
+            android:id="@+id/adminAttendeesLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"/>
@@ -98,19 +98,29 @@
             android:layout_height="match_parent"
             android:layout_weight="1">
             <LinearLayout
-                android:id="@+id/firstImagesLayout"
+                android:id="@+id/adminPostersLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"/>
         </ScrollView>
 
-        <!-- Second Vertical ScrollView -->
         <ScrollView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">
             <LinearLayout
-                android:id="@+id/secondImagesLayout"
+                android:id="@+id/adminProfilePicsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+        </ScrollView>
+
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <LinearLayout
+                android:id="@+id/adminQrCodesLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"/>
