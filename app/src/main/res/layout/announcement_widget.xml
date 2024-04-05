@@ -2,21 +2,21 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="300dp"
-    android:layout_height="100dp"
+    android:layout_height="wrap_content"
     app:cardCornerRadius="16dp"
     app:cardElevation="12dp"
     android:layout_margin="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
 
         <TextView
             android:id="@+id/announcementEvent"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/bold1"
             android:gravity="center"
@@ -30,7 +30,7 @@
         <TextView
             android:id="@+id/announcementOrganizer"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/light"
             android:text="Organizer"
@@ -42,7 +42,7 @@
         <TextView
             android:id="@+id/announcementContent"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/light"
             android:gravity="left|center"
