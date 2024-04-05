@@ -33,7 +33,7 @@
         android:layout_marginTop="16dp"
         android:layout_below="@id/delete_button"
         android:background="@null"
-        android:text="Change and Save Avatar"
+        android:text="Change Profile Pic"
         android:onClick="showImageChangeDialog" />
 
     <!-- User name (editable) -->

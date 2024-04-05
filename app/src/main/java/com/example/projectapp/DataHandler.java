@@ -1,5 +1,7 @@
 package com.example.projectapp;
 
+import android.widget.LinearLayout;
+
 import androidx.annotation.Nullable;
 
 import com.google.auth.oauth2.GoogleCredentials;
@@ -7,6 +9,7 @@ import com.google.common.hash.Hashing;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,7 +26,9 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -148,6 +153,22 @@ public class DataHandler {
         }).addOnFailureListener(e -> callback.onGetAttendee(null, false));
     }
 
+    public void getEvent(String eventId, GetEventCallback callback){
+        DocumentReference eventDocRef = eventsRef.document(eventId);
+        eventDocRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Event event = documentSnapshot.toObject(Event.class);
+                if (event != null) {
+                    callback.onGetEvent(event);
+                }
+            } else {
+                callback.onGetEvent(null);
+            }
+        }).addOnFailureListener(e -> {
+            callback.onGetEvent(null);
+        });
+    }
+
     public void getOrganizer(String organizerId, GetOrganizerCallback callback){
         DocumentReference organizerDocRef = organizersRef.document(organizerId);
 
@@ -167,33 +188,22 @@ public class DataHandler {
                 .addOnFailureListener(e -> callback.onUpdateEvent(null));
     }
 
-    public void updateAttendee(String attendeeId, String field, String value){
+    public void updateAttendee(String attendeeId, String field, Object value, UpdateAttendeeCallback callback){
         DocumentReference attendeeDocRef = attendeesRef.document(attendeeId);
-        attendeeDocRef.update(field, value);
+        attendeeDocRef.update(field, value).addOnSuccessListener(aVoid -> callback.onUpdateAttendee(attendeeId))
+                .addOnFailureListener(e -> callback.onUpdateAttendee(null));;
     }
 
-    public void subscribeToNotis(String eventId){
-        FirebaseMessaging.getInstance().subscribeToTopic(eventId);
-    }
-    public void unSubscribeFromNotis(String eventId){
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(eventId);
+    public void deleteAttendee(String attendeeId, DeleteAttendeeCallback callback){
+        DocumentReference attendeeDocRef = attendeesRef.document(attendeeId);
+        attendeeDocRef.delete().addOnSuccessListener(aVoid -> callback.onDeleteAttendee(attendeeId))
+                .addOnFailureListener(e -> callback.onDeleteAttendee(null));
     }
 
-
-    public void getEvent(String eventId, GetEventCallback callback){
+    public void deleteEvent(String eventId, DeleteEventCallback callback){
         DocumentReference eventDocRef = eventsRef.document(eventId);
-        eventDocRef.get().addOnSuccessListener(documentSnapshot -> {
-                if (documentSnapshot.exists()) {
-                    Event event = documentSnapshot.toObject(Event.class);
-                    if (event != null) {
-                        callback.onGetEvent(event);
-                    }
-                } else {
-                    callback.onGetEvent(null);
-                }
-        }).addOnFailureListener(e -> {
-            callback.onGetEvent(null);
-        });
+        eventDocRef.delete().addOnSuccessListener(aVoid -> callback.onDeleteEvent(eventId))
+                .addOnFailureListener(e -> callback.onDeleteEvent(null));
     }
 
     public void getQRCode(String eventId, String qrCodeType,GetQrCodeCallback callback) {
@@ -214,17 +224,18 @@ public class DataHandler {
                 .addOnFailureListener(e -> callback.onGetQrCode(null));
     }
 
-
-    public void addProfileDeletedListener(ProfileDeletedListenerCallback callback){
+    public void addLocalAttendeeListener(LocalAttendeeListenerCallback callback){
         attendeesRef.whereEqualTo("attendeeId", localAttendee.getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
                 if (snapshots != null){
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                        System.out.println("Got here " + dc.getType());
                         if (dc.getType() == DocumentChange.Type.REMOVED){
-                            callback.onProfileDeleted();
+                            callback.onLocalAttendeeUpdated();
+                        }
+                        else {
+                            localAttendee = dc.getDocument().toObject(Attendee.class);
                         }
                     }
                 }
@@ -255,7 +266,7 @@ public class DataHandler {
         });
     }
 
-    public void addAllEventsListener(AllEventsListenerCallback callback){
+    public void addEventsListener(EventsListenerCallback callback){
         eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>(){
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
@@ -263,7 +274,22 @@ public class DataHandler {
                 if (snapshots != null){
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         Event event = dc.getDocument().toObject(Event.class);
-                        callback.onAllEventsUpdated(dc.getType(), event);
+                        callback.onEventsUpdated(dc.getType(), event);
+                    }
+                }
+            }
+        });
+    }
+
+    public void addAttendeesListener(AttendeesListenerCallback callback){
+        attendeesRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (snapshots != null){
+                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                        Attendee attendee = dc.getDocument().toObject(Attendee.class);
+                        callback.onAttendeesUpdated(dc.getType(), attendee);
                     }
                 }
             }
@@ -315,8 +341,25 @@ public class DataHandler {
         });
     }
 
+    public void addImagesListener(String collection, String field, LinearLayout layout, ImagesListenerCallback callback) {
+        db.collection(collection).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                if (snapshots != null) {
+                    HashMap<String, String> images = new HashMap<>();
+                    for (DocumentSnapshot document : snapshots.getDocuments()) {
+                        String encodedImage = document.getString(field);
+                        if (encodedImage != null && !encodedImage.isEmpty()) {
+                            images.put(document.getId(), encodedImage);
+                        }
+                    }
+                    callback.onImagesUpdated(images, layout,collection, field);
+                }
+            }
+        });
+    }
 
-    // get event that has qrData same as Id or in qrCode (in case reusing qr code)
+        // get event that has qrData same as Id or in qrCode (in case reusing qr code)
     public void getQrCodeEvent(String qrData, boolean checkInto, GetQrCodeEventCallback callback){
 
         Query query = eventsRef.where(Filter.or(Filter.equalTo("eventId", qrData), Filter.equalTo("qrCode", hashEventCode(qrData))));
@@ -329,7 +372,6 @@ public class DataHandler {
                 callback.onGetQrCodeEvent(events.get(0), checkInto, hashEventCode(qrData));
             }
         });
-
     }
 
     private String hashEventCode(String code){
@@ -338,8 +380,14 @@ public class DataHandler {
                 .toString();
     }
 
+    public void subscribeToNotis(String eventId){
+        FirebaseMessaging.getInstance().subscribeToTopic(eventId);
+    }
+    public void unSubscribeFromNotis(String eventId){
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(eventId);
+    }
 
-    public void requestAPI(Event event, String announcement) throws Exception{
+    public void sendNotification(Event event, String announcement) throws Exception{
         String projectId = "qrazy-scanner";
         String topic = event.getEventId();
 

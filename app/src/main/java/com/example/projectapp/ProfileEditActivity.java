@@ -22,14 +22,12 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class ProfileEditActivity extends AppCompatActivity implements AddAttendeeCallback, ProfileDeletedListenerCallback{
+public class ProfileEditActivity extends AppCompatActivity implements AddAttendeeCallback, LocalAttendeeListenerCallback {
     private ImageView avatar;
     private String encodedImage;
     private ActivityResultLauncher<Intent> resultLauncher;
@@ -58,7 +56,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         if (currentAttendee != null){
             loadAttendeeInfo();
             updateDeleteButtonVisibility();
-            dataHandler.addProfileDeletedListener(this);
+            dataHandler.addLocalAttendeeListener(this);
         }
 
         avatarButton.setOnClickListener(v -> pickImage());
@@ -126,6 +124,12 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
                 avatar.setImageBitmap(bitmap);
             }
         }
+        else {
+            Bitmap generatedProfilePic = IdenticonGenerator.generate(currentAttendee.getName(), 128);
+            avatar.setImageBitmap(generatedProfilePic);
+            encodedImage = bitmapToString(generatedProfilePic);
+        }
+
     }
 
     private void saveProfileChanges() {
@@ -258,7 +262,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
     }
 
     @Override
-    public void onProfileDeleted() {
+    public void onLocalAttendeeUpdated() {
         if (active){
             dataHandler.setLocalAttendee(null);
             restart();
