@@ -36,34 +36,47 @@
         android:text="Change Profile Pic"
         android:onClick="showImageChangeDialog" />
 
-    <!-- User name (editable) -->
-    <EditText
-        android:id="@+id/userNameEditText"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/userNameInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="User Name"
-        android:fontFamily="@font/light"
         android:layout_below="@id/avatarImageButton"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp">
 
-    <!-- Contact fields (editable) -->
-    <EditText
-        android:id="@+id/emailEditText"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/userNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="User Name" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/emailInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email"
-        android:fontFamily="@font/light"
-        android:layout_below="@id/userNameEditText"
-        android:layout_marginTop="16dp" />
+        android:layout_below="@id/userNameInputLayout"
+        android:layout_marginTop="16dp">
 
-    <EditText
-        android:id="@+id/phoneEditText"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/emailEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/phoneInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Phone"
-        android:fontFamily="@font/light"
-        android:layout_below="@id/emailEditText"
-        android:layout_marginTop="16dp" />
+        android:layout_below="@id/emailInputLayout"
+        android:layout_marginTop="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/phoneEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Phone" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Save button at the bottom -->
     <com.google.android.material.button.MaterialButton
