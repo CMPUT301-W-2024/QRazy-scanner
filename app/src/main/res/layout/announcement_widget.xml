@@ -2,7 +2,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="300dp"
-    android:layout_height="100dp"
+    android:layout_height="150dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="12dp"
     android:layout_margin="8dp">
@@ -38,6 +38,15 @@
             android:textSize="12sp"
             android:maxLines="1"
             android:scrollHorizontally="true"/>
+
+        <TextView
+            android:id="@+id/announcementDateTime"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="22-10-2024 19:00"
+            android:fontFamily="@font/light"/>
 
         <TextView
             android:id="@+id/announcementContent"

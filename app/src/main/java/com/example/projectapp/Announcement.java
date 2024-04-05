@@ -7,16 +7,16 @@ import java.util.Objects;
 
 public class Announcement implements Serializable {
     private String announcement;
-    private String time;
+    private String dateTime;
     private String event;
     private String organizer;
 
     public Announcement() {
     }
 
-    public Announcement(String announcement, String time, String event, String organizer) {
+    public Announcement(String announcement, String dateTime, String event, String organizer) {
         this.announcement = announcement;
-        this.time = time;
+        this.dateTime = dateTime;
         this.event = event;
         this.organizer = organizer;
     }
@@ -29,12 +29,12 @@ public class Announcement implements Serializable {
         this.announcement = announcement;
     }
 
-    public String getTime() {
-        return time;
+    public String getDateTime() {
+        return dateTime;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
     }
 
     public String getEvent() {
@@ -64,11 +64,11 @@ public class Announcement implements Serializable {
             return true;
         }
 
-        return (obj instanceof Announcement) && ((Announcement) obj).getEvent().equals(event) && ((Announcement) obj).getAnnouncement().equals(announcement) && ((Announcement) obj).getTime().equals(time);
+        return (obj instanceof Announcement) && ((Announcement) obj).getEvent().equals(event) && ((Announcement) obj).getAnnouncement().equals(announcement) && ((Announcement) obj).getDateTime().equals(dateTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(event, announcement, time);
+        return Objects.hash(event, announcement, dateTime);
     }
 }

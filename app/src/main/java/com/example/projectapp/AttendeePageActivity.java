@@ -16,6 +16,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,7 +40,7 @@ import java.util.Date;
  * It provides functionality to view events the attendee is participating in, and to view all available events.
  * Attendees can interact with the events, such as signing up for them.
  */
-public class AttendeePageActivity extends AppCompatActivity implements ProfileDeletedListenerCallback, AttendeeEventsListenerCallback, AllEventsListenerCallback, GetEventCallback {
+public class AttendeePageActivity extends AppCompatActivity implements ProfileDeletedListenerCallback, AttendeeEventsListenerCallback, AllEventsListenerCallback {
     private ArrayList<Event> allEventsFiltered;
     private ArrayList<Event> attendeeEventsFiltered;
     private ArrayList<Event> allEventsFull;
@@ -88,7 +92,7 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         attendeeEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         allEventsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         announcementsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        String userName = dataHandler.getAttendee().getName();
+        String userName = dataHandler.getLocalAttendee().getName();
         welcomeText.setText("Welcome, " + userName);
 
         attendeeEventsAdapter = new AttendeeEventAdapter(attendeeEventsFiltered, new AttendeeEventAdapter.OnItemClickListener() {
@@ -154,14 +158,10 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
             public void onClick(View v) {
                 Intent intent = new Intent(AttendeePageActivity.this, ScanActivity.class);
                 intent.putExtra("usage", "promoQr");
-                startActivity(intent);
+                activityResultLauncher.launch(intent);
             }
         });
 
-        String eventId = getIntent().getStringExtra("EVENT_ID");
-        if (eventId != null && !eventId.trim().isEmpty()) {
-            dataHandler.getEvent(eventId, this);
-        }
 
     }
     /**
@@ -306,8 +306,8 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
                 public void onClick(View v) {
                     // only add if attendance limit is not reached
                     if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().size() < event.getAttendanceLimit()){
-                        event.addSignedAttendee(dataHandler.getAttendee().getAttendeeId());
-                        dataHandler.getAttendee().addSignedEvent(event.getEventId());
+                        event.addSignedAttendee(dataHandler.getLocalAttendee().getAttendeeId());
+                        dataHandler.getLocalAttendee().addSignedEvent(event.getEventId());
                         dataHandler.subscribeToNotis(event.getEventId());
                         eventDetailDialog.dismiss();
                     }
@@ -342,8 +342,8 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
     @Override
     public void onProfileDeleted() {
         if (active){
+            dataHandler.setLocalAttendee(null);
             restart();
-            //unsubscribeFromNotis();
         }
     }
 
@@ -383,15 +383,6 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
         updateEventListVisibility();
     }
 
-    @Override
-    public void onGetEvent(Event event) {
-        if (event == null){
-            Toast.makeText(AttendeePageActivity.this, "Error fetching event details", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        showDialogWithEventDetails(event, true);
-    }
-
     private void updateEventListVisibility() {
         TextView noMyEventsText = findViewById(R.id.noMyEventsText);
         TextView noAllEventsText = findViewById(R.id.noAllEventsText);
@@ -408,6 +399,19 @@ public class AttendeePageActivity extends AppCompatActivity implements ProfileDe
             noAllEventsText.setVisibility(View.GONE);
         }
     }
+
+    ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == 1) {
+                        Intent data = result.getData();
+                        Event event = (Event) data.getSerializableExtra("EVENT");
+                        showDialogWithEventDetails(event, true);
+                    }
+                }
+            });
 
 }
 

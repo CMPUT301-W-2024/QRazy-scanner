@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.qrcode.QRCodeWriter;
@@ -84,7 +82,7 @@ public class GenerateQrCodeActivity extends AppCompatActivity implements GetQrCo
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                navigateBackToCreateEvent();
+                finish();
             }
         });
 
@@ -102,6 +100,7 @@ public class GenerateQrCodeActivity extends AppCompatActivity implements GetQrCo
         useOwnQrButton.setOnClickListener(v -> {
             Intent i = new Intent(this, ScanActivity.class);
             i.putExtra("usage", "reuseQr");
+            i.putExtra("EVENT_ID", eventId);
             startActivity(i);
         });
 
@@ -161,13 +160,6 @@ public class GenerateQrCodeActivity extends AppCompatActivity implements GetQrCo
     }
 
 
-    /**
-     * Navigates back to the CreateEventActivity.
-     */
-    private void navigateBackToCreateEvent() {
-        Intent intent = new Intent(GenerateQrCodeActivity.this, OrganizerPageActivity.class);
-        startActivity(intent);
-    }
 
     private Uri bitmapToUri(Bitmap bitmap) {
         // Creating a file
