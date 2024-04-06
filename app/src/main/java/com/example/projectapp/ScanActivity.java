@@ -26,6 +26,14 @@ public class ScanActivity extends AppCompatActivity implements GetEventCallback,
     private final int CAMERA_PERMISSION_CODE = 100;
     private final DataHandler dataHandler = DataHandler.getInstance();
 
+    /**
+     * Sets up the activity with a QR code scanner and handles QR code processing.
+     * Depending on the 'usage' intent extra, it checks in attendees, reuses QR codes, or processes promo QRs.
+     *
+     * @param savedInstanceState
+     *      Contains data supplied in onSaveInstanceState(Bundle)
+     *      if activity is re-initialized.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,19 +76,30 @@ public class ScanActivity extends AppCompatActivity implements GetEventCallback,
         });
     }
 
+    /**
+     * Resumes the camera preview when the activity is resumed.
+     */
     @Override
     protected void onResume() {
         super.onResume();
         mCodeScanner.startPreview();
     }
 
+    /**
+     * Releases camera resources and pauses the camera preview when the activity is paused.
+     */
     @Override
     protected void onPause() {
         mCodeScanner.releaseResources();
         super.onPause();
     }
 
-
+    /**
+     * Checks in the attendee for an event and handles geolocation capture.
+     *
+     * @param event
+     *      The event to check in for.
+     */
     private void checkIn(Event event){
         Attendee attendee = dataHandler.getLocalAttendee();
 
@@ -109,6 +128,13 @@ public class ScanActivity extends AppCompatActivity implements GetEventCallback,
         }
     }
 
+    /**
+     * Processes the QR code for event check-in or updates the event with the QR code data.
+     *
+     * @param event     The event associated with the QR code.
+     * @param checkInto Flag indicating whether to check into the event.
+     * @param qrData    The QR code data.
+     */
     @Override
     public void onGetQrCodeEvent(Event event, boolean checkInto, String qrData) {
         if (event == null){
@@ -130,6 +156,12 @@ public class ScanActivity extends AppCompatActivity implements GetEventCallback,
         }
     }
 
+    /**
+     * Handles the retrieval of an event's details and navigates to the AttendeePageActivity.
+     *
+     * @param event
+     *      The event to retrieve details for.
+     */
     @Override
     public void onGetEvent(Event event) {
         if (event != null){
@@ -143,6 +175,12 @@ public class ScanActivity extends AppCompatActivity implements GetEventCallback,
         }
     }
 
+    /**
+     * Notifies the user of an error if updating the event in Firebase fails.
+     *
+     * @param eventId
+     *      The ID of the event being updated.
+     */
     @Override
     public void onUpdateEvent(String eventId) {
         if (eventId == null){
@@ -150,6 +188,12 @@ public class ScanActivity extends AppCompatActivity implements GetEventCallback,
         }
     }
 
+    /**
+     * Notifies the user of an error if updating the attendee in Firebase fails.
+     *
+     * @param attendeeId
+     *      The ID of the attendee being updated.
+     */
     @Override
     public void onUpdateAttendee(String attendeeId) {
         if (attendeeId == null){
@@ -158,7 +202,7 @@ public class ScanActivity extends AppCompatActivity implements GetEventCallback,
     }
 
     /**
-     * Check for camera's permission
+     * Checks for camera permission and requests it if not already granted.
      */
     public void checkPermission(){
         if(ContextCompat.checkSelfPermission(ScanActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -167,7 +211,14 @@ public class ScanActivity extends AppCompatActivity implements GetEventCallback,
         }
     }
 
-    // What to do if permission granted or not granted
+    /**
+     * Handles the result of the camera permission request.
+     * Displays a toast message indicating whether the permission was granted or denied.
+     *
+     * @param requestCode  The request code passed in requestPermissions(android.app.Activity, String[], int)
+     * @param permissions  The requested permissions.
+     * @param grantResults The grant results for the corresponding permissions.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
     {

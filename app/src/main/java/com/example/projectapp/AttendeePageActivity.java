@@ -58,11 +58,11 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
     /**
      * Initializes the activity, sets up RecyclerViews for displaying events.
      *
-     * @param savedInstanceState    If the activity is being re-initialized after
-     *                              being shut down, this Bundle contains the data
-     *                              most recently supplied in onSaveInstanceState.
+     * @param savedInstanceState
+     *      If the activity is being re-initialized after
+     *      being shut down, this Bundle contains the data
+     *      most recently supplied in onSaveInstanceState.
      */
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -187,27 +187,59 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         updateEventListVisibility();
     }
 
+    /**
+     * Adds an event to the list if it is not already present.
+     *
+     * @param event The event to be added.
+     * @param list  The list of events to which the event will be added.
+     */
     public void addEvent(Event event, ArrayList<Event> list){
         if (!list.contains(event)){
             list.add(event);
         }
     }
 
+    /**
+     * Updates the information of an existing event in the list.
+     *
+     * @param event The event with updated information.
+     * @param list  The list of events where the event information will be updated.
+     */
     public void updateEvent(Event event, ArrayList<Event> list){
         if (list.contains(event)){
             list.set(list.indexOf(event), event);
         }
     }
 
+    /**
+     * Removes an event from the list.
+     *
+     * @param event The event to be removed.
+     * @param list  The list of events from which the event will be removed.
+     */
     public void removeEvent(Event event, ArrayList<Event> list){
         list.remove(event);
     }
 
+    /**
+     * Adds announcements from an event to the global
+     * announcements list and notifies the adapter.
+     *
+     * @param event
+     *      The event to which announcements will be added.
+     */
     private void addAnnouncements(Event event){
         announcements.addAll(event.getAnnouncements());
         announcementAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Updates the global announcements list with new
+     * announcements from an event and notifies the adapter.
+     *
+     * @param event
+     *      The event whose announcements will be used for updating.
+     */
     private void updateAnnouncements(Event event){
         for (int i=0; i < event.getAnnouncements().size(); i++){
             if (!announcements.contains(event.getAnnouncements().get(i))){
@@ -217,6 +249,13 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         announcementAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Removes announcements associated with an event from
+     * the global announcements list and notifies the adapter.
+     *
+     * @param event
+     *      The event whose announcements will be removed.
+     */
     private void removeAnnouncements(Event event){
         for (int i=0; i < event.getAnnouncements().size(); i++){
             announcements.remove(event.getAnnouncements().get(i));
@@ -225,9 +264,11 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
     }
 
     /**
-     * Displays a dialog with details of an event. Allows the user to view more information about the event.
+     * Displays a dialog with details of an event.
+     * Allows the user to view more information about the event.
      * If the event is available for sign-up, it displays a sign-up button.
-     * @param event The Event object containing details to be displayed.
+     *
+     * @param event     The Event object containing details to be displayed.
      * @param canSignUp Boolean to indicate if the sign-up option should be available for this event.
      */
     private void showDialogWithEventDetails(Event event, boolean canSignUp) {
@@ -277,6 +318,13 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         eventDetailDialog.show();
     }
 
+    /**
+     * Signs up an attendee for an event if the attendance limit is not reached.
+     * Updates the event and attendee records in the database and subscribes to notifications.
+     *
+     * @param event
+     *      The event to sign up for.
+     */
     private void signUp(Event event){
         Attendee attendee = dataHandler.getLocalAttendee();
 
@@ -299,6 +347,9 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         }
     }
 
+    /**
+     * Requests notification permissions from the user if not already granted.
+     */
     private void getNotificationPermission(){
         if (Build.VERSION.SDK_INT >= 33){
             if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED){
@@ -308,6 +359,14 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         }
     }
 
+    /**
+     * Converts a Base64 encoded string to a Bitmap object.
+     *
+     * @param encodedString
+     *      The Base64 encoded string representing the bitmap.
+     * @return
+     *      The decoded Bitmap object, or null if the input string is null or empty.
+     */
     private Bitmap stringToBitmap(String encodedString) {
         if (encodedString == null || encodedString.isEmpty()) {
             Log.e("Admin", "Encoded string is null or empty");
@@ -317,6 +376,12 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
+    /**
+     * Handles updates to attendee events and announcements based on the type of update.
+     *
+     * @param updateType    The type of update that occurred.
+     * @param event         The event that was updated.
+     */
     @Override
     public void onAttendeeEventsUpdated(DocumentChange.Type updateType, Event event) {
 
@@ -340,6 +405,12 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         }
     }
 
+    /**
+     * Responds to changes in the events data by updating the UI accordingly.
+     *
+     * @param updateType    The type of change that occurred (added, modified, removed).
+     * @param event         The event object that was changed.
+     */
     @Override
     public void onEventsUpdated(DocumentChange.Type updateType, Event event) {
         switch (updateType) {
@@ -358,6 +429,12 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         }
     }
 
+    /**
+     * Notifies the user of an error if updating the attendee in Firebase fails.
+     *
+     * @param attendeeId
+     *      The ID of the attendee being updated.
+     */
     @Override
     public void onUpdateAttendee(String attendeeId) {
         if (attendeeId == null){
@@ -365,6 +442,12 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         }
     }
 
+    /**
+     * Notifies the user of an error if updating the event in Firebase fails.
+     *
+     * @param eventId
+     *      The ID of the event being updated.
+     */
     @Override
     public void onUpdateEvent(String eventId) {
         if (eventId == null){
@@ -372,6 +455,9 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         }
     }
 
+    /**
+     * Resets the local attendee data and restarts the activity if the app is active.
+     */
     @Override
     public void onLocalAttendeeUpdated() {
         if (active){
@@ -380,12 +466,22 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         }
     }
 
+    /**
+     * Restarts the current activity by starting the main activity and finishing the current one.
+     */
     private void restart(){
         Intent intent = new Intent(this, MainActivity.class);
         this.startActivity(intent);
         this.finishAffinity();
     }
 
+    /**
+     * Filters events based on a specified criterion and updates the events list accordingly.
+     *
+     * @param events       The list of events to be filtered.
+     * @param eventsFull   The full list of events.
+     * @param adapter      The adapter used to display the events.
+     */
     private void filterEvents(ArrayList<Event> events, ArrayList<Event> eventsFull, AttendeeEventAdapter adapter) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date currentDateTime = new Date();
@@ -416,6 +512,9 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         updateEventListVisibility();
     }
 
+    /**
+     * Updates the visibility of event lists based on their content.
+     */
     private void updateEventListVisibility() {
         TextView noMyEventsText = findViewById(R.id.noMyEventsText);
         TextView noAllEventsText = findViewById(R.id.noAllEventsText);
@@ -433,6 +532,9 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         }
     }
 
+    /**
+     * Handles the result from an activity that was started for a result.
+     */
     ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
