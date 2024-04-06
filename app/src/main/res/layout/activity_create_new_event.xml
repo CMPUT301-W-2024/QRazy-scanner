@@ -48,6 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/bold1"
+            android:maxLength="32"
             android:hint="Event Name"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -127,6 +128,7 @@
             android:fontFamily="@font/bold1"
             android:hint="Event Description"
             android:gravity="top|start"
+            android:maxLength="132"
             android:inputType="textMultiLine"/>
     </com.google.android.material.textfield.TextInputLayout>
 
