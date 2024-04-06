@@ -553,8 +553,12 @@ public class DataHandler {
      * Gets device token for notification and adds to database
      */
     public void addFcmToken(){
-        String token = FirebaseMessaging.getInstance().getToken().getResult();
-        updateAttendee(localAttendee.getAttendeeId(), "fcmToken", token, null);
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                String token = task.getResult().toString();
+                updateAttendee(localAttendee.getAttendeeId(), "fcmToken", token, null);
+            }
+        });
     }
 
     /**

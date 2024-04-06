@@ -99,7 +99,7 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
             String organizerName = dataHandler.getLocalOrganizer().getName();
                 dataHandler.addOrganizerEventsListener(this);
                 TextView headTextView = findViewById(R.id.headerTextView);
-                headTextView.setText("Welcome back, " + dataHandler.getLocalOrganizer().getName());
+                headTextView.setText("Welcome back, " + organizerName);
                 organizerNameEditText.setText("");
                 organizerNameEditText.setVisibility(View.GONE);
 
@@ -166,6 +166,9 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
      */
     private void checkMilestone(Event event){
         Integer attendance = event.getAttendance();
+        if (eventMileStones.get(event) == null){
+            eventMileStones.put(event, new ArrayList<>());
+        }
         if (mileStones.contains(attendance) && !eventMileStones.get(event).contains(attendance)){
             eventMileStones.get(event).add(attendance);
             Toast.makeText(OrganizerPageActivity.this, "Milestone Reached!! " + event.getAttendance() + " attendees in " + event.getName(), Toast.LENGTH_LONG).show();

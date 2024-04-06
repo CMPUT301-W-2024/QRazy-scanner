@@ -79,6 +79,7 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         setContentView(R.layout.activity_attendee_page);
 
         getNotificationPermission();
+        dataHandler.addFcmToken(); // user should now be able to get notis
 
         dataHandler.addLocalAttendeeListener(this);
         dataHandler.addAttendeeEventsListener(true,this); // for checked in events
@@ -298,8 +299,6 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         eventNameView.setText(event.getName());
 
         eventOrganizerView.setText(event.getOrganizerName());
-
-        dataHandler.addFcmToken(); // user should now be able to get notis
 
         eventDescriptionView.setText(event.getDescription());
         if (event.getPoster() != null){
