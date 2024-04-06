@@ -16,6 +16,7 @@ public class Attendee {
     private String homepage;
     private String contactInfo;
     private String attendeeId;
+    private String fcmToken;
     private HashMap<String, Integer> checkedInEvents;
     private ArrayList<String> signedUpEvents;
 
@@ -153,6 +154,22 @@ public class Attendee {
      */
     public void setSignedUpEvents(ArrayList<String> signedUpEvents) {
         this.signedUpEvents = signedUpEvents;
+    }
+
+    /**
+     * get the token for fcm notis
+     * @return the token for this attendee
+     */
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    /**
+     * set the token for fcm notis
+     * @param fcmToken the token to set for this attendee
+     */
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 
     /**

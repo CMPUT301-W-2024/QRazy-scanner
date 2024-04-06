@@ -327,7 +327,9 @@ public class DataHandler {
                 if (snapshots != null){
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         if (dc.getType() == DocumentChange.Type.REMOVED){
-                            callback.onLocalAttendeeUpdated();
+                            if (callback != null){
+                                callback.onLocalAttendeeDeleted();
+                            }
                         }
                         else {
                             localAttendee = dc.getDocument().toObject(Attendee.class);
@@ -548,38 +550,26 @@ public class DataHandler {
     }
 
     /**
-     * Subscribes to notifications for a specific event.
-     *
-     * @param eventId
-     *      The ID of the event to subscribe to.
+     * Gets device token for notification and adds to database
      */
-    public void subscribeToNotis(String eventId){
-        FirebaseMessaging.getInstance().subscribeToTopic(eventId);
-    }
-
-    /**
-     * Unsubscribes from notifications for a specific event.
-     *
-     * @param eventId
-     *      The ID of the event to unsubscribe from.
-     */
-    public void unSubscribeFromNotis(String eventId){
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(eventId);
+    public void addFcmToken(){
+        String token = FirebaseMessaging.getInstance().getToken().getResult();
+        updateAttendee(localAttendee.getAttendeeId(), "fcmToken", token, null);
     }
 
     /**
      * Sends a notification to subscribers of a specific event.
      *
-     * @param event         The event for which to send the notification.
+     * @param token         The device token to send send the notification to
+     * @param eventName         The event for which to send the notification.
      * @param announcement  The announcement to include in the notification.
      * @throws Exception    If there is an error sending the notification.
      */
-    public void sendNotification(Event event, String announcement) throws Exception{
+    public void sendNotification(String token, String eventName, String announcement) throws Exception{
         String projectId = "qrazy-scanner";
-        String topic = event.getEventId();
 
         String url = "https://fcm.googleapis.com/v1/projects/" + projectId + "/messages:send";
-        String payload = "{\"message\": {\"topic\": \"" + topic + "\", \"data\": {\"event\": \""+ event.getName() +"\", \"announcement\": \"" + announcement + "\"}}}";
+        String payload = "{\"message\": {\"token\": \"" + token + "\", \"data\": {\"event\": \""+ eventName +"\", \"announcement\": \"" + announcement + "\"}}}";
         byte[] output = payload.getBytes(StandardCharsets.UTF_8);
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -598,7 +588,7 @@ public class DataHandler {
 
     /**
      * Retrieves the access token required for sending notifications.
-     *
+     * NOT SAFE. BUT PROF ALLOWED
      * @return
      *      The access token.
      * @throws IOException
