@@ -1,4 +1,4 @@
-package com.example.projectapp;
+package com.example.projectapp.View;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,6 +13,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
+import com.example.projectapp.DataHandler;
+import com.example.projectapp.GetQrCodeCallback;
+import com.example.projectapp.R;
+import com.example.projectapp.UpdateEventCallback;
 import com.google.android.material.button.MaterialButton;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -26,7 +30,7 @@ import java.io.IOException;
 /**
  * Activity for generating and storing a QR code associated with an event.
  */
-public class GenerateQrCodeActivity extends AppCompatActivity implements GetQrCodeCallback, UpdateEventCallback{
+public class GenerateQrCodeActivity extends AppCompatActivity implements GetQrCodeCallback, UpdateEventCallback {
 
     private ImageView qrCodeImageView;
     private String eventId;

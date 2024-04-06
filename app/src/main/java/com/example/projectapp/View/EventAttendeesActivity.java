@@ -1,19 +1,24 @@
-package com.example.projectapp;
+package com.example.projectapp.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
+
+import com.example.projectapp.DataHandler;
+import com.example.projectapp.EventAttendeesListenerCallback;
+import com.example.projectapp.Model.Attendee;
+import com.example.projectapp.Model.Event;
+import com.example.projectapp.R;
 import com.google.firebase.firestore.DocumentChange;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Activity responsible for displaying lists of attendees for an Event.
  * Handles separating attendees into lists based on check-in status and
  * sync with Firebase data.
  */
-public class EventAttendeesActivity extends AppCompatActivity implements EventAttendeesListenerCallback{
+public class EventAttendeesActivity extends AppCompatActivity implements EventAttendeesListenerCallback {
 
     private ArrayList<Attendee> checkedInAttendees;
     private ArrayList<Attendee> signedUpAttendees;

@@ -1,4 +1,4 @@
-package com.example.projectapp;
+package com.example.projectapp.View;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -22,6 +22,10 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.projectapp.AddEventCallback;
+import com.example.projectapp.DataHandler;
+import com.example.projectapp.Model.Event;
+import com.example.projectapp.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -82,7 +86,7 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                                 // Set the chosen date to the EditText
-                                String selectedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
+                                String selectedDate = String.format(Locale.getDefault(), "%02d-%02d-%04d", dayOfMonth, monthOfYear + 1, year);
                                 eventDateEditText.setText(selectedDate);
 
                             }

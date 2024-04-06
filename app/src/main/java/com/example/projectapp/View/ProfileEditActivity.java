@@ -1,4 +1,4 @@
-package com.example.projectapp;
+package com.example.projectapp.View;
 
 import android.app.Activity;
 import android.content.Context;
@@ -21,6 +21,12 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.projectapp.AddAttendeeCallback;
+import com.example.projectapp.DataHandler;
+import com.example.projectapp.LocalAttendeeListenerCallback;
+import com.example.projectapp.Model.Attendee;
+import com.example.projectapp.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,7 +54,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         emailEditText = findViewById(R.id.emailEditText);
         phoneEditText = findViewById(R.id.phoneEditText);
         saveButton = findViewById(R.id.saveButton);
-        deleteButton = findViewById(R.id.delete_button);
+        deleteButton = findViewById(R.id.deleteButton);
         registerResult();
 
         currentAttendee = dataHandler.getLocalAttendee();

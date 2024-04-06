@@ -1,4 +1,4 @@
-package com.example.projectapp;
+package com.example.projectapp.View;
 
 
 import android.content.Context;
@@ -18,8 +18,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.projectapp.DataHandler;
+import com.example.projectapp.GetAttendeeCallback;
+import com.example.projectapp.GetOrganizerCallback;
+import com.example.projectapp.Model.Attendee;
+import com.example.projectapp.Model.Organizer;
+import com.example.projectapp.R;
 
-public class WelcomeFragment extends Fragment implements GetOrganizerCallback, GetAttendeeCallback{
+
+public class WelcomeFragment extends Fragment implements GetOrganizerCallback, GetAttendeeCallback {
     private DataHandler dataHandler;
 
     @Nullable

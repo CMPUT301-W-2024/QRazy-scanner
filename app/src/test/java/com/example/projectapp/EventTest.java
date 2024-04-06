@@ -7,22 +7,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.widget.Button;
-import android.widget.EditText;
+import com.example.projectapp.Model.Event;
 
-import androidx.test.core.app.ApplicationProvider;
-
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  * Setting up a class for Event related unit tests

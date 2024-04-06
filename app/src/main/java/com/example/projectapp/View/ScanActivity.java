@@ -1,4 +1,4 @@
-package com.example.projectapp;
+package com.example.projectapp.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +12,14 @@ import android.widget.Toast;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
+import com.example.projectapp.DataHandler;
+import com.example.projectapp.GetEventCallback;
+import com.example.projectapp.GetQrCodeEventCallback;
+import com.example.projectapp.Model.Attendee;
+import com.example.projectapp.Model.Event;
+import com.example.projectapp.R;
+import com.example.projectapp.UpdateAttendeeCallback;
+import com.example.projectapp.UpdateEventCallback;
 import com.google.zxing.Result;
 
 import java.util.HashSet;

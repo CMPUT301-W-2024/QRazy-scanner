@@ -1,15 +1,12 @@
-package com.example.projectapp;
+package com.example.projectapp.Model;
 
 
 import androidx.annotation.Nullable;
 
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;

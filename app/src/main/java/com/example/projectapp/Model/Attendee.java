@@ -1,4 +1,4 @@
-package com.example.projectapp;
+package com.example.projectapp.Model;
 
 import androidx.annotation.Nullable;
 import java.util.ArrayList;

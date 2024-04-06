@@ -1,23 +1,17 @@
-package com.example.projectapp;
+package com.example.projectapp.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.StrictMode;
 import android.widget.Toast;
 import android.provider.Settings;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.messaging.FirebaseMessaging;
+import com.example.projectapp.View.Admin;
+import com.example.projectapp.View.WelcomeFragment;
 
 /**
  * Main Activity
@@ -73,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Replace "SpecificAndroidID" with the actual Android ID of the admin device
 
-        return androidId.equals("136463934ec8e91f");
+        return androidId.equals("13646393ec8e91f");
     }
 
 }

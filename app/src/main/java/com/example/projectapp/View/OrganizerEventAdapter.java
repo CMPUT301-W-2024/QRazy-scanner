@@ -1,4 +1,4 @@
-package com.example.projectapp;
+package com.example.projectapp.View;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -22,6 +22,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.projectapp.DataHandler;
+import com.example.projectapp.Model.Event;
+import com.example.projectapp.R;
+import com.example.projectapp.UpdateEventCallback;
+
 import java.util.List;
 
 /**
@@ -29,7 +34,7 @@ import java.util.List;
  * event details, showing attendance counts, and providing expandable sections to
  * display QR codes.
  */
-public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAdapter.ViewHolder> implements UpdateEventCallback{
+public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAdapter.ViewHolder> implements UpdateEventCallback {
     private List<Event> events;
     private Context context;
 

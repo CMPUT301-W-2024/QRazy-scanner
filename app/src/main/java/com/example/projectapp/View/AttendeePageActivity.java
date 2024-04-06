@@ -1,4 +1,4 @@
-package com.example.projectapp;
+package com.example.projectapp.View;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -28,6 +28,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.content.pm.PackageManager;
 
+import com.example.projectapp.AttendeeEventsListenerCallback;
+import com.example.projectapp.DataHandler;
+import com.example.projectapp.EventsListenerCallback;
+import com.example.projectapp.LocalAttendeeListenerCallback;
+import com.example.projectapp.Model.Announcement;
+import com.example.projectapp.Model.Attendee;
+import com.example.projectapp.Model.Event;
+import com.example.projectapp.R;
+import com.example.projectapp.UpdateAttendeeCallback;
+import com.example.projectapp.UpdateEventCallback;
 import com.google.firebase.firestore.DocumentChange;
 
 import java.text.ParseException;

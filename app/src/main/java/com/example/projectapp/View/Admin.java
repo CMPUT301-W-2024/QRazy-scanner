@@ -1,4 +1,4 @@
-package com.example.projectapp;
+package com.example.projectapp.View;
 
 import android.app.Dialog;
 import android.graphics.Bitmap;
@@ -19,13 +19,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.projectapp.AttendeesListenerCallback;
+import com.example.projectapp.DataHandler;
+import com.example.projectapp.DeleteAttendeeCallback;
+import com.example.projectapp.DeleteEventCallback;
+import com.example.projectapp.EventsListenerCallback;
+import com.example.projectapp.ImagesListenerCallback;
+import com.example.projectapp.Model.Attendee;
+import com.example.projectapp.Model.Event;
+import com.example.projectapp.R;
+import com.example.projectapp.UpdateAttendeeCallback;
+import com.example.projectapp.UpdateEventCallback;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FieldValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Admin extends AppCompatActivity implements EventsListenerCallback, AttendeesListenerCallback, ImagesListenerCallback, UpdateEventCallback, UpdateAttendeeCallback, DeleteEventCallback, DeleteAttendeeCallback {
     private ArrayList<Event> events;
@@ -33,7 +42,7 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
     private AttendeeEventAdapter eventsAdapter;
     private EventAttendeeAdapter attendeesAdapter;
     private RecyclerView eventsLayout, attendeesLayout;
-    private LinearLayout  postersLayout, profilePicsLayout, qrCodesLayout;
+    private LinearLayout  postersLayout, profilePicsLayout, qrCodesLayout, promoQrCodesLayout;
     private final DataHandler dataHandler = DataHandler.getInstance();
 
     @Override
@@ -46,13 +55,14 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         postersLayout = findViewById(R.id.adminPostersLayout);
         profilePicsLayout = findViewById(R.id.adminProfilePicsLayout);
         qrCodesLayout = findViewById(R.id.adminQrCodesLayout);
+        promoQrCodesLayout = findViewById(R.id.adminPromoQrCodesLayout);
 
         dataHandler.addEventsListener(this);
         dataHandler.addAttendeesListener(this);
         dataHandler.addImagesListener("events", "poster", postersLayout, this);
         dataHandler.addImagesListener("attendees", "profilePic", profilePicsLayout, this);
         dataHandler.addImagesListener("events", "qrCode", qrCodesLayout, this);
-        dataHandler.addImagesListener("events", "promoQrCode", qrCodesLayout, this);
+        dataHandler.addImagesListener("events", "promoQrCode", promoQrCodesLayout, this);
 
         eventsLayout.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         attendeesLayout.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));

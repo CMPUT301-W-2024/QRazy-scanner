@@ -4,6 +4,9 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 
+import com.example.projectapp.Model.Attendee;
+import com.example.projectapp.Model.Event;
+import com.example.projectapp.Model.Organizer;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.common.hash.Hashing;
 import com.google.firebase.firestore.CollectionReference;

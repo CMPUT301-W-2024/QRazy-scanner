@@ -1,4 +1,4 @@
-package com.example.projectapp;
+package com.example.projectapp.Model;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;

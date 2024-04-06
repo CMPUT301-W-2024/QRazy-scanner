@@ -1,11 +1,7 @@
-package com.example.projectapp;
+package com.example.projectapp.View;
 import android.Manifest;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,13 +13,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.projectapp.DataHandler;
+import com.example.projectapp.R;
+import com.example.projectapp.UpdateEventCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.GeoPoint;
 
-public class GeopointDialog extends AppCompatActivity implements UpdateEventCallback{
+public class GeopointDialog extends AppCompatActivity implements UpdateEventCallback {
     private String eventId; // The variable you want to pass
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private final DataHandler dataHandler = DataHandler.getInstance();
