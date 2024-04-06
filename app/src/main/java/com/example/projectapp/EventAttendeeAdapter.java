@@ -38,7 +38,9 @@ public class EventAttendeeAdapter extends RecyclerView.Adapter<EventAttendeeAdap
         public void bind(final Attendee attendee,final EventAttendeeAdapter.OnItemClickListener listener) {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
-                    listener.onItemClick(attendee);
+                    if (listener != null){
+                        listener.onItemClick(attendee);
+                    }
                 }
             });
         }
