@@ -6,10 +6,12 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
-import androidx.test.espresso.NoMatchingViewException;
+import android.content.Context;
+
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +27,14 @@ public class WelcomePageActivitiesTest {
     @Rule
     public ActivityScenarioRule<MainActivity> activityScenarioRule =
             new ActivityScenarioRule<>(MainActivity.class);
+
+    @Before
+    public void clearData() {
+        // Clear SharedPreferences data before each test
+        Context context = androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().getTargetContext();
+        context.getSharedPreferences("your_prefs", Context.MODE_PRIVATE)
+                .edit().clear().apply();
+    }
 
     /**
      * Verifies that the ‘Create Event’ button
@@ -44,14 +54,6 @@ public class WelcomePageActivitiesTest {
     @Test
     public void testJoinEventButton(){
         onView(withId(R.id.joinEventButton)).perform(click());
-
-        try {
-            // If new user, profile fragment will be displayed
-            onView(withId(R.id.userNameEditText)).check(matches(isDisplayed()));
-        } catch (NoMatchingViewException e) {
-            // If returning user, attendee page activity will be displayed
-            onView(withId(R.id.welcomeText)).check(matches(isDisplayed()));
-        }
-
+        onView(withId(R.id.userNameEditText)).check(matches(isDisplayed()));
     }
 }
