@@ -20,17 +20,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.FieldValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Admin extends AppCompatActivity implements EventsListenerCallback, AttendeesListenerCallback, ImagesListenerCallback, UpdateEventCallback, UpdateAttendeeCallback, DeleteEventCallback, DeleteAttendeeCallback {
     private ArrayList<Event> events;
     private ArrayList<Attendee> attendees;
     private AttendeeEventAdapter eventsAdapter;
     private EventAttendeeAdapter attendeesAdapter;
-    RecyclerView eventsLayout, attendeesLayout;
-    LinearLayout  postersLayout, profilePicsLayout, qrCodesLayout;
+    private RecyclerView eventsLayout, attendeesLayout;
+    private LinearLayout  postersLayout, profilePicsLayout, qrCodesLayout;
     private final DataHandler dataHandler = DataHandler.getInstance();
 
     @Override
@@ -167,7 +170,7 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dataHandler.deleteEvent(event.getEventId(), Admin.this);
+                deleteEvent(event);
                 eventDetailDialog.dismiss();
             }
         });
@@ -192,7 +195,7 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         Button deleteButton = detailDialog.findViewById(R.id.dialog_delete_button);
 
         deleteButton.setOnClickListener(v -> {
-            dataHandler.deleteAttendee(attendee.getAttendeeId(), this);
+            deleteAttendee(attendee);
             detailDialog.dismiss();
         });
 
@@ -215,7 +218,7 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         imageDialog.show();
     }
 
-    void addImageToLayout(String encodedImageString, LinearLayout layout, String documentId, String field, String collection) {
+    private void addImageToLayout(String encodedImageString, LinearLayout layout, String documentId, String field, String collection) {
         View imageLayoutView = LayoutInflater.from(this).inflate(R.layout.image_layout, null, false);
         ImageView imageView = imageLayoutView.findViewById(R.id.image_view);
         Bitmap imageBitmap = stringToBitmap(encodedImageString);
@@ -229,7 +232,7 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
 
     }
 
-    Bitmap stringToBitmap(String encodedString) {
+    private Bitmap stringToBitmap(String encodedString) {
         if (encodedString == null || encodedString.isEmpty()) {
             Log.e("Admin", "Encoded string is null or empty");
             return null;
@@ -238,12 +241,36 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
-    void deleteImage(String documentId, String field, String collection) {
+    private void deleteImage(String documentId, String field, String collection) {
         if (collection.equals("event")){
             dataHandler.updateEvent(documentId, field, null, this);
         }
         else {
             dataHandler.updateAttendee(documentId, field, null, this);
+        }
+    }
+
+    private void deleteAttendee(Attendee attendee){
+        dataHandler.deleteAttendee(attendee.getAttendeeId(), this);
+        // remove attendee from all of its events
+        for (String event : attendee.getSignedUpEvents()){
+            dataHandler.updateEvent(event, "signedAttendees", FieldValue.arrayRemove(attendee.getAttendeeId()), null);
+        }
+
+        for (String event : attendee.getCheckedInEvents().keySet()){
+            dataHandler.updateEvent(event, "checkedAttendees." + attendee.getAttendeeId(), FieldValue.delete(), null);
+        }
+    }
+
+    private void deleteEvent(Event event){
+        dataHandler.deleteEvent(event.getEventId(), this);
+        // remove event from all of its attendees
+        for (String attendee : event.getSignedAttendees()){
+            dataHandler.updateAttendee(attendee, "signedUpEvents", FieldValue.arrayRemove(event.getEventId()), null);
+        }
+
+        for (String attendee : event.getCheckedAttendees().keySet()){
+            dataHandler.updateAttendee(attendee, "checkedInEvents." + event.getEventId(), FieldValue.delete(), null);
         }
     }
 

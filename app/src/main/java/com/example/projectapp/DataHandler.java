@@ -184,14 +184,24 @@ public class DataHandler {
 
     public void updateEvent(String eventId, String field, Object value, UpdateEventCallback callback){
         DocumentReference eventDocRef = eventsRef.document(eventId);
-        eventDocRef.update(field, value).addOnSuccessListener(aVoid -> callback.onUpdateEvent(eventId))
-                .addOnFailureListener(e -> callback.onUpdateEvent(null));
+        eventDocRef.update(field, value).addOnSuccessListener(aVoid -> {
+                    if (callback != null)
+                        callback.onUpdateEvent(eventId);})
+                .addOnFailureListener(e -> {
+                    if (callback != null)
+                        callback.onUpdateEvent(null);
+                });
     }
 
     public void updateAttendee(String attendeeId, String field, Object value, UpdateAttendeeCallback callback){
         DocumentReference attendeeDocRef = attendeesRef.document(attendeeId);
-        attendeeDocRef.update(field, value).addOnSuccessListener(aVoid -> callback.onUpdateAttendee(attendeeId))
-                .addOnFailureListener(e -> callback.onUpdateAttendee(null));;
+        attendeeDocRef.update(field, value).addOnSuccessListener(aVoid -> {
+                    if (callback != null)
+                        callback.onUpdateAttendee(attendeeId);})
+                .addOnFailureListener(e -> {
+                    if (callback != null)
+                        callback.onUpdateAttendee(null);
+                });
     }
 
     public void deleteAttendee(String attendeeId, DeleteAttendeeCallback callback){
