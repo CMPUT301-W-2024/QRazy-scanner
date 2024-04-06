@@ -185,6 +185,7 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         TextView welcomeText = findViewById(R.id.welcomeText);
         welcomeText.setText("Welcome, " + userName);
         updateEventListVisibility();
+        updateAnnouncementsVisibility();
     }
 
     /**
@@ -231,6 +232,7 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
     private void addAnnouncements(Event event){
         announcements.addAll(event.getAnnouncements());
         announcementAdapter.notifyDataSetChanged();
+        updateAnnouncementsVisibility();
     }
 
     /**
@@ -247,6 +249,7 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
             }
         }
         announcementAdapter.notifyDataSetChanged();
+        updateAnnouncementsVisibility();
     }
 
     /**
@@ -261,6 +264,7 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
             announcements.remove(event.getAnnouncements().get(i));
         }
         announcementAdapter.notifyDataSetChanged();
+        updateAnnouncementsVisibility();
     }
 
     /**
@@ -510,6 +514,8 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         }
         adapter.notifyDataSetChanged();
         updateEventListVisibility();
+        updateAnnouncementsVisibility();
+
     }
 
     /**
@@ -531,6 +537,20 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
             noAllEventsText.setVisibility(View.GONE);
         }
     }
+
+
+    /**
+     * Updates the visibility of announcements based on their content.
+     */
+    private void updateAnnouncementsVisibility() {
+        TextView noAnnouncementsText = findViewById(R.id.noAnnouncementsText);
+        if (announcements.isEmpty()) {
+            noAnnouncementsText.setVisibility(View.VISIBLE);
+        } else {
+            noAnnouncementsText.setVisibility(View.GONE);
+        }
+    }
+
 
     /**
      * Handles the result from an activity that was started for a result.
