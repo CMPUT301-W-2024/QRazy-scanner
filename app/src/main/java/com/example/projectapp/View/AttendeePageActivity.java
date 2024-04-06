@@ -315,7 +315,17 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
             }
         });
 
-        if (canSignUp){
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date currentDateTime = new Date();
+        Date eventEndTime = null;
+        try {
+            eventEndTime = sdf.parse(event.getDate() + " " + event.getEndTime());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (canSignUp && currentDateTime.before(eventEndTime)){
             signUpButton.setVisibility(View.VISIBLE);
             signUpButton.setOnClickListener(new View.OnClickListener() {
                 @Override
