@@ -8,6 +8,8 @@ import java.util.HashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.example.projectapp.Model.Attendee;
+
 class AttendeeTest {
 
     private Attendee attendee;
