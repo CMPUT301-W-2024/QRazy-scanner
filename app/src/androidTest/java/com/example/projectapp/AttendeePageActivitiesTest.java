@@ -15,6 +15,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.GrantPermissionRule;
 
+import com.example.projectapp.View.AttendeePageActivity;
+import com.example.projectapp.View.MainActivity;
+
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
