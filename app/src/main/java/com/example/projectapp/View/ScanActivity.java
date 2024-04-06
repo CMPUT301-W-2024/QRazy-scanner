@@ -124,8 +124,6 @@ public class ScanActivity extends AppCompatActivity implements GetEventCallback,
             attendee.addCheckedEvent(event.getEventId());
             dataHandler.updateAttendee(attendee.getAttendeeId(), "checkedInEvents", attendee.getCheckedInEvents(), this);
 
-            dataHandler.subscribeToNotis(event.getEventId());
-
             Intent intent1 = new Intent(ScanActivity.this, GeopointDialog.class);
             intent1.putExtra("eventId", event.getEventId());
             startActivity(intent1);

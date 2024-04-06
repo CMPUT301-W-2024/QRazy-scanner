@@ -24,6 +24,8 @@ import com.example.projectapp.Controller.OrganizerEventsListenerCallback;
 import com.example.projectapp.R;
 import com.google.firebase.firestore.DocumentChange;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Activity for an organizer to manage their events. Provides action to set an
@@ -36,7 +38,8 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
     private final DataHandler dataHandler = DataHandler.getInstance();
     private ArrayList<Event> events;
     private OrganizerEventAdapter eventAdapter;
-    private ArrayList<Integer> mileStones;
+    private List<Integer> mileStones;
+    private HashMap<Event, List<Integer>> eventMileStones; // event and all its milestones
 
     /**
      * Initializes the activity and sets up UI and event listeners.
@@ -49,6 +52,7 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
         organizerNameEditText = findViewById(R.id.organizerNameEditText);
 
         mileStones = new ArrayList<>();
+        eventMileStones = new HashMap<>();
         mileStones.add(5);
         mileStones.add(10);
         mileStones.add(20);
@@ -95,7 +99,7 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
             String organizerName = dataHandler.getLocalOrganizer().getName();
                 dataHandler.addOrganizerEventsListener(this);
                 TextView headTextView = findViewById(R.id.headerTextView);
-                headTextView.setText("Welcome back, " + dataHandler.getLocalOrganizer().getName());
+                headTextView.setText("Welcome back, " + organizerName);
                 organizerNameEditText.setText("");
                 organizerNameEditText.setVisibility(View.GONE);
 
@@ -161,8 +165,12 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
      * @param event The Event to check.
      */
     private void checkMilestone(Event event){
-        if (mileStones.contains(event.getAttendance())){
-            mileStones.remove(event.getAttendance());
+        Integer attendance = event.getAttendance();
+        if (eventMileStones.get(event) == null){
+            eventMileStones.put(event, new ArrayList<>());
+        }
+        if (mileStones.contains(attendance) && !eventMileStones.get(event).contains(attendance)){
+            eventMileStones.get(event).add(attendance);
             Toast.makeText(OrganizerPageActivity.this, "Milestone Reached!! " + event.getAttendance() + " attendees in " + event.getName(), Toast.LENGTH_LONG).show();
         }
     }

@@ -79,6 +79,7 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         setContentView(R.layout.activity_attendee_page);
 
         getNotificationPermission();
+        dataHandler.addFcmToken(); // user should now be able to get notis
 
         dataHandler.addLocalAttendeeListener(this);
         dataHandler.addAttendeeEventsListener(true,this); // for checked in events
@@ -348,8 +349,6 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
 
             attendee.addSignedEvent(event.getEventId());
             dataHandler.updateAttendee(attendee.getAttendeeId(), "signedUpEvents", attendee.getSignedUpEvents(), this);
-
-            dataHandler.subscribeToNotis(event.getEventId());
         }
         else {
             Toast.makeText(AttendeePageActivity.this, "Event has reached attendance limit", Toast.LENGTH_SHORT).show();
@@ -465,10 +464,10 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
     }
 
     /**
-     * Resets the local attendee data and restarts the activity if the app is active.
+     * Resets the local attendee data and restarts the activity if the activity is active.
      */
     @Override
-    public void onLocalAttendeeUpdated() {
+    public void onLocalAttendeeDeleted() {
         if (active){
             dataHandler.setLocalAttendee(null);
             restart();

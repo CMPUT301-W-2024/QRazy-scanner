@@ -23,18 +23,22 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projectapp.Controller.DataHandler;
+import com.example.projectapp.Controller.GetAttendeeCallback;
+import com.example.projectapp.Model.Attendee;
 import com.example.projectapp.Model.Event;
 import com.example.projectapp.R;
 import com.example.projectapp.Controller.UpdateEventCallback;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Adapter for displaying an organizer's Events in a RecyclerView. Handles
  * event details, showing attendance counts, and providing expandable sections to
  * display QR codes.
  */
-public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAdapter.ViewHolder> implements UpdateEventCallback {
+public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAdapter.ViewHolder> implements UpdateEventCallback{
     private List<Event> events;
     private Context context;
 
@@ -123,13 +127,26 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    try {
-                        DataHandler.getInstance().sendNotification(event, input.getText().toString());
-                        event.addAnnouncements(input.getText().toString());
-                        DataHandler.getInstance().updateEvent(event.getEventId(), "announcements", event.getAnnouncements(), OrganizerEventAdapter.this);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
+                    DataHandler dataHandler = DataHandler.getInstance();
+                    // gets set of all checked and signed up attendees
+                    Set<String> unionAttendees = new HashSet<>(event.getCheckedAttendees().keySet());
+                    unionAttendees.addAll(event.getSignedAttendees());
+
+                    for (String attendeeId : unionAttendees){
+                        dataHandler.getAttendee(attendeeId, new GetAttendeeCallback() {
+                            @Override
+                            public void onGetAttendee(Attendee attendee, boolean deleted) {
+                                try {
+                                    dataHandler.sendNotification(attendee.getFcmToken() ,event.getName(), input.getText().toString());
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        });
                     }
+                    
+                    event.addAnnouncements(input.getText().toString());
+                    dataHandler.updateEvent(event.getEventId(), "announcements", event.getAnnouncements(), OrganizerEventAdapter.this);
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

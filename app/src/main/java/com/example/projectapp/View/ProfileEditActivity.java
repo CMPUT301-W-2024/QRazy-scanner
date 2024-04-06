@@ -268,7 +268,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
     }
 
     @Override
-    public void onLocalAttendeeUpdated() {
+    public void onLocalAttendeeDeleted() {
         if (active){
             dataHandler.setLocalAttendee(null);
             restart();
@@ -282,7 +282,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
     }
 
     /**
-     * save attendee ID
+     * save attendee ID to device
      */
     public void saveLocalAttendeeId(){
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("AttendeePref", Context.MODE_PRIVATE);
