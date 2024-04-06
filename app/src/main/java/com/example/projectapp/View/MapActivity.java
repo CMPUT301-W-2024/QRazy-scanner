@@ -22,7 +22,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.projectapp.Controller.DataHandler;
 import com.example.projectapp.R;
-import com.example.projectapp.Controller.SpecificEventListenerCallback;
+import com.example.projectapp.Controller.EventGeoPointsListenerCallback;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -35,7 +35,7 @@ import org.osmdroid.views.overlay.OverlayItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapActivity extends AppCompatActivity implements SpecificEventListenerCallback {
+public class MapActivity extends AppCompatActivity implements EventGeoPointsListenerCallback {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private MapView mMapView;
     private MapController mMapController;
@@ -132,7 +132,7 @@ public class MapActivity extends AppCompatActivity implements SpecificEventListe
         String eventId = getIntent().getStringExtra("EVENT_ID");
 
         // Retrieve markers from Firestore and add them to the overlay
-        DataHandler.getInstance().addSpecificEventListener(eventId, this);
+        DataHandler.getInstance().addEventGeoPointsListener(eventId, this);
 
     }
 
@@ -156,7 +156,7 @@ public class MapActivity extends AppCompatActivity implements SpecificEventListe
     }
 
     @Override
-    public void onSpecificEventUpdated(List<com.google.firebase.firestore.GeoPoint> geoPoints) {
+    public void onEventGeoPointsUpdated(List<com.google.firebase.firestore.GeoPoint> geoPoints) {
         if (geoPoints != null){
             List<OverlayItem> overlayItems = mapToOverlayItems(geoPoints);
 

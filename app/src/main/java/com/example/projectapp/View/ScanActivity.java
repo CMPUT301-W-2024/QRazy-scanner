@@ -20,6 +20,7 @@ import com.example.projectapp.Model.Event;
 import com.example.projectapp.R;
 import com.example.projectapp.Controller.UpdateAttendeeCallback;
 import com.example.projectapp.Controller.UpdateEventCallback;
+import com.google.firebase.firestore.FieldValue;
 import com.google.zxing.Result;
 
 import java.util.HashSet;
@@ -103,7 +104,7 @@ public class ScanActivity extends AppCompatActivity implements GetEventCallback,
     }
 
     /**
-     * Checks in the attendee for an event and handles geolocation capture.
+     * Checks in the attendee for an event and sends for handling geolocation capture.
      *
      * @param event
      *      The event to check in for.
@@ -118,11 +119,9 @@ public class ScanActivity extends AppCompatActivity implements GetEventCallback,
         // if no attendance limit or signed attendees is less than limit then check in
         if (event.getAttendanceLimit() == 0 || unionAttendees.contains(attendee.getAttendeeId()) || unionAttendees.size() < event.getAttendanceLimit()){
 
-            event.addCheckedAttendee(attendee.getAttendeeId());
-            dataHandler.updateEvent(event.getEventId(), "checkedAttendees", event.getCheckedAttendees(), this);
+            dataHandler.updateEvent(event.getEventId(), "checkedAttendees." + attendee.getAttendeeId(), FieldValue.increment(1), this);
 
-            attendee.addCheckedEvent(event.getEventId());
-            dataHandler.updateAttendee(attendee.getAttendeeId(), "checkedInEvents", attendee.getCheckedInEvents(), this);
+            dataHandler.updateAttendee(attendee.getAttendeeId(), "checkedInEvents." + event.getEventId(), FieldValue.increment(1), this);
 
             Intent intent1 = new Intent(ScanActivity.this, GeopointDialog.class);
             intent1.putExtra("eventId", event.getEventId());

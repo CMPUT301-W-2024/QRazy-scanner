@@ -31,7 +31,7 @@ public class Event implements Serializable{
     private Integer attendanceLimit;
     private String qrCode;
     private String promoQrCode;
-    private transient ArrayList<GeoPoint> geopoints;
+    private transient HashMap<String, ArrayList<GeoPoint>> geopoints;
     private ArrayList<Announcement> announcements;
 
     /**
@@ -67,7 +67,7 @@ public class Event implements Serializable{
         eventId = UUID.randomUUID().toString();
         checkedAttendees = new HashMap<>();
         signedAttendees = new ArrayList<>();
-        geopoints = new ArrayList<>();
+        geopoints = new HashMap<>();
         announcements = new ArrayList<>();
     }
 
@@ -342,51 +342,23 @@ public class Event implements Serializable{
     }
 
     /**
-     * Check in an attendee
-     *
-     * @param attendeeId
-     *      The ID of the attendee who checked in.
-     */
-    public void addCheckedAttendee(String attendeeId){
-        if (!checkedAttendees.containsKey(attendeeId)){
-            checkedAttendees.put(attendeeId, 1);
-        }
-        else{
-            Integer checkIns = checkedAttendees.get(attendeeId) + 1;
-            checkedAttendees.put(attendeeId, checkIns);
-        }
-    }
-
-    /**
-     * Sign up an attendee
-     *
-     * @param attendeeId
-     *      The ID of the attendee who signed up.
-     */
-    public void addSignedAttendee(String attendeeId){
-        if (!signedAttendees.contains(attendeeId)){
-            signedAttendees.add(attendeeId);
-        }
-    }
-
-    /**
      * Gets the geographical location from
-     * where the attendee checked in.
+     * where each attendee checked in.
      *
      * @return
-     *      The geographical point of check in.
+     *      The geographical point of check in for each attendee.
      */
-    public ArrayList<GeoPoint> getGeopoints() {
+    public HashMap<String, ArrayList<GeoPoint>> getGeopoints() {
         return geopoints;
     }
 
     /**
-     * Sets the new geographical location of check in.
+     * Sets the new geographical location of check in for each attendee
      *
      * @param geopoints
      *      The new geographical points of check in.
      */
-    public void setGeopoints(ArrayList<GeoPoint> geopoints) {
+    public void setGeopoints(HashMap<String, ArrayList<GeoPoint>> geopoints) {
         this.geopoints = geopoints;
     }
 
@@ -408,18 +380,6 @@ public class Event implements Serializable{
      */
     public void setAnnouncements(ArrayList<Announcement> announcements) {
         this.announcements = announcements;
-    }
-
-    /**
-     * Add a new announcement
-     *
-     * @param announcement
-     *      A list of the announcements
-     */
-    public void addAnnouncements(String announcement){
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        Date currentDateTime = new Date();
-        announcements.add(new Announcement(announcement, sdf.format(currentDateTime), name, organizerName));
     }
 
     /**
