@@ -160,7 +160,9 @@ public class MapActivity extends AppCompatActivity implements EventGeoPointsList
         if (geoPoints != null){
             List<OverlayItem> overlayItems = mapToOverlayItems(geoPoints);
 
-            itemizedOverlay = new ItemizedIconOverlay<>(MapActivity.this, new ArrayList<>(), null);
+            if (itemizedOverlay == null){
+                itemizedOverlay = new ItemizedIconOverlay<>(MapActivity.this, new ArrayList<>(), null);
+            }
             // Clear existing items
             itemizedOverlay.removeAllItems();
 
