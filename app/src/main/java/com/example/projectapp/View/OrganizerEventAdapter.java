@@ -22,10 +22,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.projectapp.DataHandler;
+import com.example.projectapp.Controller.DataHandler;
 import com.example.projectapp.Model.Event;
 import com.example.projectapp.R;
-import com.example.projectapp.UpdateEventCallback;
+import com.example.projectapp.Controller.UpdateEventCallback;
 
 import java.util.List;
 
@@ -149,7 +149,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         });
         holder.pdfButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, ReportActivity.class);
-            intent.putExtra("EVENT_ID", event);
+            intent.putExtra("EVENT", event);
             context.startActivity(intent);
         });
     }

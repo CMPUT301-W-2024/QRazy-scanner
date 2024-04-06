@@ -16,11 +16,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.projectapp.AddOrganizerCallback;
-import com.example.projectapp.DataHandler;
+import com.example.projectapp.Controller.AddOrganizerCallback;
+import com.example.projectapp.Controller.DataHandler;
 import com.example.projectapp.Model.Event;
 import com.example.projectapp.Model.Organizer;
-import com.example.projectapp.OrganizerEventsListenerCallback;
+import com.example.projectapp.Controller.OrganizerEventsListenerCallback;
 import com.example.projectapp.R;
 import com.google.firebase.firestore.DocumentChange;
 import java.util.ArrayList;

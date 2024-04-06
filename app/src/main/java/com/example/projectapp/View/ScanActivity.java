@@ -12,14 +12,14 @@ import android.widget.Toast;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
-import com.example.projectapp.DataHandler;
-import com.example.projectapp.GetEventCallback;
-import com.example.projectapp.GetQrCodeEventCallback;
+import com.example.projectapp.Controller.DataHandler;
+import com.example.projectapp.Controller.GetEventCallback;
+import com.example.projectapp.Controller.GetQrCodeEventCallback;
 import com.example.projectapp.Model.Attendee;
 import com.example.projectapp.Model.Event;
 import com.example.projectapp.R;
-import com.example.projectapp.UpdateAttendeeCallback;
-import com.example.projectapp.UpdateEventCallback;
+import com.example.projectapp.Controller.UpdateAttendeeCallback;
+import com.example.projectapp.Controller.UpdateEventCallback;
 import com.google.zxing.Result;
 
 import java.util.HashSet;
@@ -116,7 +116,7 @@ public class ScanActivity extends AppCompatActivity implements GetEventCallback,
         unionAttendees.addAll(event.getSignedAttendees());
 
         // if no attendance limit or signed attendees is less than limit then check in
-        if (event.getAttendanceLimit() == 0 || event.getSignedAttendees().contains(attendee.getAttendeeId()) || unionAttendees.size() < event.getAttendanceLimit()){
+        if (event.getAttendanceLimit() == 0 || unionAttendees.contains(attendee.getAttendeeId()) || unionAttendees.size() < event.getAttendanceLimit()){
 
             event.addCheckedAttendee(attendee.getAttendeeId());
             dataHandler.updateEvent(event.getEventId(), "checkedAttendees", event.getCheckedAttendees(), this);

@@ -22,9 +22,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.projectapp.AddAttendeeCallback;
-import com.example.projectapp.DataHandler;
-import com.example.projectapp.LocalAttendeeListenerCallback;
+import com.example.projectapp.Controller.AddAttendeeCallback;
+import com.example.projectapp.Controller.DataHandler;
+import com.example.projectapp.Controller.LocalAttendeeListenerCallback;
 import com.example.projectapp.Model.Attendee;
 import com.example.projectapp.R;
 

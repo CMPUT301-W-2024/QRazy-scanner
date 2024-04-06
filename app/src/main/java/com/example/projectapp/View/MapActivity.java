@@ -20,8 +20,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.projectapp.MarkerAdapter;
+import com.example.projectapp.Controller.DataHandler;
 import com.example.projectapp.R;
+import com.example.projectapp.Controller.SpecificEventListenerCallback;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -34,11 +35,10 @@ import org.osmdroid.views.overlay.OverlayItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapActivity extends AppCompatActivity {
+public class MapActivity extends AppCompatActivity implements SpecificEventListenerCallback {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private MapView mMapView;
     private MapController mMapController;
-    private MarkerAdapter markerAdapter;
     private Button backButton;
     private ItemizedIconOverlay<OverlayItem> itemizedOverlay;
 
@@ -48,7 +48,6 @@ public class MapActivity extends AppCompatActivity {
 
 
         itemizedOverlay = new ItemizedIconOverlay<>(this, new ArrayList<>(), null);
-        markerAdapter = new MarkerAdapter((String) getIntent().getSerializableExtra("EVENT_ID"));
 
         // Configure the user agent
         Configuration.getInstance().setUserAgentValue("Project app");
@@ -130,44 +129,64 @@ public class MapActivity extends AppCompatActivity {
         // Use the default marker
         Drawable marker = getResources().getDrawable(android.R.drawable.ic_dialog_map);
 
+        String eventId = getIntent().getStringExtra("EVENT_ID");
 
         // Retrieve markers from Firestore and add them to the overlay
+        DataHandler.getInstance().addSpecificEventListener(eventId, this);
 
-        markerAdapter.retrieveMarkersFromFirestore(new MarkerAdapter.MarkerRetrievalListener() {
-            @Override
-            public void onMarkersRetrieved(List<OverlayItem> overlayItems) {
-                itemizedOverlay = new ItemizedIconOverlay<>(MapActivity.this, new ArrayList<>(), null);
-                // Clear existing items
-                itemizedOverlay.removeAllItems();
+    }
 
-                // Convert Firestore's OverlayItems to osmdroid's OverlayItems
-                for (OverlayItem overlayItem : overlayItems) {
-                    GeoPoint geoPoint = (GeoPoint) overlayItem.getPoint();
-                    Log.d(TAG, "Geopoint marker: " + geoPoint.toString());
-                    org.osmdroid.views.overlay.OverlayItem osmOverlayItem = new org.osmdroid.views.overlay.OverlayItem(null, null, new org.osmdroid.util.GeoPoint(geoPoint.getLatitude(), geoPoint.getLongitude()));
-                    mMapController.setCenter(new org.osmdroid.util.GeoPoint(geoPoint.getLatitude(), geoPoint.getLongitude()));
-                    itemizedOverlay.addItem(osmOverlayItem);
-                }
+    private List<OverlayItem> mapToOverlayItems(List<com.google.firebase.firestore.GeoPoint> geoPoints) {
+        List<OverlayItem> overlayItems = new ArrayList<>();
 
-                // Add the overlay to the map
-                mMapView.getOverlays().add(itemizedOverlay);
+        Log.d(TAG, "Number of geopoints retrieved: " + geoPoints.size());
 
-                // Redraw the map to reflect the changes
-                mMapView.invalidate();
-                // Add this line before adding the overlay to the map
-                Log.d(TAG, "Number of markers added: " + itemizedOverlay.size());
+        if (!geoPoints.isEmpty()) {
+            for (com.google.firebase.firestore.GeoPoint geoPoint : geoPoints) {
+                double latitude = geoPoint.getLatitude();
+                double longitude = geoPoint.getLongitude();
+                org.osmdroid.util.GeoPoint point = new org.osmdroid.util.GeoPoint(latitude, longitude);
+                OverlayItem overlayItem = new OverlayItem(null, null, point); // Passing null for title and description
+                overlayItems.add(overlayItem);
+            }
+        }
+        Log.d(TAG, "Number of overlayitems retrieved: " + overlayItems.size());
 
-// Add this line after adding the overlay to the map
-                Log.d(TAG, "Map overlays count: " + mMapView.getOverlays().size());
+        return overlayItems;
+    }
 
+    @Override
+    public void onSpecificEventUpdated(List<com.google.firebase.firestore.GeoPoint> geoPoints) {
+        if (geoPoints != null){
+            List<OverlayItem> overlayItems = mapToOverlayItems(geoPoints);
+
+            itemizedOverlay = new ItemizedIconOverlay<>(MapActivity.this, new ArrayList<>(), null);
+            // Clear existing items
+            itemizedOverlay.removeAllItems();
+
+            // Convert Firestore's OverlayItems to osmdroid's OverlayItems
+            for (OverlayItem overlayItem : overlayItems) {
+                GeoPoint geoPoint = (GeoPoint) overlayItem.getPoint();
+                Log.d(TAG, "Geopoint marker: " + geoPoint.toString());
+                org.osmdroid.views.overlay.OverlayItem osmOverlayItem = new org.osmdroid.views.overlay.OverlayItem(null, null, new org.osmdroid.util.GeoPoint(geoPoint.getLatitude(), geoPoint.getLongitude()));
+                mMapController.setCenter(new org.osmdroid.util.GeoPoint(geoPoint.getLatitude(), geoPoint.getLongitude()));
+                itemizedOverlay.addItem(osmOverlayItem);
             }
 
-            @Override
-            public void onError(String errorMessage) {
-                Toast.makeText(MapActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-            }
+            // Add the overlay to the map
+            mMapView.getOverlays().add(itemizedOverlay);
 
-        });
+            // Redraw the map to reflect the changes
+            mMapView.invalidate();
+            // Add this line before adding the overlay to the map
+            Log.d(TAG, "Number of markers added: " + itemizedOverlay.size());
+
+            // Add this line after adding the overlay to the map
+            Log.d(TAG, "Map overlays count: " + mMapView.getOverlays().size());
+        }
+        else {
+            Toast.makeText(MapActivity.this, "Couldn't access firebase", Toast.LENGTH_SHORT).show();
+        }
     }
 }
 

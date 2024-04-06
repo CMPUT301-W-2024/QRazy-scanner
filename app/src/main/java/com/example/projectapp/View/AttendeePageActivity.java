@@ -28,16 +28,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.content.pm.PackageManager;
 
-import com.example.projectapp.AttendeeEventsListenerCallback;
-import com.example.projectapp.DataHandler;
-import com.example.projectapp.EventsListenerCallback;
-import com.example.projectapp.LocalAttendeeListenerCallback;
+import com.example.projectapp.Controller.AttendeeEventsListenerCallback;
+import com.example.projectapp.Controller.DataHandler;
+import com.example.projectapp.Controller.EventsListenerCallback;
+import com.example.projectapp.Controller.LocalAttendeeListenerCallback;
 import com.example.projectapp.Model.Announcement;
 import com.example.projectapp.Model.Attendee;
 import com.example.projectapp.Model.Event;
 import com.example.projectapp.R;
-import com.example.projectapp.UpdateAttendeeCallback;
-import com.example.projectapp.UpdateEventCallback;
+import com.example.projectapp.Controller.UpdateAttendeeCallback;
+import com.example.projectapp.Controller.UpdateEventCallback;
 import com.google.firebase.firestore.DocumentChange;
 
 import java.text.ParseException;
@@ -174,8 +174,7 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
 
     }
     /**
-     * Removes event listeners when the activity is paused
-     *  to avoid unnecessary background processing.
+     * Keeps track of if screen active
      */
     @Override
     protected void onPause() {
@@ -184,8 +183,8 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
     }
 
     /**
-     * Re-registers the event listeners when the activity
-     *  resumes to keep the event lists up-to-date.
+     * Keeps track of if screen active
+     * Displays user name on screen
      */
     @Override
     protected void onResume() {
@@ -236,7 +235,7 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
      * announcements list and notifies the adapter.
      *
      * @param event
-     *      The event to which announcements will be added.
+     *      The event whose announcements will be added.
      */
     private void addAnnouncements(Event event){
         announcements.addAll(event.getAnnouncements());
@@ -493,7 +492,7 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
      * @param adapter      The adapter used to display the events.
      */
     private void filterEvents(ArrayList<Event> events, ArrayList<Event> eventsFull, AttendeeEventAdapter adapter) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date currentDateTime = new Date();
         events.clear();
         if (filter.equals("All")) {

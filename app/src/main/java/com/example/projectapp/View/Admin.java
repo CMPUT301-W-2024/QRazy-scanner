@@ -19,17 +19,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.projectapp.AttendeesListenerCallback;
-import com.example.projectapp.DataHandler;
-import com.example.projectapp.DeleteAttendeeCallback;
-import com.example.projectapp.DeleteEventCallback;
-import com.example.projectapp.EventsListenerCallback;
-import com.example.projectapp.ImagesListenerCallback;
+import com.example.projectapp.Controller.AttendeesListenerCallback;
+import com.example.projectapp.Controller.DataHandler;
+import com.example.projectapp.Controller.DeleteAttendeeCallback;
+import com.example.projectapp.Controller.DeleteEventCallback;
+import com.example.projectapp.Controller.EventsListenerCallback;
+import com.example.projectapp.Controller.ImagesListenerCallback;
 import com.example.projectapp.Model.Attendee;
 import com.example.projectapp.Model.Event;
 import com.example.projectapp.R;
-import com.example.projectapp.UpdateAttendeeCallback;
-import com.example.projectapp.UpdateEventCallback;
+import com.example.projectapp.Controller.UpdateAttendeeCallback;
+import com.example.projectapp.Controller.UpdateEventCallback;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FieldValue;
 

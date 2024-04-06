@@ -22,8 +22,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.projectapp.AddEventCallback;
-import com.example.projectapp.DataHandler;
+import com.example.projectapp.Controller.AddEventCallback;
+import com.example.projectapp.Controller.DataHandler;
 import com.example.projectapp.Model.Event;
 import com.example.projectapp.R;
 import com.google.android.material.button.MaterialButton;
@@ -141,7 +141,7 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
             return;
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date currentDateTime = new Date();
         Date eventStartParsed;
         Date eventEndParsed;

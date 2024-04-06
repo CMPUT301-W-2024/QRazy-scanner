@@ -5,8 +5,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 
-import com.example.projectapp.DataHandler;
-import com.example.projectapp.EventAttendeesListenerCallback;
+import com.example.projectapp.Controller.DataHandler;
+import com.example.projectapp.Controller.EventAttendeesListenerCallback;
 import com.example.projectapp.Model.Attendee;
 import com.example.projectapp.Model.Event;
 import com.example.projectapp.R;

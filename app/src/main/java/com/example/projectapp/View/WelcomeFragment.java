@@ -18,22 +18,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.projectapp.DataHandler;
-import com.example.projectapp.GetAttendeeCallback;
-import com.example.projectapp.GetOrganizerCallback;
+import com.example.projectapp.Controller.DataHandler;
+import com.example.projectapp.Controller.GetAttendeeCallback;
+import com.example.projectapp.Controller.GetOrganizerCallback;
 import com.example.projectapp.Model.Attendee;
 import com.example.projectapp.Model.Organizer;
 import com.example.projectapp.R;
 
 
 public class WelcomeFragment extends Fragment implements GetOrganizerCallback, GetAttendeeCallback {
-    private DataHandler dataHandler;
+    private final DataHandler dataHandler = DataHandler.getInstance();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.welcome_fragment, container, false);
-        dataHandler = DataHandler.getInstance();
 
 
         // Initialize button on the welcome screen
@@ -51,13 +50,6 @@ public class WelcomeFragment extends Fragment implements GetOrganizerCallback, G
                 else {
                     Intent intent = new Intent(getActivity(), ProfileEditActivity.class);
                     startActivity(intent);
- /*                   ProfileFragment profileFragment = new ProfileFragment();
-                    requireActivity().getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(android.R.id.content, profileFragment)
-                            // Use android.R.id.content as the container
-                            .addToBackStack(null)
-                            .commit();*/
                 }
             }
         });
@@ -103,13 +95,6 @@ public class WelcomeFragment extends Fragment implements GetOrganizerCallback, G
             Toast.makeText(getActivity(), "Your account was deleted you will need to create a new account", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getActivity(), ProfileEditActivity.class);
             startActivity(intent);
- /*           ProfileFragment profileFragment = new ProfileFragment();
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(android.R.id.content, profileFragment)
-                    // Use android.R.id.content as the container
-                    .addToBackStack(null)
-                    .commit();*/
         }
         else {
             Toast.makeText(getActivity(), "Couldn't access firebase", Toast.LENGTH_SHORT).show();

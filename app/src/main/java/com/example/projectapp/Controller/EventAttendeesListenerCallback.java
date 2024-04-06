@@ -1,4 +1,4 @@
-package com.example.projectapp;
+package com.example.projectapp.Controller;
 
 import com.example.projectapp.Model.Attendee;
 import com.google.firebase.firestore.DocumentChange;

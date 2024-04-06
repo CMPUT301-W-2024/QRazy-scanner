@@ -1,4 +1,4 @@
-package com.example.projectapp;
+package com.example.projectapp.Controller;
 
 import android.widget.LinearLayout;
 
@@ -18,6 +18,7 @@ import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.MemoryCacheSettings;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -118,7 +119,7 @@ public class DataHandler {
      * @param newAttendee Indicates if the attendee is new or existing.
      * @param callback    Callback to handle the result of the operation.
      */
-    public void addAttendee(Attendee attendee, boolean newAttendee,AddAttendeeCallback callback){
+    public void addAttendee(Attendee attendee, boolean newAttendee, AddAttendeeCallback callback){
         DocumentReference attendeeDocRef = attendeesRef.document(attendee.getAttendeeId());
 
         attendeeDocRef.set(attendee).addOnSuccessListener(aVoid -> {
@@ -294,7 +295,7 @@ public class DataHandler {
      * @param qrCodeType  The type of QR code to retrieve.
      * @param callback    Callback to handle the QR code retrieval result.
      */
-    public void getQRCode(String eventId, String qrCodeType,GetQrCodeCallback callback) {
+    public void getQRCode(String eventId, String qrCodeType, GetQrCodeCallback callback) {
         DocumentReference eventDocRef = eventsRef.document(eventId);
 
         eventDocRef.get().addOnSuccessListener(documentSnapshot -> {
@@ -461,6 +462,25 @@ public class DataHandler {
                             callback.onEventSignedAttendeesUpdated(dc.getType(), attendee);
                         }
                     }
+                }
+            }
+        });
+    }
+
+    public void addSpecificEventListener(String eventId, SpecificEventListenerCallback callback){
+        DocumentReference eventDocRef = eventsRef.document(eventId);
+
+        eventDocRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException error) {
+                if (snapshot != null && snapshot.exists()) {
+                    // Document exists, access the geopoints field
+                    List<GeoPoint> geoPoints = (List<GeoPoint>) snapshot.get("geopoints");
+                    callback.onSpecificEventUpdated(geoPoints);
+
+                } else {
+                    // Document does not exist
+                    callback.onSpecificEventUpdated(null);
                 }
             }
         });
