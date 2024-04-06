@@ -16,12 +16,14 @@ import androidx.test.filters.LargeTest;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-public class Admin_test {
+@RunWith(Enclosed.class)
+public class AdminTest {
     @RunWith(AndroidJUnit4.class)
     @LargeTest
-    public class AdminActivityTest {
+    public static class AdminActivityTest {
 
         @Rule
         public ActivityScenarioRule<Admin> activityRule =
@@ -34,19 +36,23 @@ public class Admin_test {
             onView(withId(R.id.textView2)).check(matches(withText(R.string.Images)));
         }
 
-/*        @Test
-        public void horizontalScrollViewIsScrollable() {
-            onView(withId(R.id.horizontalScrollView)).perform(swipeLeft());
-            onView(withId(R.id.horizontalScrollView)).perform(swipeRight());
-        }*/
-
-
         @Test
         public void verticalScrollViewIsScrollable() {
             onView(withId(R.id.adminAttendeesLayout)).perform(swipeUp());
             onView(withId(R.id.adminAttendeesLayout)).perform(swipeDown());
         }
+
+        @Test
+        public void deleteEventButton() {
+            onView(withId(R.id.adminEventsLayout)).perform(click());
+            onView(withId(R.id.dialogEventDeleteButton)).perform(click());
+        }
+
+        @Test
+        public void deleteAttendeeButton() {
+            onView(withId(R.id.adminAttendeesLayout)).perform(click());
+            onView(withId(R.id.dialog_delete_button)).perform(click());
+        }
+
     }
-
-
 }

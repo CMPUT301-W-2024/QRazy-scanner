@@ -67,7 +67,7 @@ dependencies {
     implementation("androidx.camera:camera-extensions:1.3.2")
     implementation("androidx.core:core:1.12.0")
     implementation ("com.itextpdf:itextg:5.5.10")
-    implementation("androidx.test.ext:junit:1.1.5")
+    implementation("androidx.test.ext:junit:1.2.0-alpha03")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:3.12.4")
@@ -77,8 +77,8 @@ dependencies {
     androidTestImplementation("org.mockito:mockito-core:3.12.4")
     androidTestImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     androidTestImplementation("androidx.test:runner:1.4.0")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-    androidTestImplementation("androidx.test:rules:1.4.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.0-alpha03")
+    androidTestImplementation("androidx.test:rules:1.6.0-alpha03")
 
 tasks.withType<Test> {
     useJUnitPlatform()

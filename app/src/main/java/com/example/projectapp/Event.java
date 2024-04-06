@@ -47,15 +47,15 @@ public class Event implements Serializable{
     /**
      * Creates a new Event object with specified details.
      *
-     * @param name            The name of the event.
-     * @param date            The date the event occurs
-     * @param startTime             The time the event starts
+     * @param name          The name of the event.
+     * @param date          The date the event occurs
+     * @param startTime     The time the event starts
      * @param endTime       The time the event ends.
-     * @param organizerName       The name of the event organizer.
-     * @param organizerId     The id of the event organizer.
+     * @param organizerName The name of the event organizer.
+     * @param organizerId   The id of the event organizer.
      * @param attendanceLimit The maximum number of allowed attendees.
-     * @param description     A description of the event.
-     * @param poster          A poster image associated with the event.
+     * @param description   A description of the event.
+     * @param poster        A poster image associated with the event.
      */
     public Event(String name, String date, String startTime, String endTime, String organizerName, String organizerId, Integer attendanceLimit, String description, String poster) {
         this.name = name;
@@ -77,7 +77,8 @@ public class Event implements Serializable{
     /**
      * Get Event ID
      *
-     * @return      ID of the event
+     * @return
+     *      ID of the event
      */
     public String getEventId() {
         return eventId;
@@ -86,7 +87,8 @@ public class Event implements Serializable{
     /**
      * Set event's ID
      *
-     * @param eventId       ID of the event
+     * @param eventId
+     *      ID of the event
      */
     public void setEventId(String eventId) {
         this.eventId = eventId;
@@ -95,7 +97,8 @@ public class Event implements Serializable{
     /**
      * Gets the name of the event.
      *
-     * @return      The event name.
+     * @return
+     *      The event name.
      */
     public String getName() {
         return name;
@@ -104,7 +107,8 @@ public class Event implements Serializable{
     /**
      * Sets the name of the event.
      *
-     * @param name      The new name for the event.
+     * @param name
+     *      The new name for the event.
      */
     public void setName(String name) {
         this.name = name;
@@ -113,7 +117,8 @@ public class Event implements Serializable{
     /**
      * Gets the organizer of the event.
      *
-     * @return      The organizer's name.
+     * @return
+     *      The organizer's name.
      */
     public String getOrganizerName() {
         return organizerName;
@@ -122,7 +127,8 @@ public class Event implements Serializable{
     /**
      * Sets the organizer name of the event.
      *
-     * @param organizerName         The new organizer's name.
+     * @param organizerName
+     *      The new organizer's name.
      */
     public void setOrganizerName(String organizerName) {
         this.organizerName = organizerName;
@@ -131,7 +137,8 @@ public class Event implements Serializable{
     /**
      * Gets the organizer ID of the event.
      *
-     * @return      The organizer's ID.
+     * @return
+     *      The organizer's ID.
      */
     public String getOrganizerId() {
         return organizerId;
@@ -140,7 +147,8 @@ public class Event implements Serializable{
     /**
      * Sets the organizer ID of the event.
      *
-     * @param organizerId       The new organizer's ID.
+     * @param organizerId
+     *      The new organizer's ID.
      */
     public void setOrganizerId(String organizerId) {
         this.organizerId = organizerId;
@@ -149,7 +157,8 @@ public class Event implements Serializable{
     /**
      * Gets a HashMap representing event attendees and their check-in counts.
      *
-     * @return A HashMap where keys are attendee IDs and values are check-in counts.
+     * @return
+     *      A HashMap where keys are attendee IDs and values are check-in counts.
      */
     public HashMap<String, Integer> getCheckedAttendees() {
         return checkedAttendees;
@@ -158,7 +167,8 @@ public class Event implements Serializable{
     /**
      * Sets checked event attendees and their check-in counts.
      *
-     * @param checkedAttendees      The new number of attendees that have checked in.
+     * @param checkedAttendees
+     *      The new number of attendees that have checked in.
      */
     public void setCheckedAttendees(HashMap<String, Integer> checkedAttendees) {
         this.checkedAttendees = checkedAttendees;
@@ -167,7 +177,8 @@ public class Event implements Serializable{
     /**
      * Gets the Event's poster.
      *
-     * @return      The event's poster.
+     * @return
+     *      The event's poster.
      */
     public String getPoster() {
         return poster;
@@ -176,7 +187,8 @@ public class Event implements Serializable{
     /**
      * Sets the Event's poster
      *
-     * @param poster        The event's new poster.
+     * @param poster
+     *      The event's new poster.
      */
     public void setPoster(String poster) {
         this.poster = poster;
@@ -185,7 +197,8 @@ public class Event implements Serializable{
     /**
      * Gets the number of attendees.
      *
-     * @return      The number of Attendees.
+     * @return
+     *      The number of Attendees.
      */
     public Integer getAttendance() {
         return checkedAttendees.size();
@@ -194,7 +207,8 @@ public class Event implements Serializable{
     /**
      * Gets the event's date..
      *
-     * @return      The event date.
+     * @return
+     *      The event date.
      */
     public String getDate() {
         return date;
@@ -203,7 +217,8 @@ public class Event implements Serializable{
     /**
      * Sets the date on which the event occurs.
      *
-     * @param date      The new event date.
+     * @param date
+     *      The new event date.
      */
     public void setDate(String date) {
         this.date = date;
@@ -212,7 +227,8 @@ public class Event implements Serializable{
     /**
      * Get time at which event starts.
      *
-     * @return The event start time
+     * @return
+     *      The event start time
      */
     public String getStartTime() {
         return startTime;
@@ -221,7 +237,8 @@ public class Event implements Serializable{
     /**
      * Sets the time at which the event starts.
      *
-     * @param startTime The new event start time
+     * @param startTime
+     *      The new event start time
      */
     public void setStartTime(String startTime) {
         this.startTime = startTime;
@@ -230,7 +247,8 @@ public class Event implements Serializable{
     /**
      * Get time at which event ends.
      *
-     * @return The event end time
+     * @return
+     *      The event end time
      */
     public String getEndTime() {
         return endTime;
@@ -239,7 +257,8 @@ public class Event implements Serializable{
     /**
      * Sets the time at which the event ends.
      *
-     * @param endTime The new event end time
+     * @param endTime
+     *      The new event end time
      */
     public void setEndTime(String endTime) {
         this.endTime = endTime;
@@ -248,7 +267,8 @@ public class Event implements Serializable{
     /**
      * Gets the attendance limit for the event.
      *
-     * @return      The maximum number of allowed attendees.
+     * @return
+     *      The maximum number of allowed attendees.
      */
     public Integer getAttendanceLimit() {
         return attendanceLimit;
@@ -257,7 +277,8 @@ public class Event implements Serializable{
     /**
      * Sets the attendance limit for the event.
      *
-     * @param attendanceLimit       The new maximum number of allowed attendees.
+     * @param attendanceLimit
+     *      The new maximum number of allowed attendees.
      */
     public void setAttendanceLimit(Integer attendanceLimit) {
         this.attendanceLimit = attendanceLimit;
@@ -266,7 +287,8 @@ public class Event implements Serializable{
     /**
      * Gets event description.
      *
-     * @return      A description of the event.
+     * @return
+     *      A description of the event.
      */
     public String getDescription() {
         return description;
@@ -275,7 +297,8 @@ public class Event implements Serializable{
     /**
      * Sets event description
      *
-     * @param description       The new description of the event.
+     * @param description
+     *      The new description of the event.
      */
     public void setDescription(String description) {
         this.description = description;
@@ -284,7 +307,8 @@ public class Event implements Serializable{
     /**
      * Gets the event's QR Code
      *
-     * @return      The event's QRCode encoded as a string.
+     * @return
+     *      The event's QRCode encoded as a string.
      */
     public String getQrCode() {
         return qrCode;
@@ -293,7 +317,8 @@ public class Event implements Serializable{
     /**
      * Sets the event's QR Code
      *
-     * @param qrCode        The new encoded event QR code.
+     * @param qrCode
+     *      The new encoded event QR code.
      */
     public void setQrCode(String qrCode) {
         this.qrCode = qrCode;
@@ -302,7 +327,8 @@ public class Event implements Serializable{
     /**
      * Gets a list of signed up attendees.
      *
-     * @return      Attendees signed up for events.
+     * @return
+     *      Attendees signed up for events.
      */
     public ArrayList<String> getSignedAttendees() {
         return signedAttendees;
@@ -311,7 +337,8 @@ public class Event implements Serializable{
     /**
      * Sets a list of checked in attendees.
      *
-     * @param signedAttendees       The new list of signed up attendees.
+     * @param signedAttendees
+     *      The new list of signed up attendees.
      */
     public void setSignedAttendees(ArrayList<String> signedAttendees) {
         this.signedAttendees = signedAttendees;
@@ -320,7 +347,8 @@ public class Event implements Serializable{
     /**
      * Check in an attendee
      *
-     * @param attendeeId        The ID of the attendee who checked in.
+     * @param attendeeId
+     *      The ID of the attendee who checked in.
      */
     public void addCheckedAttendee(String attendeeId){
         if (!checkedAttendees.containsKey(attendeeId)){
@@ -335,7 +363,8 @@ public class Event implements Serializable{
     /**
      * Sign up an attendee
      *
-     * @param attendeeId        The ID of the attendee who signed up.
+     * @param attendeeId
+     *      The ID of the attendee who signed up.
      */
     public void addSignedAttendee(String attendeeId){
         if (!signedAttendees.contains(attendeeId)){
@@ -347,7 +376,8 @@ public class Event implements Serializable{
      * Gets the geographical location from
      * where the attendee checked in.
      *
-     * @return         The geographical point of check in.
+     * @return
+     *      The geographical point of check in.
      */
     public ArrayList<GeoPoint> getGeopoints() {
         return geopoints;
@@ -356,7 +386,8 @@ public class Event implements Serializable{
     /**
      * Sets the new geographical location of check in.
      *
-     * @param geopoints        The new geographical points of check in.
+     * @param geopoints
+     *      The new geographical points of check in.
      */
     public void setGeopoints(ArrayList<GeoPoint> geopoints) {
         this.geopoints = geopoints;
@@ -365,7 +396,8 @@ public class Event implements Serializable{
     /**
      * Gets a list of the announcements.
      *
-     * @return      A list of the announcements
+     * @return
+     *      A list of the announcements
      */
     public ArrayList<Announcement> getAnnouncements() {
         return announcements;
@@ -374,7 +406,8 @@ public class Event implements Serializable{
     /**
      * Sets a list of the announcements.
      *
-     * @param announcements     A list of the new announcements
+     * @param announcements
+     *      A list of the new announcements
      */
     public void setAnnouncements(ArrayList<Announcement> announcements) {
         this.announcements = announcements;
@@ -383,7 +416,8 @@ public class Event implements Serializable{
     /**
      * Add a new announcement
      *
-     * @param announcement      A list of the announcements
+     * @param announcement
+     *      A list of the announcements
      */
     public void addAnnouncements(String announcement){
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
@@ -394,7 +428,8 @@ public class Event implements Serializable{
     /**
      * Gets the event's promotional QR code.
      *
-     * @return      The event's promotional QR code as a String.
+     * @return
+     *      The event's promotional QR code as a String.
      */
     public String getPromoQrCode() {
         return promoQrCode;
@@ -403,7 +438,8 @@ public class Event implements Serializable{
     /**
      * Sets the event's promotional QR code.
      *
-     * @param promoQrCode       The new event promotional QR code.
+     * @param promoQrCode
+     *      The new event promotional QR code.
      */
     public void setPromoQrCode(String promoQrCode) {
         this.promoQrCode = promoQrCode;
@@ -434,7 +470,8 @@ public class Event implements Serializable{
     /**
      * Gets a hashcode of event ID.
      *
-     * @return      A hashcode of the event ID.
+     * @return
+     *      A hashcode of the event ID.
      */
     @Override
     public int hashCode() {
