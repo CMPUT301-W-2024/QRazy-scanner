@@ -9,6 +9,8 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
+import android.content.Context;
+
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -34,18 +36,15 @@ public class AttendeePageActivitiesTest {
     // Create a profile
     @BeforeClass
     public static void setUp() {
-        // Launch MainActivity
+        // Clear SharedPreferences
         ActivityScenario<MainActivity> mainActivityScenario = ActivityScenario.launch(MainActivity.class);
+        mainActivityScenario.onActivity(activity -> {
+            activity.getSharedPreferences("your_prefs", Context.MODE_PRIVATE)
+                    .edit().clear().apply();
+        });
 
         onView(withId(R.id.joinEventButton)).perform(click());
-        try {
-            // If new user, profile fragment will be displayed
-            onView(withId(R.id.userNameEditText)).check(matches(isDisplayed()));
-        } catch (NoMatchingViewException e) {
-            // If returning user, attendee page activity will be displayed
-            onView(withId(R.id.welcomeText)).check(matches(isDisplayed()));
-            onView(withId(R.id.menuButton)).perform(click());
-        }
+        onView(withId(R.id.userNameEditText)).check(matches(isDisplayed()));
 
         onView(withId(R.id.userNameEditText)).perform(typeText("Page activities test"), closeSoftKeyboard());
         onView(withId(R.id.emailEditText)).perform(typeText("attendee101@gmail.com"), closeSoftKeyboard());
