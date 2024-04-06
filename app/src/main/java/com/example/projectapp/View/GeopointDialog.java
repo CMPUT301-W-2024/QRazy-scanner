@@ -22,7 +22,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.GeoPoint;
 
-public class GeopointDialog extends AppCompatActivity implements UpdateEventCallback {
+public class GeopointDialog extends AppCompatActivity {
     private String eventId; // The variable you want to pass
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private final DataHandler dataHandler = DataHandler.getInstance();
@@ -102,23 +102,11 @@ public class GeopointDialog extends AppCompatActivity implements UpdateEventCall
                             double longitude = location.getLongitude();
                             Log.d("Location", "Latitude: " + latitude + ", Longitude: " + longitude);
                             GeoPoint newGeopoint = new GeoPoint(latitude, longitude);
-                            dataHandler.updateEvent(eventId, "geopoints", FieldValue.arrayUnion(newGeopoint), GeopointDialog.this);
+                            dataHandler.updateEvent(eventId, "geopoints."+dataHandler.getLocalAttendee().getAttendeeId(), FieldValue.arrayUnion(newGeopoint), null);
                         } else {
                             Toast.makeText(GeopointDialog.this, "Fail to get current location", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
-    }
-
-    @Override
-    public void onUpdateEvent(String eventId) {
-        if (eventId != null){
-            // Successfully added the GeoPoint
-            Toast.makeText(this, "Added successfully", Toast.LENGTH_SHORT).show();
-        }
-        else {
-            // Handle failure (e.g., network error, permission denied, etc.)
-            Toast.makeText(this, "Fail to add", Toast.LENGTH_SHORT).show();
-        }
     }
 }

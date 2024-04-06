@@ -31,7 +31,7 @@ public class Event implements Serializable{
     private Integer attendanceLimit;
     private String qrCode;
     private String promoQrCode;
-    private transient ArrayList<GeoPoint> geopoints;
+    private transient HashMap<String, ArrayList<GeoPoint>> geopoints;
     private ArrayList<Announcement> announcements;
 
     /**
@@ -67,7 +67,7 @@ public class Event implements Serializable{
         eventId = UUID.randomUUID().toString();
         checkedAttendees = new HashMap<>();
         signedAttendees = new ArrayList<>();
-        geopoints = new ArrayList<>();
+        geopoints = new HashMap<>();
         announcements = new ArrayList<>();
     }
 
@@ -343,22 +343,22 @@ public class Event implements Serializable{
 
     /**
      * Gets the geographical location from
-     * where the attendee checked in.
+     * where each attendee checked in.
      *
      * @return
-     *      The geographical point of check in.
+     *      The geographical point of check in for each attendee.
      */
-    public ArrayList<GeoPoint> getGeopoints() {
+    public HashMap<String, ArrayList<GeoPoint>> getGeopoints() {
         return geopoints;
     }
 
     /**
-     * Sets the new geographical location of check in.
+     * Sets the new geographical location of check in for each attendee
      *
      * @param geopoints
      *      The new geographical points of check in.
      */
-    public void setGeopoints(ArrayList<GeoPoint> geopoints) {
+    public void setGeopoints(HashMap<String, ArrayList<GeoPoint>> geopoints) {
         this.geopoints = geopoints;
     }
 

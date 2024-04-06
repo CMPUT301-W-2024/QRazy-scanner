@@ -30,6 +30,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -469,7 +470,7 @@ public class DataHandler {
         });
     }
 
-    public void addSpecificEventListener(String eventId, SpecificEventListenerCallback callback){
+    public void addEventGeoPointsListener(String eventId, EventGeoPointsListenerCallback callback){
         DocumentReference eventDocRef = eventsRef.document(eventId);
 
         eventDocRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -477,12 +478,16 @@ public class DataHandler {
             public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException error) {
                 if (snapshot != null && snapshot.exists()) {
                     // Document exists, access the geopoints field
-                    List<GeoPoint> geoPoints = (List<GeoPoint>) snapshot.get("geopoints");
-                    callback.onSpecificEventUpdated(geoPoints);
+                    HashMap<String, List<GeoPoint>> map = (HashMap<String, List<GeoPoint>>) snapshot.get("geopoints");
+                    List<GeoPoint> geoPoints = new ArrayList<>();
+                    for (String attendee : map.keySet()){
+                        geoPoints.addAll(map.get(attendee));
+                    }
+                    callback.onEventGeoPointsUpdated(geoPoints);
 
                 } else {
                     // Document does not exist
-                    callback.onSpecificEventUpdated(null);
+                    callback.onEventGeoPointsUpdated(null);
                 }
             }
         });
