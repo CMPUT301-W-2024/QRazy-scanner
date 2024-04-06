@@ -1,14 +1,17 @@
 package com.example.projectapp;
 
+import android.widget.LinearLayout;
+
 import androidx.annotation.Nullable;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.common.hash.Hashing;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
@@ -24,6 +27,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Data handler. Handles interactions with Firebase,
@@ -36,9 +41,13 @@ public class DataHandler {
     private CollectionReference attendeesRef;
     private CollectionReference organizersRef;
     private CollectionReference eventsRef;
-    private Attendee attendee;
-    private Organizer organizer;
+    private Attendee localAttendee;
+    private Organizer localOrganizer;
 
+    /**
+     * Private constructor initializes the DataHandler with
+     * Firestore database, collection references, and settings.
+     */
     private DataHandler(){
         db = FirebaseFirestore.getInstance();
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder().setLocalCacheSettings(MemoryCacheSettings.newBuilder().build()).build();
@@ -48,6 +57,12 @@ public class DataHandler {
         eventsRef = db.collection("events");
     }
 
+    /**
+     * Retrieves the singleton instance of DataHandler.
+     *
+     * @return
+     *      The singleton instance of DataHandler.
+     */
     public static DataHandler getInstance(){
         if (instance == null){
             instance = new DataHandler();
@@ -56,60 +71,69 @@ public class DataHandler {
     }
 
     /**
-     * Get the Attendee
-     * @return the Attendee
+     * Get the local attendee object.
+     *
+     * @return
+     *      The local attendee object.
      */
-    public Attendee getAttendee() {
-        return attendee;
+    public Attendee getLocalAttendee() {
+        return localAttendee;
     }
 
     /**
-     * Set the attendee
-     * @param attendee an attendee
+     * Set the local attendee object.
+     *
+     * @param attendee
+     *      The local attendee object to set.
      */
-    public void setAttendee(Attendee attendee) {
-        this.attendee = attendee;
+    public void setLocalAttendee(Attendee attendee) {
+        this.localAttendee = attendee;
     }
 
     /**
-     * Get the organizer
-     * @return the organizer
+     * Get the local organizer object.
+     *
+     * @return
+     *      The local organizer object.
      */
-    public Organizer getOrganizer() {return organizer;}
+    public Organizer getLocalOrganizer() {return localOrganizer;}
 
     /**
-     * Set the organizer
-     * @param organizer a organizer
+     * Set the local organizer object.
+     *
+     * @param organizer
+     *      The local organizer object to set.
      */
-    public void setOrganizer(Organizer organizer) {
-        this.organizer = organizer;
+    public void setLocalOrganizer(Organizer organizer) {
+        this.localOrganizer = organizer;
     }
 
     /**
      * Adds an Attendee document to the "attendees" collection in Firebase.
-     * @param attendee
-     *      The Attendee object representing the data to add.
+     *
+     * @param attendee    The Attendee object representing the data to add.
+     * @param newAttendee Indicates if the attendee is new or existing.
+     * @param callback    Callback to handle the result of the operation.
      */
-    public void addAttendee(Attendee attendee, AddAttendeeCallback callback){
+    public void addAttendee(Attendee attendee, boolean newAttendee,AddAttendeeCallback callback){
         DocumentReference attendeeDocRef = attendeesRef.document(attendee.getAttendeeId());
 
         attendeeDocRef.set(attendee).addOnSuccessListener(aVoid -> {
-                    callback.onAddAttendee(attendee);
+                    callback.onAddAttendee(attendee, newAttendee);
                 })
                 .addOnFailureListener(e -> {
-                    System.out.println("Got till here error " + e);
-                    callback.onAddAttendee(null);
-                });;
+                    callback.onAddAttendee(null, newAttendee);
+                });
     }
 
     /**
      * Adds an Event document to the "events" collection in Firebase.
-     * @param event
-     *      The Event object representing the data to add.
+     *
+     * @param event    The Event object representing the data to add.
+     * @param callback Callback to handle the result of the operation.
      */
     public void addEvent(Event event, AddEventCallback callback){
         DocumentReference eventDocRef = eventsRef.document(event.getEventId());
-
         eventDocRef.set(event).addOnSuccessListener(aVoid -> {
                     callback.onAddEvent(event);
                 })
@@ -118,56 +142,145 @@ public class DataHandler {
                 });
     }
 
+    /**
+     * Adds the local organizer to the Firebase Firestore database.
+     *
+     * @param callback
+     *      The callback for the operation result.
+     */
+    public void addOrganizer(AddOrganizerCallback callback){
+        DocumentReference organizerDocRef =  organizersRef.document(localOrganizer.getOrganizerId());
+
+        organizerDocRef.set(localOrganizer).addOnSuccessListener(aVoid -> {
+                    callback.onAddOrganizer(localOrganizer);
+                })
+                .addOnFailureListener(e -> {
+                    callback.onAddOrganizer(null);
+                });
+    }
 
     /**
-     * Adds an Organizer document to the "organizers" collection in Firebase.
-     * @param organizer
-     *      The Organizer object representing the data to add.
+     * Retrieves an attendee from the Firebase Firestore database.
+     *
+     * @param attendeeId The ID of the attendee to retrieve.
+     * @param callback   The callback for the retrieved attendee.
      */
-    public void addOrganizer(Organizer organizer){
-        DocumentReference organizerDocRef =  organizersRef.document(organizer.getOrganizerId());
-
-        organizerDocRef.set(organizer);
-    }
-
-    public void updateEvent(String eventId, String field, Object value, UpdateEventCallback callback){
-        DocumentReference eventDocRef = eventsRef.document(eventId);
-        eventDocRef.update(field, value).addOnSuccessListener(aVoid -> callback.onUpdateEvent(eventId))
-                .addOnFailureListener(e -> callback.onUpdateEvent(null));
-    }
-
-    public void updateAttendee(String attendeeId, String field, String value){
+    public void getAttendee(String attendeeId, GetAttendeeCallback callback){
         DocumentReference attendeeDocRef = attendeesRef.document(attendeeId);
-        attendeeDocRef.update(field, value);
+
+        attendeeDocRef.get().addOnSuccessListener( documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Attendee attendee = documentSnapshot.toObject(Attendee.class);
+                if (attendee != null) {
+                    callback.onGetAttendee(attendee, false);
+                }
+            }
+            else {
+                callback.onGetAttendee(null, true);
+            }
+        }).addOnFailureListener(e -> callback.onGetAttendee(null, false));
     }
 
-    public void subscribeToNotis(String eventId){
-        FirebaseMessaging.getInstance().subscribeToTopic(eventId);
-    }
-    public void unSubscribeFromNotis(String eventId){
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(eventId);
-    }
-
-
+    /**
+     * Retrieves an event document from Firebase based on the event ID.
+     *
+     * @param eventId  The ID of the event to retrieve.
+     * @param callback Callback to handle the result of the operation.
+     */
     public void getEvent(String eventId, GetEventCallback callback){
         DocumentReference eventDocRef = eventsRef.document(eventId);
-        eventDocRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    Event event = documentSnapshot.toObject(Event.class);
-                    if (event != null) {
-                        callback.onGetEvent(event);
-                    }
-                } else {
-                    callback.onGetEvent(null);
+        eventDocRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Event event = documentSnapshot.toObject(Event.class);
+                if (event != null) {
+                    callback.onGetEvent(event);
                 }
+            } else {
+                callback.onGetEvent(null);
             }
         }).addOnFailureListener(e -> {
             callback.onGetEvent(null);
         });
     }
 
+    /**
+     * Retrieves an organizer document from Firebase based on the organizer ID.
+     *
+     * @param organizerId The ID of the organizer to retrieve.
+     * @param callback    Callback to handle the result of the operation.
+     */
+    public void getOrganizer(String organizerId, GetOrganizerCallback callback){
+        DocumentReference organizerDocRef = organizersRef.document(organizerId);
+
+        organizerDocRef.get().addOnSuccessListener( documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Organizer organizer = documentSnapshot.toObject(Organizer.class);
+                if (organizer != null) {
+                    callback.onGetOrganizer(organizer);
+                }
+            }
+        }).addOnFailureListener(e -> callback.onGetOrganizer(null));
+    }
+
+    /**
+     * Updates an event with the specified eventId, field, and value.
+     *
+     * @param eventId  The ID of the event to update.
+     * @param field    The field in the event to update.
+     * @param value    The new value for the field.
+     * @param callback Callback to handle the update event operation result.
+     */
+    public void updateEvent(String eventId, String field, Object value, UpdateEventCallback callback){
+        DocumentReference eventDocRef = eventsRef.document(eventId);
+        eventDocRef.update(field, value).addOnSuccessListener(aVoid -> callback.onUpdateEvent(eventId))
+                .addOnFailureListener(e -> callback.onUpdateEvent(null));
+    }
+
+    /**
+     * Updates an attendee with the specified attendeeId, field, and value.
+     *
+     * @param attendeeId The ID of the attendee to update.
+     * @param field      The field in the attendee to update.
+     * @param value      The new value for the field.
+     * @param callback   Callback to handle the update attendee operation result.
+     */
+    public void updateAttendee(String attendeeId, String field, Object value, UpdateAttendeeCallback callback){
+        DocumentReference attendeeDocRef = attendeesRef.document(attendeeId);
+        attendeeDocRef.update(field, value).addOnSuccessListener(aVoid -> callback.onUpdateAttendee(attendeeId))
+                .addOnFailureListener(e -> callback.onUpdateAttendee(null));
+    }
+
+    /**
+     * Deletes an attendee with the specified attendeeId.
+     *
+     * @param attendeeId The ID of the attendee to delete.
+     * @param callback   Callback to handle the delete attendee operation result.
+     */
+    public void deleteAttendee(String attendeeId, DeleteAttendeeCallback callback){
+        DocumentReference attendeeDocRef = attendeesRef.document(attendeeId);
+        attendeeDocRef.delete().addOnSuccessListener(aVoid -> callback.onDeleteAttendee(attendeeId))
+                .addOnFailureListener(e -> callback.onDeleteAttendee(null));
+    }
+
+    /**
+     * Deletes an event with the specified eventId.
+     *
+     * @param eventId  The ID of the event to delete.
+     * @param callback Callback to handle the delete event operation result.
+     */
+    public void deleteEvent(String eventId, DeleteEventCallback callback){
+        DocumentReference eventDocRef = eventsRef.document(eventId);
+        eventDocRef.delete().addOnSuccessListener(aVoid -> callback.onDeleteEvent(eventId))
+                .addOnFailureListener(e -> callback.onDeleteEvent(null));
+    }
+
+    /**
+     * Retrieves the QR code for the specified event ID and type.
+     *
+     * @param eventId     The ID of the event to retrieve the QR code for.
+     * @param qrCodeType  The type of QR code to retrieve.
+     * @param callback    Callback to handle the QR code retrieval result.
+     */
     public void getQRCode(String eventId, String qrCodeType,GetQrCodeCallback callback) {
         DocumentReference eventDocRef = eventsRef.document(eventId);
 
@@ -186,16 +299,24 @@ public class DataHandler {
                 .addOnFailureListener(e -> callback.onGetQrCode(null));
     }
 
-
-    public void addProfileDeletedListener(ProfileDeletedListenerCallback callback){
-        attendeesRef.whereEqualTo("attendeeId", attendee.getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+    /**
+     * Adds a listener for changes to the local attendee's data.
+     *
+     * @param callback
+     *      Callback to handle local attendee updates.
+     */
+    public void addLocalAttendeeListener(LocalAttendeeListenerCallback callback){
+        attendeesRef.whereEqualTo("attendeeId", localAttendee.getAttendeeId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
-                if (snapshots != null && !snapshots.isEmpty()){
+                if (snapshots != null){
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         if (dc.getType() == DocumentChange.Type.REMOVED){
-                            callback.onProfileDeleted();
+                            callback.onLocalAttendeeUpdated();
+                        }
+                        else {
+                            localAttendee = dc.getDocument().toObject(Attendee.class);
                         }
                     }
                 }
@@ -203,20 +324,26 @@ public class DataHandler {
         });
     }
 
+    /**
+     * Adds a listener for changes to the attendee's events.
+     *
+     * @param getCheckedIn Whether to retrieve checked-in events.
+     * @param callback     Callback to handle attendee events updates.
+     */
     public void addAttendeeEventsListener(boolean getCheckedIn, AttendeeEventsListenerCallback callback) {
 
         Query query;
         if (getCheckedIn){
-            query = eventsRef.orderBy("checkedAttendees." + attendee.getAttendeeId());
+            query = eventsRef.orderBy("checkedAttendees." + localAttendee.getAttendeeId());
         }
         else {
-            query = eventsRef.whereArrayContains("signedAttendees", attendee.getAttendeeId());
+            query = eventsRef.whereArrayContains("signedAttendees", localAttendee.getAttendeeId());
         }
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
-                if (snapshots != null && !snapshots.isEmpty()) {
+                if (snapshots != null) {
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         Event event = dc.getDocument().toObject(Event.class);
                         callback.onAttendeeEventsUpdated(dc.getType(), event);
@@ -226,28 +353,61 @@ public class DataHandler {
         });
     }
 
-    public void addAllEventsListener(AllEventsListenerCallback callback){
+    /**
+     * Adds a listener for changes to the events data.
+     *
+     * @param callback
+     *      Callback to handle events updates.
+     */
+    public void addEventsListener(EventsListenerCallback callback){
         eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>(){
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
-                if (snapshots != null && !snapshots.isEmpty()){
+                if (snapshots != null){
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         Event event = dc.getDocument().toObject(Event.class);
-                        callback.onAllEventsUpdated(dc.getType(), event);
+                        callback.onEventsUpdated(dc.getType(), event);
                     }
                 }
             }
         });
     }
 
-    public void addOrganizerEventsListener(OrganizerEventsListenerCallback callback){
-
-        eventsRef.whereEqualTo("organizerId", getOrganizer().getOrganizerId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+    /**
+     * Adds a listener for changes to the attendees data.
+     *
+     * @param callback
+     *      Callback to handle attendees updates.
+     */
+    public void addAttendeesListener(AttendeesListenerCallback callback){
+        attendeesRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
-                if (snapshots != null && !snapshots.isEmpty()){
+                if (snapshots != null){
+                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                        Attendee attendee = dc.getDocument().toObject(Attendee.class);
+                        callback.onAttendeesUpdated(dc.getType(), attendee);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Adds a listener for changes to the organizer's events.
+     *
+     * @param callback
+     *      Callback to handle organizer events updates.
+     */
+    public void addOrganizerEventsListener(OrganizerEventsListenerCallback callback){
+
+        eventsRef.whereEqualTo("organizerId", localOrganizer.getOrganizerId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (snapshots != null){
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         Event event = dc.getDocument().toObject(Event.class);
                         callback.onOrganizerEventsUpdated(dc.getType(), event);
@@ -257,6 +417,13 @@ public class DataHandler {
         });
     }
 
+    /**
+     * Adds a listener for changes to the attendees of a specific event.
+     *
+     * @param event         The event to listen for attendee changes.
+     * @param getCheckedIn  Whether to retrieve checked-in attendees.
+     * @param callback      Callback to handle event attendees updates.
+     */
     public void addEventAttendeesListener(Event event, boolean getCheckedIn, EventAttendeesListenerCallback callback){
 
         Query query;
@@ -271,7 +438,7 @@ public class DataHandler {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
-                if (snapshots != null && !snapshots.isEmpty()){
+                if (snapshots != null){
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         Attendee attendee = dc.getDocument().toObject(Attendee.class);
                         if (getCheckedIn){
@@ -286,8 +453,95 @@ public class DataHandler {
         });
     }
 
+    /**
+     * Adds a listener for changes to the images in a collection.
+     *
+     * @param collection The name of the collection to listen for image changes.
+     * @param field      The field containing image data.
+     * @param layout     The layout to update with images.
+     * @param callback   Callback to handle image updates.
+     */
+    public void addImagesListener(String collection, String field, LinearLayout layout, ImagesListenerCallback callback) {
+        db.collection(collection).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                if (snapshots != null) {
+                    HashMap<String, String> images = new HashMap<>();
+                    for (DocumentSnapshot document : snapshots.getDocuments()) {
+                        String encodedImage = document.getString(field);
+                        if (encodedImage != null && !encodedImage.isEmpty()) {
+                            images.put(document.getId(), encodedImage);
+                        }
+                    }
+                    callback.onImagesUpdated(images, layout,collection, field);
+                }
+            }
+        });
+    }
 
-    public void requestAPI(Event event, String announcement) throws Exception{
+    /**
+     * Retrieves the event associated with the given QR code data.
+     *
+     * @param qrData    The QR code data.
+     * @param checkInto Whether to check into the event.
+     * @param callback  Callback to handle the event retrieval result.
+     */
+    public void getQrCodeEvent(String qrData, boolean checkInto, GetQrCodeEventCallback callback){
+
+        Query query = eventsRef.where(Filter.or(Filter.equalTo("eventId", qrData), Filter.equalTo("qrCode", hashEventCode(qrData))));
+        query.get().addOnSuccessListener(documentSnapshots -> {
+            if (documentSnapshots.isEmpty()){
+                callback.onGetQrCodeEvent(null, checkInto, hashEventCode(qrData));
+            }
+            else {
+                List<Event> events = documentSnapshots.toObjects(Event.class);
+                callback.onGetQrCodeEvent(events.get(0), checkInto, hashEventCode(qrData));
+            }
+        });
+    }
+
+    /**
+     * Hashes the event code using SHA-256 algorithm.
+     *
+     * @param code
+     *      The event code to hash.
+     * @return
+     *      The hashed event code.
+     */
+    private String hashEventCode(String code){
+        return Hashing.sha256()
+                .hashString(code, StandardCharsets.UTF_8)
+                .toString();
+    }
+
+    /**
+     * Subscribes to notifications for a specific event.
+     *
+     * @param eventId
+     *      The ID of the event to subscribe to.
+     */
+    public void subscribeToNotis(String eventId){
+        FirebaseMessaging.getInstance().subscribeToTopic(eventId);
+    }
+
+    /**
+     * Unsubscribes from notifications for a specific event.
+     *
+     * @param eventId
+     *      The ID of the event to unsubscribe from.
+     */
+    public void unSubscribeFromNotis(String eventId){
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(eventId);
+    }
+
+    /**
+     * Sends a notification to subscribers of a specific event.
+     *
+     * @param event         The event for which to send the notification.
+     * @param announcement  The announcement to include in the notification.
+     * @throws Exception    If there is an error sending the notification.
+     */
+    public void sendNotification(Event event, String announcement) throws Exception{
         String projectId = "qrazy-scanner";
         String topic = event.getEventId();
 
@@ -309,6 +563,14 @@ public class DataHandler {
         con.getResponseCode();
     }
 
+    /**
+     * Retrieves the access token required for sending notifications.
+     *
+     * @return
+     *      The access token.
+     * @throws IOException
+     *      If there is an error retrieving the access token.
+     */
     private String getAccessToken() throws IOException {
 
         String[] SCOPES = {"https://www.googleapis.com/auth/firebase.messaging"};

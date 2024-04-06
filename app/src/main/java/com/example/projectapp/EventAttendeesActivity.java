@@ -39,8 +39,8 @@ public class EventAttendeesActivity extends AppCompatActivity implements EventAt
         checkedInAttendees = new ArrayList<>();
         signedUpAttendees = new ArrayList<>();
 
-        checkedInAttendeeAdapter = new EventAttendeeAdapter(checkedInAttendees, event);
-        signedUpAttendeeAdapter = new EventAttendeeAdapter(signedUpAttendees, event);
+        checkedInAttendeeAdapter = new EventAttendeeAdapter(checkedInAttendees, event, null);
+        signedUpAttendeeAdapter = new EventAttendeeAdapter(signedUpAttendees, event, null);
 
         checkedInAttendeesListView.setAdapter(checkedInAttendeeAdapter);
         signedUpAttendeesListView.setAdapter(signedUpAttendeeAdapter);
@@ -58,53 +58,51 @@ public class EventAttendeesActivity extends AppCompatActivity implements EventAt
 
     /**
      * Adds a new Attendee to the specified list and updates the adapter.
+     *
      * Prevents duplicates based on attendeeId.
-     * @param attendee The Attendee to add.
-     * @param list The list to modify.
-     * @param adapter The adapter to notify of changes.
+     * @param attendee  The Attendee to add.
+     * @param list      The list to modify.
+     * @param adapter   The adapter to notify of changes.
      */
     public void addAttendee(Attendee attendee, ArrayList<Attendee> list, EventAttendeeAdapter adapter){
-        for (int i=0; i<list.size(); i++){
-            if (attendee.getAttendeeId() != null && list.get(i).getAttendeeId() != null && (attendee.getAttendeeId()).equals(list.get(i).getAttendeeId())){
-                return;
-            }
+        if (!list.contains(attendee)){
+            list.add(attendee);
+            adapter.notifyDataSetChanged();
         }
-        list.add(attendee);
-        adapter.notifyDataSetChanged();
     }
 
     /**
      * Updates an existing Attendee in the specified list and updates the adapter.
-     * @param attendee The updated Attendee.
-     * @param list The list to modify.
-     * @param adapter The adapter to notify of changes.
+     *
+     * @param attendee  The updated Attendee.
+     * @param list      The list to modify.
+     * @param adapter   The adapter to notify of changes.
      */
     public void updateAttendee(Attendee attendee, ArrayList<Attendee> list, EventAttendeeAdapter adapter){
-        for (int i=0; i<list.size(); i++){
-            if (attendee.getAttendeeId() != null && (attendee.getAttendeeId()).equals(list.get(i).getAttendeeId())){
-                list.set(i, attendee);
-            }
+        if (list.contains(attendee)){
+            list.set(list.indexOf(attendee), attendee);
+            adapter.notifyDataSetChanged();
         }
-        adapter.notifyDataSetChanged();
     }
 
     /**
      * Removes an Attendee from the specified list and updates the adapter.
-     * @param attendee The Attendee to remove.
-     * @param list The list to modify.
-     * @param adapter The adapter to notify of changes.
+     *
+     * @param attendee  The Attendee to remove.
+     * @param list      The list to modify.
+     * @param adapter   The adapter to notify of changes.
      */
     public void removeAttendee(Attendee attendee, ArrayList<Attendee> list, EventAttendeeAdapter adapter){
-        Iterator<Attendee> i = list.iterator();
-        while(i.hasNext()){
-            Attendee e = i.next();
-            if (attendee.getAttendeeId() != null && e.getAttendeeId() != null && (e.getAttendeeId()).equals(attendee.getAttendeeId())){
-                i.remove();
-            }
-        }
-        adapter.notifyDataSetChanged();
+        list.remove(attendee);
     }
 
+    /**
+     * Responds to updates in the list of attendees who have checked in.
+     * It handles the addition, modification, or removal of an attendee's check-in status.
+     *
+     * @param updateType The type of update (ADDED, MODIFIED, REMOVED).
+     * @param attendee   The attendee whose check-in status has changed.
+     */
     @Override
     public void onEventCheckedAttendeesUpdated(DocumentChange.Type updateType, Attendee attendee) {
         switch (updateType) {
@@ -120,6 +118,13 @@ public class EventAttendeesActivity extends AppCompatActivity implements EventAt
         }
     }
 
+    /**
+     * Responds to updates in the list of attendees who have signed up for an event.
+     * It manages the addition, modification, or removal of an attendee's sign-up status.
+     *
+     * @param updateType The type of update (ADDED, MODIFIED, REMOVED).
+     * @param attendee   The attendee whose sign-up status has changed.
+     */
     @Override
     public void onEventSignedAttendeesUpdated(DocumentChange.Type updateType, Attendee attendee) {
         switch (updateType) {
