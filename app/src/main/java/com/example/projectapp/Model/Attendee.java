@@ -172,31 +172,6 @@ public class Attendee {
         this.fcmToken = fcmToken;
     }
 
-    /**
-     * Add checked into event
-
-     * @param eventId the event added
-     */
-    public void addCheckedEvent(String eventId){
-        if (!checkedInEvents.containsKey(eventId)){
-            checkedInEvents.put(eventId, 1);
-        }
-        else{
-            Integer checkIns = checkedInEvents.get(eventId) + 1;
-            checkedInEvents.put(eventId, checkIns);
-        }
-    }
-
-    /**
-     * Add signed into event
-     * @param eventId the event added
-     */
-    public void addSignedEvent(String eventId){
-        if (!signedUpEvents.contains(eventId)){
-            signedUpEvents.add(eventId);
-        }
-    }
-
     @Override
     public boolean equals(@Nullable Object obj) {
 

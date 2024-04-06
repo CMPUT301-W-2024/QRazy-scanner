@@ -342,34 +342,6 @@ public class Event implements Serializable{
     }
 
     /**
-     * Check in an attendee
-     *
-     * @param attendeeId
-     *      The ID of the attendee who checked in.
-     */
-    public void addCheckedAttendee(String attendeeId){
-        if (!checkedAttendees.containsKey(attendeeId)){
-            checkedAttendees.put(attendeeId, 1);
-        }
-        else{
-            Integer checkIns = checkedAttendees.get(attendeeId) + 1;
-            checkedAttendees.put(attendeeId, checkIns);
-        }
-    }
-
-    /**
-     * Sign up an attendee
-     *
-     * @param attendeeId
-     *      The ID of the attendee who signed up.
-     */
-    public void addSignedAttendee(String attendeeId){
-        if (!signedAttendees.contains(attendeeId)){
-            signedAttendees.add(attendeeId);
-        }
-    }
-
-    /**
      * Gets the geographical location from
      * where the attendee checked in.
      *
@@ -408,18 +380,6 @@ public class Event implements Serializable{
      */
     public void setAnnouncements(ArrayList<Announcement> announcements) {
         this.announcements = announcements;
-    }
-
-    /**
-     * Add a new announcement
-     *
-     * @param announcement
-     *      A list of the announcements
-     */
-    public void addAnnouncements(String announcement){
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        Date currentDateTime = new Date();
-        announcements.add(new Announcement(announcement, sdf.format(currentDateTime), name, organizerName));
     }
 
     /**

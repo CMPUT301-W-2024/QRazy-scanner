@@ -24,11 +24,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projectapp.Controller.DataHandler;
 import com.example.projectapp.Controller.GetAttendeeCallback;
+import com.example.projectapp.Model.Announcement;
 import com.example.projectapp.Model.Attendee;
 import com.example.projectapp.Model.Event;
 import com.example.projectapp.R;
 import com.example.projectapp.Controller.UpdateEventCallback;
+import com.google.firebase.firestore.FieldValue;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -144,9 +148,11 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                             }
                         });
                     }
-                    
-                    event.addAnnouncements(input.getText().toString());
-                    dataHandler.updateEvent(event.getEventId(), "announcements", event.getAnnouncements(), OrganizerEventAdapter.this);
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+                    Date currentDateTime = new Date();
+                    Announcement announcement = new Announcement(input.getText().toString(), sdf.format(currentDateTime), event.getName(), event.getOrganizerName());
+                    dataHandler.updateEvent(event.getEventId(), "announcements", FieldValue.arrayUnion(announcement), OrganizerEventAdapter.this);
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
