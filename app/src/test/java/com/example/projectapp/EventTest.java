@@ -310,4 +310,18 @@ public class EventTest {
         // Checks if an object's hashCode is equal to itself
         assertEquals(testHashCode.hashCode(), testHashCode.hashCode());
     }
+
+    /**
+     * Tests for track location getter and setter
+     */
+    @Test
+    public void testTrackLocationGetterAndSetter(){
+        assertNull(testEvent.getTrackLocation());
+
+        testEvent.setTrackLocation(Boolean.TRUE);
+
+        assertTrue(testEvent.getTrackLocation());
+        assertNotEquals(Boolean.FALSE, testEvent.getTrackLocation());
+    }
+
 }
