@@ -58,8 +58,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         ImageView eventQrView, promoQrView;
         TextView eventQrText, promoQrText;
         ImageButton expandEventButton, announcementButton;
-        Button viewmapButton;
-        Button pdfButton;
+        Button viewmapButton, pdfButton, generateQrButton;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -77,6 +76,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             announcementButton = itemView.findViewById(R.id.announcementButton);
             pdfButton = itemView.findViewById(R.id.pdfButton);
             viewmapButton = itemView.findViewById(R.id.viewMapButton);
+            generateQrButton = itemView.findViewById(R.id.eventAdapterQrButton);
         }
     }
 
@@ -102,6 +102,10 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                 holder.eventQrView.setImageBitmap(bitmap);
                 holder.eventQrView.setVisibility(View.VISIBLE);
                 holder.eventQrText.setVisibility(View.VISIBLE);
+            }
+            else {
+                holder.eventQrView.setVisibility(View.GONE);
+                holder.eventQrText.setVisibility(View.GONE);
             }
         }
         else {
@@ -144,28 +148,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    DataHandler dataHandler = DataHandler.getInstance();
-                    // gets set of all checked and signed up attendees
-                    Set<String> unionAttendees = new HashSet<>(event.getCheckedAttendees().keySet());
-                    unionAttendees.addAll(event.getSignedAttendees());
-
-                    for (String attendeeId : unionAttendees){
-                        dataHandler.getAttendee(attendeeId, new GetAttendeeCallback() {
-                            @Override
-                            public void onGetAttendee(Attendee attendee, boolean deleted) {
-                                try {
-                                    dataHandler.sendNotification(attendee.getFcmToken() ,event.getName(), input.getText().toString());
-                                } catch (Exception e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
-                        });
-                    }
-
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-                    Date currentDateTime = new Date();
-                    Announcement announcement = new Announcement(input.getText().toString(), sdf.format(currentDateTime), event.getName(), event.getOrganizerName());
-                    dataHandler.updateEvent(event.getEventId(), "announcements", FieldValue.arrayUnion(announcement), OrganizerEventAdapter.this);
+                    sendAnnouncement(input.getText().toString(), event);
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -178,7 +161,14 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             builder.show();
         });
 
+        holder.generateQrButton.setOnClickListener(v -> {
+            Intent intent = new Intent(context, GenerateQrCodeActivity.class);
+            intent.putExtra("EVENT_ID", event.getEventId());
+            context.startActivity(intent);
+        });
+
         holder.viewmapButton.setVisibility(event.getTrackLocation() ? View.VISIBLE : View.GONE);
+
         holder.viewmapButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, MapActivity.class);
             intent.putExtra("EVENT_ID", event.getEventId());
@@ -194,6 +184,31 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
     @Override
     public int getItemCount() {
         return events.size();
+    }
+
+    private void sendAnnouncement(String message, Event event){
+        DataHandler dataHandler = DataHandler.getInstance();
+        // gets set of all checked and signed up attendees
+        Set<String> unionAttendees = new HashSet<>(event.getCheckedAttendees().keySet());
+        unionAttendees.addAll(event.getSignedAttendees());
+
+        for (String attendeeId : unionAttendees){
+            dataHandler.getAttendee(attendeeId, new GetAttendeeCallback() {
+                @Override
+                public void onGetAttendee(Attendee attendee, boolean deleted) {
+                    try {
+                        dataHandler.sendNotification(attendee.getFcmToken() ,event.getName(), message);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date currentDateTime = new Date();
+        Announcement announcement = new Announcement(message, sdf.format(currentDateTime), event.getName(), event.getOrganizerName());
+        dataHandler.updateEvent(event.getEventId(), "announcements", FieldValue.arrayUnion(announcement), OrganizerEventAdapter.this);
     }
 
 
