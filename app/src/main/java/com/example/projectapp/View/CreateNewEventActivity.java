@@ -29,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.projectapp.Controller.AddEventCallback;
 import com.example.projectapp.Controller.DataHandler;
+import com.example.projectapp.ImageHandler;
 import com.example.projectapp.Model.Event;
 import com.example.projectapp.R;
 import com.google.android.material.button.MaterialButton;
@@ -228,7 +229,7 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
                             try {
                                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), result);
                                 // Set the encodedImage string here
-                                encodedImage = bitmapToString(bitmap);
+                                encodedImage = ImageHandler.getInstance().bitmapToString(bitmap);
                             } catch (Exception e) {
                                 Toast.makeText(CreateNewEventActivity.this, "Failed to load image.", Toast.LENGTH_SHORT).show();
                                 e.printStackTrace();
@@ -237,6 +238,7 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
                     }
                 });
     }
+
 
     /**
      * Converts a bitmap image into a Base64 encoded string representation.
@@ -283,11 +285,13 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
         }
     }
 
+
     /**
      * Helper method to display a time picker dialog and set the selected time into an EditText field.
      *
      * @param editText The EditText where the selected time should be displayed.
      */
+
     private void timePicker(EditText editText){
 
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
