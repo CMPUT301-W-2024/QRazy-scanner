@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -51,6 +52,8 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
     private String encodedImage;
     private TextInputEditText eventNameEditText, eventDescriptionEditText, attendanceLimitEditText, eventStartTimeEditText, eventEndTimeEditText;
     private final DataHandler dataHandler = DataHandler.getInstance();
+    private RadioGroup checkInOptionGroup;
+    private Boolean trackLocation = null;
 
     /**
      * Initializes the activity, sets up UI elements, and prepares date picker functionality.
@@ -70,6 +73,7 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
         eventStartTimeEditText = findViewById(R.id.eventStartTimeEditText);
         eventEndTimeEditText = findViewById(R.id.eventEndTimeEditText);
         calendar = Calendar.getInstance();
+        checkInOptionGroup = findViewById(R.id.checkInOptionGroup);
 
 
         eventDateEditText.setOnClickListener(new View.OnClickListener() {
@@ -103,6 +107,20 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
             timePicker(eventEndTimeEditText);
         });
 
+        checkInOptionGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                // Check which radio button is selected
+                if (checkedId == R.id.checkInLocation) {
+                    // "Check In at Location" radio button is selected
+                    trackLocation = true;
+                } else if (checkedId == R.id.noCheckInLocation) {
+                    // "Do Not Check In at Location" radio button is selected
+                    trackLocation = false;
+                }
+            }
+        });
+
         MaterialButton saveEventButton = findViewById(R.id.newQrButton);
         saveEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,7 +149,7 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
         String attendanceLimitStr = attendanceLimitEditText.getText().toString().trim();
 
         // Check if inputs are valid
-        if (eventName.isEmpty() || eventDate.isEmpty() || eventDescription.isEmpty() || eventStartTime.isEmpty() || eventEndTime.isEmpty()) {
+        if (eventName.isEmpty() || eventDate.isEmpty() || eventDescription.isEmpty() || eventStartTime.isEmpty() || eventEndTime.isEmpty() || (trackLocation == null)) {
             Toast.makeText(CreateNewEventActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -163,6 +181,7 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
         // Set the event details to the newEvent object
 
         Event newEvent = new Event(eventName, eventDate, eventStartTime, eventEndTime, dataHandler.getLocalOrganizer().getName(), dataHandler.getLocalOrganizer().getOrganizerId(), attendanceLimit, eventDescription, encodedImage);
+        newEvent.setTrackLocation(trackLocation);
 
         dataHandler.addEvent(newEvent, this);
     }
