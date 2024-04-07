@@ -29,7 +29,9 @@
             android:layout_below="@id/dialogQuestion"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="8dp"
-            android:background="@drawable/rectangular_button"/>
+            android:background="@drawable/rectangular_button"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/orange"/>
 
         <Button
             android:id="@+id/noButton"
@@ -39,6 +41,8 @@
             android:layout_below="@id/okButton"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="8dp"
-            android:background="@drawable/rectangular_button"/>
+            android:background="@drawable/rectangular_button"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/orange"/>
     </RelativeLayout>
 </RelativeLayout>

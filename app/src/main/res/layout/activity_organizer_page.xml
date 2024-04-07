@@ -67,6 +67,8 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/bold1"
         android:text="Create New Event"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/orange"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
