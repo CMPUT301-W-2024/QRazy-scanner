@@ -36,6 +36,9 @@ import com.google.firebase.firestore.FieldValue;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * The Admin class provides a central view for administrators to manage events and attendees within an application.
+ */
 public class Admin extends AppCompatActivity implements EventsListenerCallback, AttendeesListenerCallback, ImagesListenerCallback, UpdateEventCallback, UpdateAttendeeCallback, DeleteEventCallback, DeleteAttendeeCallback {
     private ArrayList<Event> events;
     private ArrayList<Attendee> attendees;
@@ -45,6 +48,10 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
     private LinearLayout  postersLayout, profilePicsLayout, qrCodesLayout, promoQrCodesLayout;
     private final DataHandler dataHandler = DataHandler.getInstance();
 
+    /**
+     * Initializes the Admin view, setting up UI elements and listeners for real-time database updates.
+     * @param savedInstanceState The saved instance state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +96,11 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
     }
 
 
+    /**
+     * Callback triggered when changes are detected in the events collection.
+     * @param updateType The type of change (ADDED, MODIFIED, REMOVED)
+     * @param event The updated Event object
+     */
     @Override
     public void onEventsUpdated(DocumentChange.Type updateType, Event event) {
         switch (updateType) {
@@ -109,6 +121,11 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         eventsAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Callback triggered when changes are detected in the attendees collection.
+     * @param updateType    The type of change (ADDED, MODIFIED, REMOVED)
+     * @param attendee      The updated Attendee object
+     */
     @Override
     public void onAttendeesUpdated(DocumentChange.Type updateType, Attendee attendee) {
         switch (updateType) {
@@ -129,6 +146,13 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         attendeesAdapter.notifyDataSetChanged();
     }
 
+    /**
+     *  Callback triggered when changes are detected in image references.
+     *  @param images       A map of document IDs to their image data
+     *  @param layout       The layout to dynamically update with the images
+     *  @param collection   The Firestore collection containing the images
+     *  @param field        The image field within the documents
+     */
     @Override
     public void onImagesUpdated(HashMap<String, String> images, LinearLayout layout,String collection, String field) {
         layout.removeAllViews();
@@ -188,6 +212,10 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         eventDetailDialog.show();
     }
 
+    /**
+     * Displays a dialog with detailed information about the selected attendee.
+     * @param attendee The Attendee object to display details for
+     */
     private void showDialogWithAttendeeDetails(Attendee attendee) {
         Dialog detailDialog = new Dialog(this);
         detailDialog.setContentView(R.layout.attendee_dialog);
@@ -214,6 +242,13 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         detailDialog.show();
     }
 
+    /**
+     * Displays a dialog with a larger view  of the image.
+     * @param image         The Bitmap of the image to display
+     * @param documentId    The document ID for deleting the image
+     * @param field         The field name for deleting the image
+     * @param collection    The collection name for deleting the image
+     */
     private void showDialogWithImage(Bitmap image, String documentId, String field, String collection) {
         Dialog imageDialog = new Dialog(this);
         imageDialog.setContentView(R.layout.image_dialog);
@@ -230,6 +265,9 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         imageDialog.show();
     }
 
+    /**
+     * Helper method to add images to a layout with a click listener for viewing larger images.
+     */
     private void addImageToLayout(String encodedImageString, LinearLayout layout, String documentId, String field, String collection) {
         View imageLayoutView = LayoutInflater.from(this).inflate(R.layout.image_layout, null, false);
         ImageView imageView = imageLayoutView.findViewById(R.id.image_view);
@@ -244,15 +282,31 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
 
     }
 
-    private Bitmap stringToBitmap(String encodedString) {
-        if (encodedString == null || encodedString.isEmpty()) {
-            Log.e("Admin", "Encoded string is null or empty");
+    /**
+     * Converts an image encoded as a Base64 String to a Bitmap.
+     * @param encodedString     The Base64 encoded string representation of the image
+     * @return                  The Bitmap object, or 'null' if decoding failed
+     */
+    public Bitmap stringToBitmap(String encodedString) {
+        try {
+            Log.i("admin", "encodedString3 "+ encodedString);
+            byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+            return bitmap;
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
-        byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+
     }
 
+    /**
+     * Deletes an image field from a Firestore document in either the "events" or "attendees" collection.
+     *
+     * @param documentId    The ID of the document containing the image
+     * @param field         The name of the image field within the document
+     * @param collection    The Firestore collection containing the document ("events" or "attendees")
+     */
     private void deleteImage(String documentId, String field, String collection) {
         if (collection.equals("events")){
             dataHandler.updateEvent(documentId, field, null, this);
@@ -262,6 +316,11 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         }
     }
 
+    /**
+     *  Deletes an attendee from the database and removes them from all associated events.
+     *
+     *  @param attendee The Attendee object to be deleted
+     */
     private void deleteAttendee(Attendee attendee){
         dataHandler.deleteAttendee(attendee.getAttendeeId(), this);
         // remove attendee from all of its events
@@ -279,6 +338,11 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         }
     }
 
+    /**
+     *  Deletes an event from the database and removes it from the associated attendees.
+     *
+     *  @param event The Event object to be deleted.
+     */
     private void deleteEvent(Event event){
         dataHandler.deleteEvent(event.getEventId(), this);
         // remove event from all of its attendees
@@ -291,6 +355,12 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         }
     }
 
+    /**
+     * Callback invoked when an attendee document has been updated in the database.
+     * Displays a message indicating success or failure of the image deletion.
+     *
+     * @param attendeeId The ID of the attendee document that was updated (or null if the update failed)
+     */
     @Override
     public void onUpdateAttendee(String attendeeId) {
         if (attendeeId == null){
@@ -301,6 +371,12 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         }
     }
 
+    /**
+     * Callback invoked when an event document has been updated in the database.
+     * Displays a message indicating success or failure of the image deletion.
+     *
+     * @param eventId The ID of the event document that was updated (or null if the update failed)
+     */
     @Override
     public void onUpdateEvent(String eventId) {
         if (eventId == null){
@@ -311,6 +387,12 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         }
     }
 
+    /**
+     *  Callback invoked when an attendee has been deleted from the database.
+     *  Displays a message indicating success or failure of the deletion.
+     *
+     *  @param attendeeId The ID of the attendee that was deleted (or null if the deletion failed)
+     */
     @Override
     public void onDeleteAttendee(String attendeeId) {
         if (attendeeId == null){
@@ -321,6 +403,12 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         }
     }
 
+    /**
+     *  Callback invoked when an event has been deleted from the database.
+     *  Displays a message indicating success or failure of the deletion.
+     *
+     *  @param eventId The ID of the event that was deleted (or null if the deletion failed)
+     */
     @Override
     public void onDeleteEvent(String eventId) {
         if (eventId == null){

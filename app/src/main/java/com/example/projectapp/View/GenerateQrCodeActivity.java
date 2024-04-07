@@ -165,6 +165,12 @@ public class GenerateQrCodeActivity extends AppCompatActivity implements GetQrCo
 
 
 
+    /**
+     * Converts a Bitmap image into a shareable Uri.
+     *
+     * @param bitmap The Bitmap image to be converted.
+     * @return Uri A file-based Uri representing the newly saved image for sharing purposes.
+     */
     private Uri bitmapToUri(Bitmap bitmap) {
         // Creating a file
         File cachePath = new File(getExternalCacheDir(), "shared_qr_code.png");
@@ -181,6 +187,12 @@ public class GenerateQrCodeActivity extends AppCompatActivity implements GetQrCo
         return FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", cachePath);
     }
 
+    /**
+     * Initiates the sharing process for a QR code image. This method creates a sharing intent,
+     * providing the generated QR code bitmap as an image attachment.
+     *
+     * @param bitmap The Bitmap object representing the QR code to be shared.
+     */
     private void shareQRCode(Bitmap bitmap) {
         Uri qrCodeUri = bitmapToUri(bitmap);
 
@@ -194,6 +206,12 @@ public class GenerateQrCodeActivity extends AppCompatActivity implements GetQrCo
     }
 
 
+    /**
+     * Converts a Base64 encoded string representation of an image into a Bitmap object.
+     *
+     * @param encodedString The Base64 encoded string of the image.
+     * @return Bitmap The decoded image as a Bitmap object, or 'null' if the decoding fails.
+     */
     private Bitmap stringToBitmap(String encodedString) {
         try {
             byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
@@ -204,6 +222,12 @@ public class GenerateQrCodeActivity extends AppCompatActivity implements GetQrCo
         }
     }
 
+    /**
+     *  Callback triggered when a QR code has been retrieved (likely from a database).
+     *  If successful, decodes the Base64 QR Code string into a Bitmap and initiates the sharing process.
+     *
+     * @param qrCode The Base64 encoded string representation of the QR code image, or 'null' if retrieval failed.
+     */
     @Override
     public void onGetQrCode(String qrCode) {
         if (qrCode != null){

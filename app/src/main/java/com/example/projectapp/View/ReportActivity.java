@@ -35,6 +35,10 @@ import java.util.Set;
 
 
 
+/**
+ * The ReportActivity class provides functionality to generate a PDF report summarizing key information
+ * about a specific event
+ */
 public class ReportActivity extends AppCompatActivity {
 
     Button btn;
@@ -83,6 +87,11 @@ public class ReportActivity extends AppCompatActivity {
 
     }
 
+    /**
+     *  Creates a PDF document and populates it with event information.
+     *
+     *  @param ref_outst The OutputStream where the generated PDF content will be written.
+     */
     public void createPDF(OutputStream ref_outst) {
         // Standard margins for A4 size paper (1 inch = 72 points)
         int marginLeft = 72;
@@ -154,6 +163,9 @@ public class ReportActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Creates a PDF report, saves it as a temporary file, and initiates a share intent for sharing the generated PDF.
+     */
     public void createPDFandShare() {
         try {
             // Create a temporary file
@@ -181,6 +193,9 @@ public class ReportActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     *  Requests permissions for storing/reading images.
+     */
     public void requestPermissionStorageImages() {
         if (ContextCompat.checkSelfPermission(this, requiredPermissions[0]) == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, requiredPermissions[0] + " Granted");
@@ -205,6 +220,9 @@ public class ReportActivity extends AppCompatActivity {
                         }
                     });
 
+    /**
+     *  Extracts relevant information from the Event object used to populate the PDF report.
+     */
     private void getInfo(){
         // Retrieve values from the event
         eventName = event.getName();
