@@ -4,7 +4,9 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -245,7 +247,7 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
      *      Base64 encoded string of the bitmap.
      */
     public String bitmapToString(Bitmap bitmap) {
-        int maxSize = 3072; // Maximum dimension (width or height) for the resized bitmap
+        int maxSize = 1300; // Maximum dimension (width or height) for the resized bitmap
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
 
@@ -303,6 +305,36 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
                     }
                 }, hour, minute, false);
         timePickerDialog.show();
+    }
+
+    public static Bitmap rotateImageIfNeeded(String imagePath) {
+        try {
+            ExifInterface exif = new ExifInterface(imagePath);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+            Matrix matrix = new Matrix();
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    matrix.postRotate(90);
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    matrix.postRotate(180);
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    matrix.postRotate(270);
+                    break;
+                default:
+                    // No rotation needed
+                    return BitmapFactory.decodeFile(imagePath);
+            }
+
+            Bitmap originalBitmap = BitmapFactory.decodeFile(imagePath);
+            return Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getWidth(), originalBitmap.getHeight(), matrix, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Handle exceptions (e.g., file not found, invalid image)
+            return null;
+        }
     }
 }
 

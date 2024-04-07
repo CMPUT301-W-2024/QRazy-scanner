@@ -215,7 +215,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
     }
 
     public String bitmapToString(Bitmap bitmap) {
-        int maxSize = 3072; // Maximum dimension (width or height) for the resized bitmap
+        int maxSize = 1024; // Maximum dimension (width or height) for the resized bitmap
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
 
@@ -226,16 +226,10 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
             matrix.postScale(scale, scale);
             Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
 
-            // Rotate the resized bitmap by 90 degrees (adjust as needed)
-            matrix.postRotate(90); // You can change the rotation angle here
-
-            Bitmap rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0, resizedBitmap.getWidth(), resizedBitmap.getHeight(), matrix, true);
-
-            // Convert the rotated bitmap to a Base64 encoded string
+            // Convert the resized bitmap to a Base64 encoded string
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
             int quality = 100; // Initial quality
-            rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
 
             while (baos.size() > 1024 * 1024) { // 1 MiB in bytes
                 baos.reset(); // Reset the stream
@@ -243,11 +237,10 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
                 if (quality <= 0) {
                     break; // Exit loop if quality reaches 0
                 }
-                rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+                resizedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
             }
 
             byte[] byteArray = baos.toByteArray();
-            Log.i("ProfileEditActivity", "encodedString2 " + Base64.encodeToString(byteArray, Base64.DEFAULT));
             return Base64.encodeToString(byteArray, Base64.DEFAULT);
         } else {
             // No resizing needed, directly convert the original bitmap to a Base64 encoded string
@@ -264,6 +257,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
             Log.i("ProfileEditActivity", "encodedString3 "+ encodedString);
             byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+            bitmap = rotateBitmapIfRequired(bitmap,encodedString);
             return bitmap;
         } catch (Exception e) {
             e.printStackTrace();
@@ -355,6 +349,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
                     matrix.postRotate(270);
                     break;
                 default:
+                    // No rotation needed
                     return bitmap;
             }
 
