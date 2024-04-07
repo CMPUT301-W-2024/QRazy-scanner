@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -47,7 +48,7 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
     private TextInputEditText eventDateEditText;
     private Calendar calendar;
     private MaterialButton uploadButton;
-    ActivityResultLauncher<Intent> resultLauncher;
+    ActivityResultLauncher<String> resultLauncher;
     private ImageView poster;
     private String encodedImage;
     private TextInputEditText eventNameEditText, eventDescriptionEditText, attendanceLimitEditText, eventStartTimeEditText, eventEndTimeEditText;
@@ -207,11 +208,7 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
      * Launches an image picker intent to allow users to select an image for the event poster.
      */
     private void pickImage(){
-        Intent intent = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R && android.os.ext.SdkExtensions.getExtensionVersion(android.os.Build.VERSION_CODES.R) >= 2) {
-            intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
-        }
-        resultLauncher.launch(intent);
+        resultLauncher.launch("image/*");
     }
 
     /**
@@ -219,28 +216,23 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
      * Within this, updates the ImageView and encodes the selected image for storage.
      */
     private void registerResult() {
-        resultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
+        resultLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(),
+                new ActivityResultCallback<Uri>() {
                     @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                            Uri imageUri = result.getData().getData();
-                            if (imageUri != null) {
-                                poster.setImageURI(imageUri);
-                                try {
-                                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                                    // Set the encodedImage string here
-                                    encodedImage = bitmapToString(bitmap);
-                                } catch (Exception e) {
-                                    Toast.makeText(CreateNewEventActivity.this, "Failed to load image.", Toast.LENGTH_SHORT).show();
-                                    e.printStackTrace();
-                                }
+                    public void onActivityResult(Uri result) {
+                        if (result != null) {
+                            poster.setImageURI(result);
+                            try {
+                                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), result);
+                                // Set the encodedImage string here
+                                encodedImage = bitmapToString(bitmap);
+                            } catch (Exception e) {
+                                Toast.makeText(CreateNewEventActivity.this, "Failed to load image.", Toast.LENGTH_SHORT).show();
+                                e.printStackTrace();
                             }
                         }
                     }
-                }
-        );
+                });
     }
 
     /**
@@ -252,8 +244,17 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
      *      Base64 encoded string of the bitmap.
      */
     public String bitmapToString(Bitmap bitmap) {
+        int maxSize = 1024; // Maximum dimension (width or height) for the resized bitmap
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        float scale = Math.min(((float) maxSize) / width, ((float) maxSize) / height);
+        Matrix matrix = new Matrix();
+        matrix.postScale(scale, scale);
+        Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
+
+        // Convert the resized bitmap to a Base64 encoded string
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        resizedBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] byteArray = baos.toByteArray();
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
