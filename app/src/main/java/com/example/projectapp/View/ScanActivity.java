@@ -48,7 +48,7 @@ public class ScanActivity extends AppCompatActivity implements GetEventCallback,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
         checkPermission();
-        CodeScannerView scannerView = findViewById(R.id.scanner_view);
+        CodeScannerView scannerView = findViewById(R.id.scannerView);
         mCodeScanner = new CodeScanner(this, scannerView);
         mCodeScanner.setDecodeCallback(new DecodeCallback() {
             @Override

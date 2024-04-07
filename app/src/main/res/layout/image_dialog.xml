@@ -5,7 +5,7 @@
     android:padding="16dp">
 
     <ImageView
-        android:id="@+id/dialog_image_view"
+        android:id="@+id/imageDialogImageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:maxHeight="300dp"
@@ -13,7 +13,7 @@
 
     <com.google.android.material.button.MaterialButton
         style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-        android:id="@+id/delete_image_button"
+        android:id="@+id/imageDialogDeleteButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Delete Image"

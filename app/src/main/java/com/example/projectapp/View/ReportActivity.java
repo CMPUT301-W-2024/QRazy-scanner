@@ -62,7 +62,7 @@ public class ReportActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.report_layout);
         event = (Event) getIntent().getSerializableExtra("EVENT");
-        btn = (Button) findViewById(R.id.btn);
+        btn = (Button) findViewById(R.id.reportButton);
         container = (ConstraintLayout) findViewById(R.id.container);
 
 

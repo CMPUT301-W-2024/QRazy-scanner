@@ -80,7 +80,7 @@
                 android:text="Check map" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/pdf_button"
+                android:id="@+id/pdfButton"
                 style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

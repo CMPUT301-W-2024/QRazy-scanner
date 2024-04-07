@@ -55,7 +55,7 @@ public class MapActivity extends AppCompatActivity implements EventGeoPointsList
         setContentView(R.layout.osm_main); // Make sure you have a layout file named osm_main.xml
 
         // Initialize the map view
-        mMapView = findViewById(R.id.mapview);
+        mMapView = findViewById(R.id.mapView);
         backButton = findViewById(R.id.goBackButton);
         mMapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
         mMapView.setBuiltInZoomControls(true);

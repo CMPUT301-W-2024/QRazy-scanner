@@ -19,7 +19,7 @@
         android:background="@color/white">
 
         <TextView
-            android:id="@+id/edt"
+            android:id="@+id/reportText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
@@ -31,7 +31,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/btn"
+            android:id="@+id/reportButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Create PDF and Share"
@@ -40,16 +40,16 @@
             android:textSize="25sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/edt" />
+            app:layout_constraintTop_toBottomOf="@id/reportText" />
 
         <ImageView
-            android:id="@+id/image"
+            android:id="@+id/reportImage"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_marginTop="50dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn" />
+            app:layout_constraintTop_toBottomOf="@id/reportButton" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
