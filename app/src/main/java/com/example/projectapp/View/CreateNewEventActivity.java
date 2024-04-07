@@ -245,7 +245,7 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
      *      Base64 encoded string of the bitmap.
      */
     public String bitmapToString(Bitmap bitmap) {
-        int maxSize = 1024; // Maximum dimension (width or height) for the resized bitmap
+        int maxSize = 3072; // Maximum dimension (width or height) for the resized bitmap
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
 
