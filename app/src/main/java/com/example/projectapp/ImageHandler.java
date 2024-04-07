@@ -34,15 +34,13 @@ public class ImageHandler {
     }
 
     /**
-     * Converts a bitmap image into a Base64 encoded string representation.
+     *  Converts a bitmap into a Base64 encoded string and optionally implements downsizing and rotation.
      *
-     * @param bitmap
-     *      The bitmap to be encoded.
-     * @return
-     *      Base64 encoded string of the bitmap.
+     *  @param bitmap  The Bitmap to be converted.
+     *  @return The Base64 encoded string representation of the image.
      */
     public String bitmapToString(Bitmap bitmap) {
-        int maxSize = 3072; // Maximum dimension (width or height) for the resized bitmap
+        int maxSize = 1024; // Maximum dimension (width or height) for the resized bitmap
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
 
@@ -53,16 +51,10 @@ public class ImageHandler {
             matrix.postScale(scale, scale);
             Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
 
-            // Rotate the resized bitmap by 90 degrees (adjust as needed)
-            matrix.postRotate(90); // You can change the rotation angle here
-
-            Bitmap rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0, resizedBitmap.getWidth(), resizedBitmap.getHeight(), matrix, true);
-
-            // Convert the rotated bitmap to a Base64 encoded string
+            // Convert the resized bitmap to a Base64 encoded string
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
             int quality = 100; // Initial quality
-            rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
 
             while (baos.size() > 1024 * 1024) { // 1 MiB in bytes
                 baos.reset(); // Reset the stream
@@ -70,7 +62,7 @@ public class ImageHandler {
                 if (quality <= 0) {
                     break; // Exit loop if quality reaches 0
                 }
-                rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+                resizedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
             }
 
             byte[] byteArray = baos.toByteArray();
@@ -84,16 +76,20 @@ public class ImageHandler {
         }
     }
 
+
     /**
-     * Converts a Base64 encoded string to a Bitmap object.
+     *  Converts a Base64 encoded string into a Bitmap object.
      *
-     * @param encodedString
-     *      The Base64 encoded string representing the bitmap.
-     * @return
-     *      The decoded Bitmap object, or null if the input string is null or empty.
+     *  @param encodedString  The Base64 encoded image string
+     *  @return  The Bitmap object, or 'null' if decoding failed
      */
     public Bitmap stringToBitmap(String encodedString) {
+        if (encodedString == null || encodedString.isEmpty()) {
+            Log.e("Admin", "Encoded string is null or empty");
+            return null;
+        }
         try {
+            Log.i("ProfileEditActivity", "encodedString3 "+ encodedString);
             byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
             return bitmap;
@@ -101,6 +97,5 @@ public class ImageHandler {
             e.printStackTrace();
             return null;
         }
-
     }
 }
