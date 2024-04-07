@@ -35,6 +35,10 @@ import org.osmdroid.views.overlay.OverlayItem;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The MapActivity class displays an interactive map using OpenStreetMap.  It allows users to view
+ * geolocation markers retrieved from Firestore for a specific event.
+ */
 public class MapActivity extends AppCompatActivity implements EventGeoPointsListenerCallback {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private MapView mMapView;
@@ -101,7 +105,10 @@ public class MapActivity extends AppCompatActivity implements EventGeoPointsList
         }
     }
 
-    // Get device's location
+    /**
+     * Configures the map with the user's location (if available), retrieves the Event ID from the
+     * intent, and registers a listener for updates to the event's geopoints in Firestore.
+     */
     private void setupMap() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
@@ -136,6 +143,13 @@ public class MapActivity extends AppCompatActivity implements EventGeoPointsList
 
     }
 
+    /**
+     * Converts a list of Firestore GeoPoint objects into a list of OverlayItem objects suitable for
+     * display on the OpenStreetMap map.
+     *
+     * @param geoPoints  The list of Firestore GeoPoint objects
+     * @return A list of  OverlayItem objects
+     */
     private List<OverlayItem> mapToOverlayItems(List<com.google.firebase.firestore.GeoPoint> geoPoints) {
         List<OverlayItem> overlayItems = new ArrayList<>();
 
