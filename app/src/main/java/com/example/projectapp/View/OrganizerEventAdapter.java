@@ -97,9 +97,11 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
 
         if (event.getQrCode() != null){
             Bitmap bitmap = stringToBitmap(event.getQrCode());
-            holder.eventQrView.setImageBitmap(bitmap);
-            holder.eventQrView.setVisibility(View.VISIBLE);
-            holder.eventQrText.setVisibility(View.VISIBLE);
+            if (bitmap != null){
+                holder.eventQrView.setImageBitmap(bitmap);
+                holder.eventQrView.setVisibility(View.VISIBLE);
+                holder.eventQrText.setVisibility(View.VISIBLE);
+            }
         }
         else {
             holder.eventQrView.setVisibility(View.GONE);
