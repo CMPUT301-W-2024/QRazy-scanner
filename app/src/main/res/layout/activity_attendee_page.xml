@@ -38,9 +38,11 @@
         android:layout_below="@id/welcomeText"
         android:padding="18dp">
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
@@ -49,12 +51,29 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="All"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:id="@+id/attendeeOngoingEvent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ongoing"/>
+
             <com.google.android.material.button.MaterialButton
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:id="@+id/attendeeUpcomingEvent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Upcoming"/>
+
             <com.google.android.material.button.MaterialButton
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:id="@+id/attendeeCompletedEvent"
@@ -63,12 +82,6 @@
                 android:text="Completed"/>
 
         </LinearLayout>
-        <com.google.android.material.button.MaterialButton
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:id="@+id/attendeeOngoingEvent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ongoing"/>
 
         <TextView
             android:layout_width="match_parent"

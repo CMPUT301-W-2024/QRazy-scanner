@@ -33,7 +33,7 @@ public class GeopointDialog extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.geopoint_dialog);
-
+        checkLocationPermission();
         eventId = getIntent().getStringExtra("eventId");
 
         Button okButton = findViewById(R.id.okButton);
@@ -44,7 +44,7 @@ public class GeopointDialog extends AppCompatActivity {
             public void onClick(View v) {
 
                 // Check location permission and proceed to set location if permission is granted
-                checkLocationPermission();
+                getCurrentLocation();
                 finish();
             }
         });
@@ -64,6 +64,7 @@ public class GeopointDialog extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission granted
                 Toast.makeText(this, "Thank you", Toast.LENGTH_SHORT).show();
+                //getCurrentLocation();
             } else {
                 // Permission denied
                 Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
@@ -79,7 +80,7 @@ public class GeopointDialog extends AppCompatActivity {
                     LOCATION_PERMISSION_REQUEST_CODE);
         } else {
             // Permission already granted, set location
-            getCurrentLocation();
+            //getCurrentLocation();
         }
     }
 
@@ -89,6 +90,7 @@ public class GeopointDialog extends AppCompatActivity {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // You have to request permissions before calling this method
+            finish();
             return;
         }
 

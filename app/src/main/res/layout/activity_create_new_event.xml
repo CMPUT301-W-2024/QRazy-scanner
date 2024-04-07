@@ -30,10 +30,10 @@
             android:id="@+id/eventPosterImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_launcher_foreground"
-            android:scaleType="center"
+            android:contentDescription="Upload Event Poster"
             android:fontFamily="@font/bold1"
-            android:contentDescription="Upload Event Poster"/>
+            android:scaleType="center"
+            android:src="@drawable/ic_launcher_foreground" />
     </FrameLayout>
 
     <!-- Input fields -->
@@ -48,6 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/bold1"
+            android:maxLength="32"
             android:hint="Event Name"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -127,6 +128,7 @@
             android:fontFamily="@font/bold1"
             android:hint="Event Description"
             android:gravity="top|start"
+            android:maxLength="132"
             android:inputType="textMultiLine"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -144,6 +146,26 @@
             android:layout_height="wrap_content"
             android:inputType="number"/>
     </com.google.android.material.textfield.TextInputLayout>
+
+    <RadioGroup
+        android:id="@+id/checkInOptionGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <RadioButton
+            android:id="@+id/checkInLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Get Check-in Locations"/>
+
+        <RadioButton
+            android:id="@+id/noCheckInLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Don't Get Check-in Locations"/>
+    </RadioGroup>
 
     <!-- Buttons for QR code generation -->
     <androidx.constraintlayout.widget.ConstraintLayout
