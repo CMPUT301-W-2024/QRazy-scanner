@@ -33,6 +33,7 @@ public class Event implements Serializable{
     private String promoQrCode;
     private transient HashMap<String, ArrayList<GeoPoint>> geopoints;
     private ArrayList<Announcement> announcements;
+    private Boolean trackLocation;
 
     /**
      * Empty Event constructor required for firebase
@@ -435,5 +436,20 @@ public class Event implements Serializable{
         return Objects.hash(eventId);
     }
 
+    /**
+     * get if the event is tracking location
+     * @return
+     */
+    public Boolean getTrackLocation() {
+        return trackLocation;
+    }
+
+    /**
+     * set option to track location
+     * @param  trackLocation
+     */
+    public void setTrackLocation(Boolean trackLocation) {
+        this.trackLocation = trackLocation;
+    }
 }
 
