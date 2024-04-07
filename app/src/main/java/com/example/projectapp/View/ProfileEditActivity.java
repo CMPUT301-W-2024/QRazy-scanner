@@ -133,7 +133,6 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         if (encodedImage != null && !encodedImage.isEmpty()) {
             Bitmap bitmap = stringToBitmap(encodedImage);
             if (bitmap != null) {
-                //bitmap = ExifUtil.rotateBitmap(bitmap, exifOrientation);;
                 Log.i("ProfileEditActivity", "encodedString1 "+ bitmapToString(bitmap)+ "vs " + encodedImage);
                 avatar.setImageBitmap(bitmap);
             }
@@ -252,18 +251,13 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
     }
 
 
-    public Bitmap stringToBitmap(String encodedString) {
-        try {
-            Log.i("ProfileEditActivity", "encodedString3 "+ encodedString);
-            byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-            bitmap = rotateBitmapIfRequired(bitmap,encodedString);
-            return bitmap;
-        } catch (Exception e) {
-            e.printStackTrace();
+    private Bitmap stringToBitmap(String encodedString) {
+        if (encodedString == null || encodedString.isEmpty()) {
+            Log.e("Admin", "Encoded string is null or empty");
             return null;
         }
-
+        byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
     public static class IdenticonGenerator {
@@ -326,41 +320,5 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         editor.apply();
     }
 
-    private Bitmap rotateBitmapIfRequired(Bitmap bitmap, String encodedString) {
-        try {
-            byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
-            File file = File.createTempFile("temp", null, getCacheDir());
-            FileOutputStream fos = new FileOutputStream(file);
-            fos.write(decodedBytes);
-            fos.close();
-
-            ExifInterface exif = new ExifInterface(file.getAbsolutePath());
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
-            Matrix matrix = new Matrix();
-            switch (orientation) {
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    matrix.postRotate(90);
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    matrix.postRotate(180);
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    matrix.postRotate(270);
-                    break;
-                default:
-                    // No rotation needed
-                    return bitmap;
-            }
-
-            Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-            file.delete(); // Clean up temporary file
-            return rotatedBitmap;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return bitmap;
-        }
-    }
 
 }

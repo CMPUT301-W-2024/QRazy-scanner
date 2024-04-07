@@ -258,16 +258,10 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
             matrix.postScale(scale, scale);
             Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
 
-            // Rotate the resized bitmap by 90 degrees (adjust as needed)
-            matrix.postRotate(90); // You can change the rotation angle here
-
-            Bitmap rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0, resizedBitmap.getWidth(), resizedBitmap.getHeight(), matrix, true);
-
-            // Convert the rotated bitmap to a Base64 encoded string
+            // Convert the resized bitmap to a Base64 encoded string
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
             int quality = 100; // Initial quality
-            rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
 
             while (baos.size() > 1024 * 1024) { // 1 MiB in bytes
                 baos.reset(); // Reset the stream
@@ -275,11 +269,10 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
                 if (quality <= 0) {
                     break; // Exit loop if quality reaches 0
                 }
-                rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+                resizedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
             }
 
             byte[] byteArray = baos.toByteArray();
-            Log.i("ProfileEditActivity", "encodedString2 " + Base64.encodeToString(byteArray, Base64.DEFAULT));
             return Base64.encodeToString(byteArray, Base64.DEFAULT);
         } else {
             // No resizing needed, directly convert the original bitmap to a Base64 encoded string
@@ -305,36 +298,6 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
                     }
                 }, hour, minute, false);
         timePickerDialog.show();
-    }
-
-    public static Bitmap rotateImageIfNeeded(String imagePath) {
-        try {
-            ExifInterface exif = new ExifInterface(imagePath);
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
-            Matrix matrix = new Matrix();
-            switch (orientation) {
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    matrix.postRotate(90);
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    matrix.postRotate(180);
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    matrix.postRotate(270);
-                    break;
-                default:
-                    // No rotation needed
-                    return BitmapFactory.decodeFile(imagePath);
-            }
-
-            Bitmap originalBitmap = BitmapFactory.decodeFile(imagePath);
-            return Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getWidth(), originalBitmap.getHeight(), matrix, true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Handle exceptions (e.g., file not found, invalid image)
-            return null;
-        }
     }
 }
 
