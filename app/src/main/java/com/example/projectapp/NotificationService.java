@@ -11,6 +11,10 @@ import com.example.projectapp.Controller.DataHandler;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+/**
+ * The NotificationService class extends FirebaseMessagingService and is responsible for
+ * receiving and handling push notifications sent through the Firebase Cloud Messaging (FCM) platform.
+ */
 public class NotificationService extends FirebaseMessagingService {
 
     private final String channelId = "CHANNEL_ID_NOTIFICATION";
@@ -31,6 +35,12 @@ public class NotificationService extends FirebaseMessagingService {
             dataHandler.updateAttendee(dataHandler.getLocalAttendee().getAttendeeId(), "fcmToken", token, null);
     }
 
+    /**
+     *  Constructs a notification and displays it to the user.
+     *
+     *  @param textTitle The title text to be displayed in the notification.
+     *  @param textContent The body text to be displayed in the notification.
+     */
     private void generateNotification(String textTitle, String textContent){
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
