@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.projectapp.Controller.AddEventCallback;
 import com.example.projectapp.Controller.DataHandler;
+import com.example.projectapp.ImageHandler;
 import com.example.projectapp.Model.Event;
 import com.example.projectapp.R;
 import com.google.android.material.button.MaterialButton;
@@ -226,7 +227,7 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
                             try {
                                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), result);
                                 // Set the encodedImage string here
-                                encodedImage = bitmapToString(bitmap);
+                                encodedImage = ImageHandler.getInstance().bitmapToString(bitmap);
                             } catch (Exception e) {
                                 Toast.makeText(CreateNewEventActivity.this, "Failed to load image.", Toast.LENGTH_SHORT).show();
                                 e.printStackTrace();
@@ -236,63 +237,14 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
                 });
     }
 
-    /**
-     * Converts a bitmap image into a Base64 encoded string representation.
-     *
-     * @param bitmap
-     *      The bitmap to be encoded.
-     * @return
-     *      Base64 encoded string of the bitmap.
-     */
-    public String bitmapToString(Bitmap bitmap) {
-        int maxSize = 3072; // Maximum dimension (width or height) for the resized bitmap
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
 
-        // Check if resizing is needed
-        if (width > maxSize || height > maxSize) {
-            float scale = Math.min(((float) maxSize) / width, ((float) maxSize) / height);
-            Matrix matrix = new Matrix();
-            matrix.postScale(scale, scale);
-            Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
-
-            // Rotate the resized bitmap by 90 degrees (adjust as needed)
-            matrix.postRotate(90); // You can change the rotation angle here
-
-            Bitmap rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0, resizedBitmap.getWidth(), resizedBitmap.getHeight(), matrix, true);
-
-            // Convert the rotated bitmap to a Base64 encoded string
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            int quality = 100; // Initial quality
-            rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
-
-            while (baos.size() > 1024 * 1024) { // 1 MiB in bytes
-                baos.reset(); // Reset the stream
-                quality -= 10; // Reduce quality by 10 each time
-                if (quality <= 0) {
-                    break; // Exit loop if quality reaches 0
-                }
-                rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
-            }
-
-            byte[] byteArray = baos.toByteArray();
-            Log.i("ProfileEditActivity", "encodedString2 " + Base64.encodeToString(byteArray, Base64.DEFAULT));
-            return Base64.encodeToString(byteArray, Base64.DEFAULT);
-        } else {
-            // No resizing needed, directly convert the original bitmap to a Base64 encoded string
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] byteArray = baos.toByteArray();
-            return Base64.encodeToString(byteArray, Base64.DEFAULT);
-        }
-    }
 
     /**
      * Helper method to display a time picker dialog and set the selected time into an EditText field.
      *
      * @param editText The EditText where the selected time should be displayed.
      */
+
     private void timePicker(EditText editText){
 
         int hour = calendar.get(Calendar.HOUR_OF_DAY);

@@ -15,6 +15,7 @@ import androidx.core.content.FileProvider;
 
 import com.example.projectapp.Controller.DataHandler;
 import com.example.projectapp.Controller.GetQrCodeCallback;
+import com.example.projectapp.ImageHandler;
 import com.example.projectapp.R;
 import com.example.projectapp.Controller.UpdateEventCallback;
 import com.google.android.material.button.MaterialButton;
@@ -35,6 +36,7 @@ public class GenerateQrCodeActivity extends AppCompatActivity implements GetQrCo
     private ImageView qrCodeImageView;
     private String eventId;
     private final DataHandler dataHandler = DataHandler.getInstance();
+    private final ImageHandler imageHandler = ImageHandler.getInstance();
 
     /**
      *  Handles the activity creation. Extracts the event ID from the intent
@@ -58,7 +60,7 @@ public class GenerateQrCodeActivity extends AppCompatActivity implements GetQrCo
                 try {
                     Bitmap qrCodeBitmap = generateQRCode(eventId);
                     qrCodeImageView.setImageBitmap(qrCodeBitmap);
-                    dataHandler.updateEvent(eventId, "qrCode", bitmapToString(qrCodeBitmap), GenerateQrCodeActivity.this); // Store the QR code in Firebase
+                    dataHandler.updateEvent(eventId, "qrCode", imageHandler.bitmapToString(qrCodeBitmap), GenerateQrCodeActivity.this); // Store the QR code in Firebase
                 } catch (WriterException e) {
                     e.printStackTrace();
                     Toast.makeText(GenerateQrCodeActivity.this, "Error generating QR Code", Toast.LENGTH_SHORT).show();
@@ -73,7 +75,7 @@ public class GenerateQrCodeActivity extends AppCompatActivity implements GetQrCo
                 try {
                     Bitmap qrPromoBitmap = generateQRCode("Promo" + eventId);
                     qrCodeImageView.setImageBitmap(qrPromoBitmap);
-                    dataHandler.updateEvent(eventId, "promoQrCode", bitmapToString(qrPromoBitmap), GenerateQrCodeActivity.this);
+                    dataHandler.updateEvent(eventId, "promoQrCode", imageHandler.bitmapToString(qrPromoBitmap), GenerateQrCodeActivity.this);
                 } catch (WriterException e) {
                     e.printStackTrace();
                     Toast.makeText(GenerateQrCodeActivity.this, "Error generating QR Code", Toast.LENGTH_SHORT).show();
@@ -138,21 +140,6 @@ public class GenerateQrCodeActivity extends AppCompatActivity implements GetQrCo
         return bmp;
     }
 
-    /**
-     * Converts a bitmap image into a Base64 encoded string representation.
-     *
-     * @param bitmap
-     *      The bitmap to be encoded.
-     * @return
-     *      Base64 encoded string of the bitmap.
-     */
-    private String bitmapToString(Bitmap bitmap) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] byteArray = baos.toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
-    }
-
     @Override
     public void onUpdateEvent(String eventId) {
         if (eventId != null){
@@ -206,21 +193,7 @@ public class GenerateQrCodeActivity extends AppCompatActivity implements GetQrCo
     }
 
 
-    /**
-     * Converts a Base64 encoded string representation of an image into a Bitmap object.
-     *
-     * @param encodedString The Base64 encoded string of the image.
-     * @return Bitmap The decoded image as a Bitmap object, or 'null' if the decoding fails.
-     */
-    private Bitmap stringToBitmap(String encodedString) {
-        try {
-            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
-            return BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-        } catch (Exception e) {
-            e.getMessage();
-            return null;
-        }
-    }
+
 
     /**
      *  Callback triggered when a QR code has been retrieved (likely from a database).
@@ -228,10 +201,11 @@ public class GenerateQrCodeActivity extends AppCompatActivity implements GetQrCo
      *
      * @param qrCode The Base64 encoded string representation of the QR code image, or 'null' if retrieval failed.
      */
+
     @Override
     public void onGetQrCode(String qrCode) {
         if (qrCode != null){
-            Bitmap qrCodeBitmap = stringToBitmap(qrCode);
+            Bitmap qrCodeBitmap = imageHandler.stringToBitmap(qrCode);
             shareQRCode(qrCodeBitmap);
         }
         else {
