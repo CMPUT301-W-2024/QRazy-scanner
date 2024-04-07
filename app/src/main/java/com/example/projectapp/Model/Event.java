@@ -202,7 +202,7 @@ public class Event implements Serializable{
     }
 
     /**
-     * Gets the event's date..
+     * Gets the event's date.
      *
      * @return
      *      The event date.
@@ -332,7 +332,7 @@ public class Event implements Serializable{
     }
 
     /**
-     * Sets a list of checked in attendees.
+     * Sets a list of signed up attendees.
      *
      * @param signedAttendees
      *      The new list of signed up attendees.
