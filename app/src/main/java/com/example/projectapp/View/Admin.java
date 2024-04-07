@@ -25,6 +25,7 @@ import com.example.projectapp.Controller.DeleteAttendeeCallback;
 import com.example.projectapp.Controller.DeleteEventCallback;
 import com.example.projectapp.Controller.EventsListenerCallback;
 import com.example.projectapp.Controller.ImagesListenerCallback;
+import com.example.projectapp.ImageHandler;
 import com.example.projectapp.Model.Attendee;
 import com.example.projectapp.Model.Event;
 import com.example.projectapp.R;
@@ -44,6 +45,7 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
     private RecyclerView eventsLayout, attendeesLayout;
     private LinearLayout  postersLayout, profilePicsLayout, qrCodesLayout, promoQrCodesLayout;
     private final DataHandler dataHandler = DataHandler.getInstance();
+    private final ImageHandler imageHandler = ImageHandler.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,7 +166,7 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         eventDescriptionView.setText(event.getDescription());
 
         if (event.getPoster() != null){
-            eventPosterView.setImageBitmap(stringToBitmap(event.getPoster()));
+            eventPosterView.setImageBitmap(imageHandler.stringToBitmap(event.getPoster()));
         }
         eventDateView.setText(event.getDate());
         eventTimeView.setText(event.getStartTime() + " - " + event.getEndTime());
@@ -198,7 +200,7 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         TextView contactInfoView = detailDialog.findViewById(R.id.attendeeDialogContact);
         contactInfoView.setText(attendee.getContactInfo());
         ImageView profilePicView = detailDialog.findViewById(R.id.attendeeDialogProfilePic);
-        Bitmap imageBitmap = stringToBitmap(attendee.getProfilePic());
+        Bitmap imageBitmap = imageHandler.stringToBitmap(attendee.getProfilePic());
         if (imageBitmap != null) {
             profilePicView.setImageBitmap(imageBitmap);
         }
@@ -233,26 +235,13 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
     private void addImageToLayout(String encodedImageString, LinearLayout layout, String documentId, String field, String collection) {
         View imageLayoutView = LayoutInflater.from(this).inflate(R.layout.image_layout, null, false);
         ImageView imageView = imageLayoutView.findViewById(R.id.image_view);
-        Bitmap imageBitmap = stringToBitmap(encodedImageString);
+        Bitmap imageBitmap = imageHandler.stringToBitmap(encodedImageString);
         if (imageBitmap != null) {
             imageView.setImageBitmap(imageBitmap);
 
             // Set OnClickListener to show the image in a dialog when clicked
             imageView.setOnClickListener(v -> showDialogWithImage(imageBitmap, documentId, field, collection));
             layout.addView(imageLayoutView);
-        }
-
-    }
-
-    public Bitmap stringToBitmap(String encodedString) {
-        try {
-            Log.i("admin", "encodedString3 "+ encodedString);
-            byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-            return bitmap;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
         }
 
     }

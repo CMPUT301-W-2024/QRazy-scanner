@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.projectapp.Controller.AddAttendeeCallback;
 import com.example.projectapp.Controller.DataHandler;
 import com.example.projectapp.Controller.LocalAttendeeListenerCallback;
+import com.example.projectapp.ImageHandler;
 import com.example.projectapp.Model.Attendee;
 import com.example.projectapp.R;
 
@@ -47,6 +48,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
     private Button saveButton, deleteButton;
     private Attendee currentAttendee;
     private final DataHandler dataHandler = DataHandler.getInstance();
+    private final ImageHandler imageHandler = ImageHandler.getInstance();
     private boolean active;
 
     @Override
@@ -105,7 +107,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         Bitmap generatedProfilePic = IdenticonGenerator.generate(currentAttendee.getName(), 128);
         if (generatedProfilePic != null) {
             avatar.setImageBitmap(generatedProfilePic);
-            encodedImage = bitmapToString(generatedProfilePic);
+            encodedImage = imageHandler.bitmapToString(generatedProfilePic);
         }
     }
 
@@ -131,17 +133,15 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
 
         encodedImage = currentAttendee.getProfilePic();
         if (encodedImage != null && !encodedImage.isEmpty()) {
-            Bitmap bitmap = stringToBitmap(encodedImage);
+            Bitmap bitmap = imageHandler.stringToBitmap(encodedImage);
             if (bitmap != null) {
-                //bitmap = ExifUtil.rotateBitmap(bitmap, exifOrientation);;
-                Log.i("ProfileEditActivity", "encodedString1 "+ bitmapToString(bitmap)+ "vs " + encodedImage);
                 avatar.setImageBitmap(bitmap);
             }
         }
         else {
             Bitmap generatedProfilePic = IdenticonGenerator.generate(currentAttendee.getName(), 128);
             avatar.setImageBitmap(generatedProfilePic);
-            encodedImage = bitmapToString(generatedProfilePic);
+            encodedImage = imageHandler.bitmapToString(generatedProfilePic);
         }
 
     }
@@ -159,7 +159,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         if (encodedImage == null || encodedImage.isEmpty()) {
             Bitmap generatedProfilePic = IdenticonGenerator.generate(name, 128);
             if (generatedProfilePic != null) {
-                encodedImage = bitmapToString(generatedProfilePic);
+                encodedImage = imageHandler.bitmapToString(generatedProfilePic);
             }
         }
 
@@ -206,7 +206,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
                         avatar.setImageURI(imageUri);
                         try {
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-                            encodedImage = bitmapToString(bitmap);
+                            encodedImage = imageHandler.bitmapToString(bitmap);
                         } catch (IOException e) {
                             Log.e("ProfileEditActivity", "Error converting image", e);
                         }
@@ -214,63 +214,6 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
                 });
     }
 
-    public String bitmapToString(Bitmap bitmap) {
-        int maxSize = 3072; // Maximum dimension (width or height) for the resized bitmap
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-
-        // Check if resizing is needed
-        if (width > maxSize || height > maxSize) {
-            float scale = Math.min(((float) maxSize) / width, ((float) maxSize) / height);
-            Matrix matrix = new Matrix();
-            matrix.postScale(scale, scale);
-            Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
-
-            // Rotate the resized bitmap by 90 degrees (adjust as needed)
-            matrix.postRotate(90); // You can change the rotation angle here
-
-            Bitmap rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0, resizedBitmap.getWidth(), resizedBitmap.getHeight(), matrix, true);
-
-            // Convert the rotated bitmap to a Base64 encoded string
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            int quality = 100; // Initial quality
-            rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
-
-            while (baos.size() > 1024 * 1024) { // 1 MiB in bytes
-                baos.reset(); // Reset the stream
-                quality -= 10; // Reduce quality by 10 each time
-                if (quality <= 0) {
-                    break; // Exit loop if quality reaches 0
-                }
-                rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
-            }
-
-            byte[] byteArray = baos.toByteArray();
-            Log.i("ProfileEditActivity", "encodedString2 " + Base64.encodeToString(byteArray, Base64.DEFAULT));
-            return Base64.encodeToString(byteArray, Base64.DEFAULT);
-        } else {
-            // No resizing needed, directly convert the original bitmap to a Base64 encoded string
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] byteArray = baos.toByteArray();
-            return Base64.encodeToString(byteArray, Base64.DEFAULT);
-        }
-    }
-
-
-    public Bitmap stringToBitmap(String encodedString) {
-        try {
-            Log.i("ProfileEditActivity", "encodedString3 "+ encodedString);
-            byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-            return bitmap;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
-    }
 
     public static class IdenticonGenerator {
 

@@ -32,6 +32,7 @@ import com.example.projectapp.Controller.AttendeeEventsListenerCallback;
 import com.example.projectapp.Controller.DataHandler;
 import com.example.projectapp.Controller.EventsListenerCallback;
 import com.example.projectapp.Controller.LocalAttendeeListenerCallback;
+import com.example.projectapp.ImageHandler;
 import com.example.projectapp.Model.Announcement;
 import com.example.projectapp.Model.Attendee;
 import com.example.projectapp.Model.Event;
@@ -307,7 +308,8 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
 
         eventDescriptionView.setText(event.getDescription());
         if (event.getPoster() != null){
-            eventPosterView.setImageBitmap(stringToBitmap(event.getPoster()));
+            Bitmap bitmap = ImageHandler.getInstance().stringToBitmap(event.getPoster());
+            eventPosterView.setImageBitmap(bitmap);
         }
         eventDateView.setText(event.getDate());
         eventTimeView.setText(event.getStartTime() + " - " + event.getEndTime());
@@ -380,22 +382,6 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         }
     }
 
-    /**
-     * Converts a Base64 encoded string to a Bitmap object.
-     *
-     * @param encodedString
-     *      The Base64 encoded string representing the bitmap.
-     * @return
-     *      The decoded Bitmap object, or null if the input string is null or empty.
-     */
-    private Bitmap stringToBitmap(String encodedString) {
-        if (encodedString == null || encodedString.isEmpty()) {
-            Log.e("Admin", "Encoded string is null or empty");
-            return null;
-        }
-        byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-    }
 
     /**
      * Handles updates to attendee events and announcements based on the type of update.

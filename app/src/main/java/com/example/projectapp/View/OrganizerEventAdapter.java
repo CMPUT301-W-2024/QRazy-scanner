@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projectapp.Controller.DataHandler;
 import com.example.projectapp.Controller.GetAttendeeCallback;
+import com.example.projectapp.ImageHandler;
 import com.example.projectapp.Model.Announcement;
 import com.example.projectapp.Model.Attendee;
 import com.example.projectapp.Model.Event;
@@ -96,7 +97,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         holder.eventTimeTextView.setText(event.getStartTime() + " - " +event.getEndTime());
 
         if (event.getQrCode() != null){
-            Bitmap bitmap = stringToBitmap(event.getQrCode());
+            Bitmap bitmap = ImageHandler.getInstance().stringToBitmap(event.getQrCode());
             if (bitmap != null){
                 holder.eventQrView.setImageBitmap(bitmap);
                 holder.eventQrView.setVisibility(View.VISIBLE);
@@ -109,7 +110,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         }
 
         if (event.getPromoQrCode() != null){
-            Bitmap bitmap = stringToBitmap(event.getPromoQrCode());
+            Bitmap bitmap = ImageHandler.getInstance().stringToBitmap(event.getPromoQrCode());
             holder.promoQrView.setImageBitmap(bitmap);
             holder.promoQrView.setVisibility(View.VISIBLE);
             holder.promoQrText.setVisibility(View.VISIBLE);
@@ -177,7 +178,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             builder.show();
         });
 
-        holder.viewmapButton.setVisibility(event.getTrackLocation() ? View.VISIBLE : View.INVISIBLE);
+        holder.viewmapButton.setVisibility(event.getTrackLocation() ? View.VISIBLE : View.GONE);
         holder.viewmapButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, MapActivity.class);
             intent.putExtra("EVENT_ID", event.getEventId());
@@ -195,22 +196,6 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         return events.size();
     }
 
-
-    /**
-     * Function to convert a Base64 encoded string to a Bitmap.
-     * @param encodedString The Base64 encoded string representation of an image.
-     * @return The Bitmap image or null if an error occurs.
-     */
-    public Bitmap stringToBitmap(String encodedString) {
-        try {
-            byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-            return bitmap;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     @Override
     public void onUpdateEvent(String eventId) {
