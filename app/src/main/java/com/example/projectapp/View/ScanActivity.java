@@ -151,12 +151,19 @@ public class ScanActivity extends AppCompatActivity implements GetEventCallback,
             }
             else {
                 String eventId = getIntent().getStringExtra("EVENT_ID");
-                dataHandler.updateEvent(eventId, "qrCode", qrData, this);
+                dataHandler.updateEvent(eventId, "qrCode", qrData, new UpdateEventCallback() {
+                    @Override
+                    public void onUpdateEvent(String eventId) {
+                        Toast.makeText(ScanActivity.this, "Qr Code can now be used", Toast.LENGTH_SHORT) .show();
+                        finish();
+                    }
+                });
             }
         }
         else {
             if (checkInto){
                 checkIn(event);
+                Toast.makeText(ScanActivity.this, "Checked in", Toast.LENGTH_SHORT) .show();
             }
             else {
                 Toast.makeText(ScanActivity.this, "Qr Code is already in use", Toast.LENGTH_SHORT) .show();
