@@ -118,7 +118,8 @@
                     android:id="@+id/eventQrView"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:layout_gravity="center" />
+                    android:layout_gravity="center"
+                    android:visibility="gone"/>
             </LinearLayout>
 
             <!-- Promo QR Code -->
@@ -144,7 +145,8 @@
                     android:id="@+id/promoQrView"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:layout_gravity="center" />
+                    android:layout_gravity="center"
+                    android:visibility="gone"/>
             </LinearLayout>
         </LinearLayout>
 
