@@ -437,16 +437,21 @@ public class Event implements Serializable{
     }
 
     /**
-     * get if the event is tracking location
-     * @return
+     * Gets if location tracking is enabled for the event.
+     *
+     * @return true     if tracking is enabled,
+     *         false    otherwise.
      */
     public Boolean getTrackLocation() {
         return trackLocation;
     }
 
     /**
-     * set option to track location
-     * @param  trackLocation
+     * Sets location tracking for the event.
+     *
+     * @param trackLocation
+     *      true    to enable tracking,
+     *      false   to disable.
      */
     public void setTrackLocation(Boolean trackLocation) {
         this.trackLocation = trackLocation;
