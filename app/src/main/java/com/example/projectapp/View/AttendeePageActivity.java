@@ -39,6 +39,7 @@ import com.example.projectapp.R;
 import com.example.projectapp.Controller.UpdateAttendeeCallback;
 import com.example.projectapp.Controller.UpdateEventCallback;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.FieldValue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -79,6 +80,7 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
         setContentView(R.layout.activity_attendee_page);
 
         getNotificationPermission();
+        dataHandler.addFcmToken(); // user should now be able to get notis
 
         dataHandler.addLocalAttendeeListener(this);
         dataHandler.addAttendeeEventsListener(true,this); // for checked in events
@@ -313,7 +315,17 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
             }
         });
 
-        if (canSignUp){
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date currentDateTime = new Date();
+        Date eventEndTime = null;
+        try {
+            eventEndTime = sdf.parse(event.getDate() + " " + event.getEndTime());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (canSignUp && currentDateTime.before(eventEndTime)){
             signUpButton.setVisibility(View.VISIBLE);
             signUpButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -329,7 +341,7 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
 
     /**
      * Signs up an attendee for an event if the attendance limit is not reached.
-     * Updates the event and attendee records in the database and subscribes to notifications.
+     * Updates the event and attendee records in the database
      *
      * @param event
      *      The event to sign up for.
@@ -343,13 +355,9 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
 
         // only add if attendance limit is not reached
         if (event.getAttendanceLimit() == 0 || unionAttendees.size() < event.getAttendanceLimit()){
-            event.addSignedAttendee(attendee.getAttendeeId());
-            dataHandler.updateEvent(event.getEventId(), "signedAttendees", event.getSignedAttendees(), this);
+            dataHandler.updateEvent(event.getEventId(), "signedAttendees", FieldValue.arrayUnion(attendee.getAttendeeId()), this);
 
-            attendee.addSignedEvent(event.getEventId());
-            dataHandler.updateAttendee(attendee.getAttendeeId(), "signedUpEvents", attendee.getSignedUpEvents(), this);
-
-            dataHandler.subscribeToNotis(event.getEventId());
+            dataHandler.updateAttendee(attendee.getAttendeeId(), "signedUpEvents", FieldValue.arrayUnion(event.getEventId()), this);
         }
         else {
             Toast.makeText(AttendeePageActivity.this, "Event has reached attendance limit", Toast.LENGTH_SHORT).show();
@@ -465,10 +473,10 @@ public class AttendeePageActivity extends AppCompatActivity implements LocalAtte
     }
 
     /**
-     * Resets the local attendee data and restarts the activity if the app is active.
+     * Resets the local attendee data and restarts the activity if the activity is active.
      */
     @Override
-    public void onLocalAttendeeUpdated() {
+    public void onLocalAttendeeDeleted() {
         if (active){
             dataHandler.setLocalAttendee(null);
             restart();

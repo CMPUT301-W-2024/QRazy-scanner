@@ -16,6 +16,7 @@ public class Attendee {
     private String homepage;
     private String contactInfo;
     private String attendeeId;
+    private String fcmToken;
     private HashMap<String, Integer> checkedInEvents;
     private ArrayList<String> signedUpEvents;
 
@@ -156,28 +157,19 @@ public class Attendee {
     }
 
     /**
-     * Add checked into event
-
-     * @param eventId the event added
+     * get the token for fcm notis
+     * @return the token for this attendee
      */
-    public void addCheckedEvent(String eventId){
-        if (!checkedInEvents.containsKey(eventId)){
-            checkedInEvents.put(eventId, 1);
-        }
-        else{
-            Integer checkIns = checkedInEvents.get(eventId) + 1;
-            checkedInEvents.put(eventId, checkIns);
-        }
+    public String getFcmToken() {
+        return fcmToken;
     }
 
     /**
-     * Add signed into event
-     * @param eventId the event added
+     * set the token for fcm notis
+     * @param fcmToken the token to set for this attendee
      */
-    public void addSignedEvent(String eventId){
-        if (!signedUpEvents.contains(eventId)){
-            signedUpEvents.add(eventId);
-        }
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 
     @Override

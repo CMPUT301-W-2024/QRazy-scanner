@@ -32,6 +32,7 @@ import com.example.projectapp.Controller.UpdateAttendeeCallback;
 import com.example.projectapp.Controller.UpdateEventCallback;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -269,6 +270,11 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
 
         for (String event : attendee.getCheckedInEvents().keySet()){
             dataHandler.updateEvent(event, "checkedAttendees." + attendee.getAttendeeId(), FieldValue.delete(), null);
+        }
+
+        // remove geopoints for attendees all check ins
+        for (String event : attendee.getCheckedInEvents().keySet()){
+            dataHandler.updateEvent(event, "geopoints." + attendee.getAttendeeId(), FieldValue.delete(), null);
         }
     }
 
