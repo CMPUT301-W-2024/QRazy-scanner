@@ -54,28 +54,32 @@
                     android:id="@+id/attendeeAllEvent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="All"/>
+                    android:text="All"
+                    android:textColor="@color/red"/>
 
                 <com.google.android.material.button.MaterialButton
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:id="@+id/attendeeOngoingEvent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Ongoing"/>
+                    android:text="Ongoing"
+                    android:textColor="@color/red"/>
 
                 <com.google.android.material.button.MaterialButton
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:id="@+id/attendeeUpcomingEvent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Upcoming"/>
+                    android:text="Upcoming"
+                    android:textColor="@color/red"/>
 
                 <com.google.android.material.button.MaterialButton
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:id="@+id/attendeeCompletedEvent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Completed"/>
+                    android:text="Completed"
+                    android:textColor="@color/red"/>
 
             </LinearLayout>
         </HorizontalScrollView>
@@ -174,7 +178,9 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:text="Check into event"
-            android:layout_marginEnd="8dp" />
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/orange"/>
 
         <com.google.android.material.button.MaterialButton
             style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
@@ -182,7 +188,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="promo QR-code" />
+            android:text="promo QR-code"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/orange"/>
     </LinearLayout>
 
 </RelativeLayout>

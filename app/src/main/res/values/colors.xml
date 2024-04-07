@@ -3,10 +3,13 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="screenBackground">#2196F3</color>
-    <color name="buttonBackground">#BBDEFB</color>
+    <color name="red">#800000</color>
+    <color name="orange">#CC5500</color>
     <color name="lightGrey">#F5F5F5</color>
     <color name="darkGreen">#009688</color>
     <color name="primaryButton">#196CD2</color>
+    <color name="statusBar">#F28C28</color>
+    <color name="darkStatusBar">#CC5500</color>
 
 
 </resources>

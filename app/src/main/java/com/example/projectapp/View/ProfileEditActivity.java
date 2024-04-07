@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -28,8 +30,12 @@ import com.example.projectapp.Controller.LocalAttendeeListenerCallback;
 import com.example.projectapp.Model.Attendee;
 import com.example.projectapp.R;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -127,6 +133,8 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         if (encodedImage != null && !encodedImage.isEmpty()) {
             Bitmap bitmap = stringToBitmap(encodedImage);
             if (bitmap != null) {
+                //bitmap = ExifUtil.rotateBitmap(bitmap, exifOrientation);;
+                Log.i("ProfileEditActivity", "encodedString1 "+ bitmapToString(bitmap)+ "vs " + encodedImage);
                 avatar.setImageBitmap(bitmap);
             }
         }
@@ -207,14 +215,53 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
     }
 
     public String bitmapToString(Bitmap bitmap) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] byteArray = baos.toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+        int maxSize = 3072; // Maximum dimension (width or height) for the resized bitmap
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+
+        // Check if resizing is needed
+        if (width > maxSize || height > maxSize) {
+            float scale = Math.min(((float) maxSize) / width, ((float) maxSize) / height);
+            Matrix matrix = new Matrix();
+            matrix.postScale(scale, scale);
+            Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
+
+            // Rotate the resized bitmap by 90 degrees (adjust as needed)
+            matrix.postRotate(90); // You can change the rotation angle here
+
+            Bitmap rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0, resizedBitmap.getWidth(), resizedBitmap.getHeight(), matrix, true);
+
+            // Convert the rotated bitmap to a Base64 encoded string
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            int quality = 100; // Initial quality
+            rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+
+            while (baos.size() > 1024 * 1024) { // 1 MiB in bytes
+                baos.reset(); // Reset the stream
+                quality -= 10; // Reduce quality by 10 each time
+                if (quality <= 0) {
+                    break; // Exit loop if quality reaches 0
+                }
+                rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+            }
+
+            byte[] byteArray = baos.toByteArray();
+            Log.i("ProfileEditActivity", "encodedString2 " + Base64.encodeToString(byteArray, Base64.DEFAULT));
+            return Base64.encodeToString(byteArray, Base64.DEFAULT);
+        } else {
+            // No resizing needed, directly convert the original bitmap to a Base64 encoded string
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] byteArray = baos.toByteArray();
+            return Base64.encodeToString(byteArray, Base64.DEFAULT);
+        }
     }
+
 
     public Bitmap stringToBitmap(String encodedString) {
         try {
+            Log.i("ProfileEditActivity", "encodedString3 "+ encodedString);
             byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
             return bitmap;
@@ -284,4 +331,41 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         editor.putString("attendeeId", dataHandler.getLocalAttendee().getAttendeeId());
         editor.apply();
     }
+
+    private Bitmap rotateBitmapIfRequired(Bitmap bitmap, String encodedString) {
+        try {
+            byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
+            File file = File.createTempFile("temp", null, getCacheDir());
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(decodedBytes);
+            fos.close();
+
+            ExifInterface exif = new ExifInterface(file.getAbsolutePath());
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+            Matrix matrix = new Matrix();
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    matrix.postRotate(90);
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    matrix.postRotate(180);
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    matrix.postRotate(270);
+                    break;
+                default:
+                    return bitmap;
+            }
+
+            Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            file.delete(); // Clean up temporary file
+            return rotatedBitmap;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return bitmap;
+        }
+    }
+
 }

@@ -97,14 +97,26 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
 
         if (event.getQrCode() != null){
             Bitmap bitmap = stringToBitmap(event.getQrCode());
-            holder.eventQrView.setImageBitmap(bitmap);
-            holder.eventQrText.setVisibility(View.VISIBLE);
+            if (bitmap != null){
+                holder.eventQrView.setImageBitmap(bitmap);
+                holder.eventQrView.setVisibility(View.VISIBLE);
+                holder.eventQrText.setVisibility(View.VISIBLE);
+            }
+        }
+        else {
+            holder.eventQrView.setVisibility(View.GONE);
+            holder.eventQrText.setVisibility(View.GONE);
         }
 
         if (event.getPromoQrCode() != null){
             Bitmap bitmap = stringToBitmap(event.getPromoQrCode());
             holder.promoQrView.setImageBitmap(bitmap);
+            holder.promoQrView.setVisibility(View.VISIBLE);
             holder.promoQrText.setVisibility(View.VISIBLE);
+        }
+        else {
+            holder.promoQrView.setVisibility(View.GONE);
+            holder.promoQrText.setVisibility(View.GONE);
         }
 
         holder.attendeeCountTextView.setOnClickListener(v -> {
@@ -165,6 +177,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             builder.show();
         });
 
+        holder.viewmapButton.setVisibility(event.getTrackLocation() ? View.VISIBLE : View.INVISIBLE);
         holder.viewmapButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, MapActivity.class);
             intent.putExtra("EVENT_ID", event.getEventId());
