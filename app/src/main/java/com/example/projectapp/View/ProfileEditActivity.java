@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.projectapp.Controller.AddAttendeeCallback;
 import com.example.projectapp.Controller.DataHandler;
 import com.example.projectapp.Controller.LocalAttendeeListenerCallback;
+import com.example.projectapp.ImageHandler;
 import com.example.projectapp.Model.Attendee;
 import com.example.projectapp.R;
 
@@ -39,6 +40,10 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * The ProfileEditActivity class provides an interface for users to edit their profile information,
+ * including their profile picture, name, email, and phone number.
+ */
 public class ProfileEditActivity extends AppCompatActivity implements AddAttendeeCallback, LocalAttendeeListenerCallback {
     private ImageView avatar;
     private String encodedImage;
@@ -47,6 +52,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
     private Button saveButton, deleteButton;
     private Attendee currentAttendee;
     private final DataHandler dataHandler = DataHandler.getInstance();
+    private final ImageHandler imageHandler = ImageHandler.getInstance();
     private boolean active;
 
     @Override
@@ -101,11 +107,15 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         active = false;
     }
 
+    /**
+     * Deletes the current profile picture and generates a new one using the user's name.
+     * Also updates the deleteButton visibility accordingly.
+     */
     private void deleteProfilePicAndGenerateNewOne() {
         Bitmap generatedProfilePic = IdenticonGenerator.generate(currentAttendee.getName(), 128);
         if (generatedProfilePic != null) {
             avatar.setImageBitmap(generatedProfilePic);
-            encodedImage = bitmapToString(generatedProfilePic);
+            encodedImage = imageHandler.bitmapToString(generatedProfilePic);
         }
     }
 
@@ -124,6 +134,9 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
     }
 
 
+    /**
+     * Loads existing Attendee information into the activity's UI fields and updates the delete button's visibility.
+     */
     private void loadAttendeeInfo() {
         userNameEditText.setText(currentAttendee.getName());
         emailEditText.setText(currentAttendee.getHomepage());
@@ -131,21 +144,23 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
 
         encodedImage = currentAttendee.getProfilePic();
         if (encodedImage != null && !encodedImage.isEmpty()) {
-            Bitmap bitmap = stringToBitmap(encodedImage);
+            Bitmap bitmap = imageHandler.stringToBitmap(encodedImage);
             if (bitmap != null) {
-                //bitmap = ExifUtil.rotateBitmap(bitmap, exifOrientation);;
-                Log.i("ProfileEditActivity", "encodedString1 "+ bitmapToString(bitmap)+ "vs " + encodedImage);
+
                 avatar.setImageBitmap(bitmap);
             }
         }
         else {
             Bitmap generatedProfilePic = IdenticonGenerator.generate(currentAttendee.getName(), 128);
             avatar.setImageBitmap(generatedProfilePic);
-            encodedImage = bitmapToString(generatedProfilePic);
+            encodedImage = imageHandler.bitmapToString(generatedProfilePic);
         }
 
     }
 
+    /**
+     * Saves changes made to the Attendee's profile information. Also handles the case when a new Attendee profile is being created.
+     */
     private void saveProfileChanges() {
         String name = userNameEditText.getText().toString().trim();
         String email = emailEditText.getText().toString().trim();
@@ -159,7 +174,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         if (encodedImage == null || encodedImage.isEmpty()) {
             Bitmap generatedProfilePic = IdenticonGenerator.generate(name, 128);
             if (generatedProfilePic != null) {
-                encodedImage = bitmapToString(generatedProfilePic);
+                encodedImage = imageHandler.bitmapToString(generatedProfilePic);
             }
         }
 
@@ -194,10 +209,16 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         }
     }
 
+    /**
+     *  Handles fetching a profile image from the device's gallery.
+     */
     private void pickImage() {
         resultLauncher.launch("image/*");
     }
 
+    /**
+     *  Initializes the ActivityResultLauncher responsible for handling image selection results.
+     */
     private void registerResult() {
         resultLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(),
                 result -> {
@@ -206,7 +227,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
                         avatar.setImageURI(imageUri);
                         try {
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-                            encodedImage = bitmapToString(bitmap);
+                            encodedImage = imageHandler.bitmapToString(bitmap);
                         } catch (IOException e) {
                             Log.e("ProfileEditActivity", "Error converting image", e);
                         }
@@ -214,66 +235,22 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
                 });
     }
 
-    public String bitmapToString(Bitmap bitmap) {
-        int maxSize = 3072; // Maximum dimension (width or height) for the resized bitmap
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-
-        // Check if resizing is needed
-        if (width > maxSize || height > maxSize) {
-            float scale = Math.min(((float) maxSize) / width, ((float) maxSize) / height);
-            Matrix matrix = new Matrix();
-            matrix.postScale(scale, scale);
-            Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
-
-            // Rotate the resized bitmap by 90 degrees (adjust as needed)
-            matrix.postRotate(90); // You can change the rotation angle here
-
-            Bitmap rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0, resizedBitmap.getWidth(), resizedBitmap.getHeight(), matrix, true);
-
-            // Convert the rotated bitmap to a Base64 encoded string
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            int quality = 100; // Initial quality
-            rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
-
-            while (baos.size() > 1024 * 1024) { // 1 MiB in bytes
-                baos.reset(); // Reset the stream
-                quality -= 10; // Reduce quality by 10 each time
-                if (quality <= 0) {
-                    break; // Exit loop if quality reaches 0
-                }
-                rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
-            }
-
-            byte[] byteArray = baos.toByteArray();
-            Log.i("ProfileEditActivity", "encodedString2 " + Base64.encodeToString(byteArray, Base64.DEFAULT));
-            return Base64.encodeToString(byteArray, Base64.DEFAULT);
-        } else {
-            // No resizing needed, directly convert the original bitmap to a Base64 encoded string
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] byteArray = baos.toByteArray();
-            return Base64.encodeToString(byteArray, Base64.DEFAULT);
-        }
-    }
 
 
-    public Bitmap stringToBitmap(String encodedString) {
-        try {
-            Log.i("ProfileEditActivity", "encodedString3 "+ encodedString);
-            byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-            return bitmap;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    /**
 
-    }
-
+     * The IdenticonGenerator class provides a utility to generate simple, visually distinct
+     * profile pictures based on a username. These generated images are often called "Identicons".
+     */
     public static class IdenticonGenerator {
 
+        /**
+         * Generates an identicon image based on the provided username.
+         *
+         * @param username The username used to create a hash for identicon generation.
+         * @param size     The desired width and height of the generated identicon (in pixels).
+         * @return A Bitmap object representing the generated identicon, or 'null' if an error occurs.
+         */
         public static Bitmap generate(String username, int size) {
             try {
                 byte[] hash = MessageDigest.getInstance("MD5").digest(username.getBytes());
@@ -299,6 +276,15 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
             }
         }
 
+        /**
+         * Fills a rectangular cell within the identicon image with a specified color.
+         *
+         * @param bitmap   The Bitmap object representing the identicon being generated.
+         * @param x        The x-coordinate of the cell's top-left corner.
+         * @param y        The y-coordinate of the cell's top-left corner.
+         * @param cellSize The width and height of the cell (in pixels).
+         * @param color    The color to fill the cell with.
+         */
         private static void fillCell(Bitmap bitmap, int x, int y, int cellSize, int color) {
             for (int i = 0; i < cellSize; i++) {
                 for (int j = 0; j < cellSize; j++) {
@@ -316,6 +302,9 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         }
     }
 
+    /**
+     * Initiates a clean restart of the application, transitioning the user back to the MainActivity.
+     */
     private void restart(){
         Intent intent = new Intent(this, MainActivity.class);
         this.startActivity(intent);
@@ -330,42 +319,6 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("attendeeId", dataHandler.getLocalAttendee().getAttendeeId());
         editor.apply();
-    }
-
-    private Bitmap rotateBitmapIfRequired(Bitmap bitmap, String encodedString) {
-        try {
-            byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
-            File file = File.createTempFile("temp", null, getCacheDir());
-            FileOutputStream fos = new FileOutputStream(file);
-            fos.write(decodedBytes);
-            fos.close();
-
-            ExifInterface exif = new ExifInterface(file.getAbsolutePath());
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
-            Matrix matrix = new Matrix();
-            switch (orientation) {
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    matrix.postRotate(90);
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    matrix.postRotate(180);
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    matrix.postRotate(270);
-                    break;
-                default:
-                    return bitmap;
-            }
-
-            Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-            file.delete(); // Clean up temporary file
-            return rotatedBitmap;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return bitmap;
-        }
     }
 
 }

@@ -13,13 +13,25 @@ import com.example.projectapp.R;
 
 import java.util.List;
 
+/**
+ * The AnnouncementAdapter class manages the display of announcements within a RecyclerView.
+ * It is responsible for binding announcement data to the views of each announcement item.
+ */
 public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapter.ViewHolder> {
     private List<Announcement> announcements;
 
+    /**
+     * Initializes the adapter with a list of announcements.
+     * @param announcements The list of Announcement objects to be displayed in the RecyclerView
+     */
     public AnnouncementAdapter(List<Announcement> announcements) {
         this.announcements = announcements;
     }
 
+    /**
+     *  The ViewHolder class represents an individual announcement item within the RecyclerView.
+     *  It holds references to the UI elements used to display announcement information.
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView event, organizer, announcementContent, dateTime;
