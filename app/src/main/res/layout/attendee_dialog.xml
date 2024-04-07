@@ -1,8 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="240sp"
+    android:layout_width="380dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
+    android:background="@android:color/white"
     android:elevation="4dp">
 
     <ImageView
