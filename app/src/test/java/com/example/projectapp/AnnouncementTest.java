@@ -1,87 +1,104 @@
 package com.example.projectapp;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import com.example.projectapp.Model.Announcement;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class AnnouncementTest {
-    private Announcement announcement;
+    private Announcement announcement = new Announcement("Test Announcement", "15:00", "Test Event", "Test Organizer");
 
-    @BeforeEach
-    void setUp() {
-        announcement = new Announcement("Test Announcement", "15:00", "Test Event", "Test Organizer");
-    }
-
+    /**
+     * Tests for announcement getter and setter.
+     */
     @Test
     void testAnnouncementGetterAndSetter() {
+        assertNotNull(announcement.getAnnouncement());
+
         String newAnnouncement = "New Test Announcement";
         announcement.setAnnouncement(newAnnouncement);
-        assertEquals(newAnnouncement, announcement.getAnnouncement(), "Announcements do not match");
+
+        assertNotEquals("Not New Announcement", announcement.getAnnouncement());
+        assertEquals(newAnnouncement, announcement.getAnnouncement());
     }
 
+    /**
+     * Tests for date time getter and setter.
+     */
     @Test
-    void testTimeGetterAndSetter() {
+    void testDateTimeGetterAndSetter() {
+        assertNotNull(announcement.getDateTime());
+
         String newTime = "21:00";
         announcement.setDateTime(newTime);
-        assertEquals(newTime, announcement.getDateTime(), "Announcement times do not match");
+
+        assertNotEquals("00:00", announcement.getAnnouncement());
+        assertEquals(newTime, announcement.getDateTime());
     }
 
+    /**
+     * Tests for event getter and setter.
+     */
     @Test
-    void testEventsGetterAndSetter() {
+    void testEventGetterAndSetter() {
+        assertNotNull(announcement.getEvent());
+
         String newEvent = "New Event";
         announcement.setEvent(newEvent);
-        assertEquals(newEvent, announcement.getEvent(), "Events do not match");
+
+        assertNotEquals("Not New Event", announcement.getEvent());
+        assertEquals(newEvent, announcement.getEvent());
     }
 
+    /**
+     * Tests for organizer getter and setter.
+     */
     @Test
     void testOrganizerGetterAndSetter() {
+        assertNotNull(announcement.getOrganizer());
+
         String newOrganizer = "New Organizer";
         announcement.setOrganizer(newOrganizer);
-        assertEquals(newOrganizer, announcement.getOrganizer(), "Organizers do not match");
+
+        assertNotEquals("Not New Event", announcement.getEvent());
+        assertEquals(newOrganizer, announcement.getOrganizer());
     }
 
     @Test
-    void testEqualsWithNull() {
-        assertFalse(announcement.equals(null), "Announcement should not be equal to null");
-    }
+    void testEquals() {
+        // Equals With Null
+        assertFalse(announcement.equals(null));
 
-    @Test
-    void testEqualsWithSelf() {
-        assertTrue(announcement.equals(announcement), "Announcement should be equal to itself");
-    }
+        // Equals With Self
+        assertTrue(announcement.equals(announcement));
 
-    @Test
-    void testEqualsWithDifferentClass() {
-        assertFalse(announcement.equals("some string"), "Announcement should not be equal to a different class");
-    }
+        // Equals With Different Class
+        assertFalse(announcement.equals("some string"));
 
-    @Test
-    void testEqualsWithEqualAnnouncements() {
+        // Equals With Equal Announcements
         Announcement anotherAnnouncement = new Announcement("Test Announcement", "15:00", "Test Event", "Test Organizer");
-        assertTrue(announcement.equals(anotherAnnouncement), "Announcements with the same state should be equal");
-    }
+        assertTrue(announcement.equals(anotherAnnouncement));
 
-    @Test
-    void testEqualsWithDifferentAnnouncements() {
+        // Equals With Different Announcements
         Announcement differentAnnouncement = new Announcement("Different Announcement", "16:00", "Different Event", "Different Organizer");
-        assertFalse(announcement.equals(differentAnnouncement), "Announcements with different states should not be equal");
+        assertFalse(announcement.equals(differentAnnouncement));
     }
 
     @Test
-    void testHashCodeConsistency() {
+    void testHashCodeC() {
         Announcement anotherAnnouncement = new Announcement("Test Announcement", "15:00", "Test Event", "Test Organizer");
-        assertEquals(announcement.hashCode(), anotherAnnouncement.hashCode(), "Hash codes should be consistent for equal objects");
-    }
+        assertEquals(announcement.hashCode(), anotherAnnouncement.hashCode());
 
-    @Test
-    void testHashCodeConsistencyWithDifferentObjects() {
+        // Different Objects
         Announcement differentAnnouncement = new Announcement("Different Announcement", "16:00", "Different Event", "Different Organizer");
-        assertNotEquals(announcement.hashCode(), differentAnnouncement.hashCode(), "Hash codes should be different for non-equal objects");
+        assertNotEquals(announcement.hashCode(), differentAnnouncement.hashCode());
     }
 }

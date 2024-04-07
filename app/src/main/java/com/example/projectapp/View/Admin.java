@@ -32,7 +32,6 @@ import com.example.projectapp.Controller.UpdateAttendeeCallback;
 import com.example.projectapp.Controller.UpdateEventCallback;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -192,18 +191,20 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
     private void showDialogWithAttendeeDetails(Attendee attendee) {
         Dialog detailDialog = new Dialog(this);
         detailDialog.setContentView(R.layout.attendee_dialog);
-        TextView nameView = detailDialog.findViewById(R.id.dialog_name);
+        TextView nameView = detailDialog.findViewById(R.id.attendeeDialogName);
         nameView.setText(attendee.getName());
-        TextView contactInfoView = detailDialog.findViewById(R.id.dialog_contact_info);
+        TextView emailView = detailDialog.findViewById(R.id.attendeeDialogEmail);
+        emailView.setText(attendee.getHomepage());
+        TextView contactInfoView = detailDialog.findViewById(R.id.attendeeDialogContact);
         contactInfoView.setText(attendee.getContactInfo());
-        ImageView profilePicView = detailDialog.findViewById(R.id.dialog_profile_pic);
+        ImageView profilePicView = detailDialog.findViewById(R.id.attendeeDialogProfilePic);
         Bitmap imageBitmap = stringToBitmap(attendee.getProfilePic());
         if (imageBitmap != null) {
             profilePicView.setImageBitmap(imageBitmap);
         }
-        Button closeButton = detailDialog.findViewById(R.id.dialog_close_button);
+        Button closeButton = detailDialog.findViewById(R.id.attendeeDialogCloseButton);
         closeButton.setOnClickListener(v -> detailDialog.dismiss());
-        Button deleteButton = detailDialog.findViewById(R.id.dialog_delete_button);
+        Button deleteButton = detailDialog.findViewById(R.id.attendeeDialogDeleteButton);
 
         deleteButton.setOnClickListener(v -> {
             deleteAttendee(attendee);
@@ -217,10 +218,10 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
         Dialog imageDialog = new Dialog(this);
         imageDialog.setContentView(R.layout.image_dialog);
 
-        ImageView imageView = imageDialog.findViewById(R.id.dialog_image_view);
+        ImageView imageView = imageDialog.findViewById(R.id.imageDialogImageView);
         imageView.setImageBitmap(image);
 
-        Button deleteButton = imageDialog.findViewById(R.id.delete_image_button);
+        Button deleteButton = imageDialog.findViewById(R.id.imageDialogDeleteButton);
         deleteButton.setOnClickListener(v -> {
             deleteImage(documentId, field, collection);
             imageDialog.dismiss();

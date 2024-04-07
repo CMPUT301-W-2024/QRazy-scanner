@@ -2,6 +2,9 @@ package com.example.projectapp;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -10,7 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.projectapp.Model.Attendee;
 
-class AttendeeTest {
+@RunWith(JUnit4.class)
+public class AttendeeTest {
 
     private Attendee attendee;
 

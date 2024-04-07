@@ -31,8 +31,8 @@ public class AdminTest {
 
         @Test
         public void textViewDisplaysCorrectText() {
-            onView(withId(R.id.EventsView)).check(matches(withText(R.string.events)));
-            onView(withId(R.id.ProfileView)).check(matches(withText(R.string.profiles)));
+            onView(withId(R.id.eventsView)).check(matches(withText(R.string.events)));
+            onView(withId(R.id.profileView)).check(matches(withText(R.string.profiles)));
             onView(withId(R.id.textView2)).check(matches(withText(R.string.Images)));
         }
 
@@ -51,7 +51,7 @@ public class AdminTest {
         @Test
         public void deleteAttendeeButton() {
             onView(withId(R.id.adminAttendeesLayout)).perform(click());
-            onView(withId(R.id.dialog_delete_button)).perform(click());
+            onView(withId(R.id.attendeeDialogDeleteButton)).perform(click());
         }
 
     }

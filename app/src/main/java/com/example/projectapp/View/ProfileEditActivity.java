@@ -46,7 +46,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_profile);
+        setContentView(R.layout.activity_edit_profile);
         avatar = findViewById(R.id.avatarImage);
         Button avatarButton = findViewById(R.id.avatarImageButton);
 
