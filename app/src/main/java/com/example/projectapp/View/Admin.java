@@ -244,13 +244,17 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
 
     }
 
-    private Bitmap stringToBitmap(String encodedString) {
-        if (encodedString == null || encodedString.isEmpty()) {
-            Log.e("Admin", "Encoded string is null or empty");
+    public Bitmap stringToBitmap(String encodedString) {
+        try {
+            Log.i("admin", "encodedString3 "+ encodedString);
+            byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+            return bitmap;
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
-        byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+
     }
 
     private void deleteImage(String documentId, String field, String collection) {

@@ -26,6 +26,8 @@
         android:layout_height="wrap_content"
         android:text="Use Own QR Code"
         android:textSize="15sp"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/orange"
         app:layout_constraintTop_toBottomOf="@id/qrCodeImageView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,6 +42,8 @@
         android:layout_height="wrap_content"
         android:text="Generate Unique QR Code"
         android:textSize="15sp"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/orange"
         app:layout_constraintTop_toBottomOf="@id/useOwnQrButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -54,6 +58,8 @@
         android:layout_height="wrap_content"
         android:text="Generate Promotion QR Code"
         android:textSize="15sp"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/orange"
         app:layout_constraintTop_toBottomOf="@id/generateQrCodeButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -61,34 +67,40 @@
         app:layout_constraintWidth_percent="0.85" />
 
     <!-- Share QR Code Button -->
+
+    <!-- Share QR Code Button -->
     <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:id="@+id/shareQrCodeButton"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Share QR Code"
-        android:textSize="13sp"
+        android:textSize="12sp"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/orange"
         app:layout_constraintTop_toBottomOf="@id/generatePromotionQrCodeButton"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/useOwnQrButton"
         app:layout_constraintEnd_toStartOf="@id/sharePromoQrCodeButton"
-        android:layout_marginTop="8dp"
-        app:layout_constraintWidth_percent="0.42" />
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_weight="1"
+        android:layout_marginTop="8dp" />
 
     <!-- Share Promo QR Button -->
     <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:id="@+id/sharePromoQrCodeButton"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-
         android:text="Share Promo QR"
-        android:textSize="13sp"
+        android:textSize="12sp"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/orange"
         app:layout_constraintTop_toBottomOf="@id/generatePromotionQrCodeButton"
         app:layout_constraintStart_toEndOf="@id/shareQrCodeButton"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/useOwnQrButton"
+        app:layout_constraintHorizontal_weight="1"
         android:layout_marginTop="8dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintWidth_percent="0.42" />
+        android:layout_marginStart="8dp" />
 
     <!-- Home Page Button -->
     <com.google.android.material.button.MaterialButton
@@ -98,6 +110,8 @@
         android:layout_height="wrap_content"
         android:text="Home Page"
         android:textSize="15sp"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/orange"
         app:layout_constraintTop_toBottomOf="@id/shareQrCodeButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -4,10 +4,12 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -47,7 +49,7 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
     private TextInputEditText eventDateEditText;
     private Calendar calendar;
     private MaterialButton uploadButton;
-    ActivityResultLauncher<Intent> resultLauncher;
+    ActivityResultLauncher<String> resultLauncher;
     private ImageView poster;
     private String encodedImage;
     private TextInputEditText eventNameEditText, eventDescriptionEditText, attendanceLimitEditText, eventStartTimeEditText, eventEndTimeEditText;
@@ -207,11 +209,7 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
      * Launches an image picker intent to allow users to select an image for the event poster.
      */
     private void pickImage(){
-        Intent intent = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R && android.os.ext.SdkExtensions.getExtensionVersion(android.os.Build.VERSION_CODES.R) >= 2) {
-            intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
-        }
-        resultLauncher.launch(intent);
+        resultLauncher.launch("image/*");
     }
 
     /**
@@ -219,28 +217,23 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
      * Within this, updates the ImageView and encodes the selected image for storage.
      */
     private void registerResult() {
-        resultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
+        resultLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(),
+                new ActivityResultCallback<Uri>() {
                     @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                            Uri imageUri = result.getData().getData();
-                            if (imageUri != null) {
-                                poster.setImageURI(imageUri);
-                                try {
-                                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                                    // Set the encodedImage string here
-                                    encodedImage = bitmapToString(bitmap);
-                                } catch (Exception e) {
-                                    Toast.makeText(CreateNewEventActivity.this, "Failed to load image.", Toast.LENGTH_SHORT).show();
-                                    e.printStackTrace();
-                                }
+                    public void onActivityResult(Uri result) {
+                        if (result != null) {
+                            poster.setImageURI(result);
+                            try {
+                                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), result);
+                                // Set the encodedImage string here
+                                encodedImage = bitmapToString(bitmap);
+                            } catch (Exception e) {
+                                Toast.makeText(CreateNewEventActivity.this, "Failed to load image.", Toast.LENGTH_SHORT).show();
+                                e.printStackTrace();
                             }
                         }
                     }
-                }
-        );
+                });
     }
 
     /**
@@ -252,10 +245,47 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
      *      Base64 encoded string of the bitmap.
      */
     public String bitmapToString(Bitmap bitmap) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] byteArray = baos.toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+        int maxSize = 3072; // Maximum dimension (width or height) for the resized bitmap
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+
+        // Check if resizing is needed
+        if (width > maxSize || height > maxSize) {
+            float scale = Math.min(((float) maxSize) / width, ((float) maxSize) / height);
+            Matrix matrix = new Matrix();
+            matrix.postScale(scale, scale);
+            Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
+
+            // Rotate the resized bitmap by 90 degrees (adjust as needed)
+            matrix.postRotate(90); // You can change the rotation angle here
+
+            Bitmap rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0, resizedBitmap.getWidth(), resizedBitmap.getHeight(), matrix, true);
+
+            // Convert the rotated bitmap to a Base64 encoded string
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            int quality = 100; // Initial quality
+            rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+
+            while (baos.size() > 1024 * 1024) { // 1 MiB in bytes
+                baos.reset(); // Reset the stream
+                quality -= 10; // Reduce quality by 10 each time
+                if (quality <= 0) {
+                    break; // Exit loop if quality reaches 0
+                }
+                rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+            }
+
+            byte[] byteArray = baos.toByteArray();
+            Log.i("ProfileEditActivity", "encodedString2 " + Base64.encodeToString(byteArray, Base64.DEFAULT));
+            return Base64.encodeToString(byteArray, Base64.DEFAULT);
+        } else {
+            // No resizing needed, directly convert the original bitmap to a Base64 encoded string
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] byteArray = baos.toByteArray();
+            return Base64.encodeToString(byteArray, Base64.DEFAULT);
+        }
     }
 
     private void timePicker(EditText editText){

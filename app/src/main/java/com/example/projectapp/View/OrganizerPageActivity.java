@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -59,6 +60,10 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
 
         RecyclerView recyclerView = findViewById(R.id.eventListRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                DividerItemDecoration.VERTICAL);
+        recyclerView.addItemDecoration(dividerItemDecoration);
 
         Button createNewEventButton = findViewById(R.id.createNewEventButton);
 

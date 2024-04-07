@@ -15,6 +15,8 @@ Reference:
    - how to use linearlayout with cardview in xml
    - how to load images from two different documents in firebase and dispaly on one imageview
    - write me bitmap converter for string to image
+   - how to resize bit map
+   - how to change from pickImage to something that compatible for android 10+
 3. For scanning QR-code
    - https://github.com/yuriy-budiyev/code-scanner
 4. Share Qr using URI

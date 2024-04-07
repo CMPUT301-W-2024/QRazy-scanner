@@ -177,6 +177,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             builder.show();
         });
 
+        holder.viewmapButton.setVisibility(event.getTrackLocation() ? View.VISIBLE : View.INVISIBLE);
         holder.viewmapButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, MapActivity.class);
             intent.putExtra("EVENT_ID", event.getEventId());

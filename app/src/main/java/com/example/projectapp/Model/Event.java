@@ -6,9 +6,7 @@ import androidx.annotation.Nullable;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
@@ -203,7 +201,7 @@ public class Event implements Serializable{
     }
 
     /**
-     * Gets the event's date..
+     * Gets the event's date.
      *
      * @return
      *      The event date.
@@ -333,7 +331,7 @@ public class Event implements Serializable{
     }
 
     /**
-     * Sets a list of checked in attendees.
+     * Sets a list of signed up attendees.
      *
      * @param signedAttendees
      *      The new list of signed up attendees.
@@ -437,16 +435,21 @@ public class Event implements Serializable{
     }
 
     /**
-     * get if the event is tracking location
-     * @return
+     * Gets if location tracking is enabled for the event.
+     *
+     * @return true     if tracking is enabled,
+     *         false    otherwise.
      */
     public Boolean getTrackLocation() {
         return trackLocation;
     }
 
     /**
-     * set option to track location
-     * @param  trackLocation
+     * Sets location tracking for the event.
+     *
+     * @param trackLocation
+     *      true    to enable tracking,
+     *      false   to disable.
      */
     public void setTrackLocation(Boolean trackLocation) {
         this.trackLocation = trackLocation;
