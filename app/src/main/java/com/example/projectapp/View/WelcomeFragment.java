@@ -25,7 +25,10 @@ import com.example.projectapp.Model.Attendee;
 import com.example.projectapp.Model.Organizer;
 import com.example.projectapp.R;
 
-
+/**
+ * The WelcomeFragment class provides the initial welcome screen for the application.
+ * It presents buttons for users to either join an event (as an attendee) or create a new event (as an organizer).
+ */
 public class WelcomeFragment extends Fragment implements GetOrganizerCallback, GetAttendeeCallback {
     private final DataHandler dataHandler = DataHandler.getInstance();
 

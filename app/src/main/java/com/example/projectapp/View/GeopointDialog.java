@@ -22,6 +22,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.GeoPoint;
 
+/**
+ * The GeopointDialog class provides a dialog interface for an attendee to record their geolocation
+ * as a check-in point for a specific event.
+ */
 public class GeopointDialog extends AppCompatActivity {
     private String eventId; // The variable you want to pass
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -71,6 +75,10 @@ public class GeopointDialog extends AppCompatActivity {
             }
         }
     }
+
+    /**
+     * Checks if the app has location permissions. If not granted, requests permission.
+     */
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(GeopointDialog.this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -85,6 +93,10 @@ public class GeopointDialog extends AppCompatActivity {
     }
 
 
+    /**
+     *  Obtains the device's current location (if permission is granted) and  updates the Firestore event
+     *  document with the attendee's geolocation data.
+     */
     private void getCurrentLocation() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
