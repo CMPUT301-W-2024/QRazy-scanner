@@ -53,7 +53,7 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
 
         mileStones = new ArrayList<>();
         eventMileStones = new HashMap<>();
-        mileStones.add(5);
+        mileStones.add(1);
         mileStones.add(10);
         mileStones.add(20);
 
@@ -132,6 +132,7 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
     public void addEvent(Event event){
         if (!events.contains(event)){
             events.add(event);
+            updateMilestone(event);
             eventAdapter.notifyDataSetChanged();
         }
     }
@@ -145,6 +146,7 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
     public void updateEvent(Event event){
         events.set(events.indexOf(event), event);
         checkMilestone(event);
+        updateMilestone(event);
         eventAdapter.notifyDataSetChanged();
     }
 
@@ -166,12 +168,28 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
      */
     private void checkMilestone(Event event){
         Integer attendance = event.getAttendance();
-        if (eventMileStones.get(event) == null){
-            eventMileStones.put(event, new ArrayList<>());
-        }
         if (mileStones.contains(attendance) && !eventMileStones.get(event).contains(attendance)){
             eventMileStones.get(event).add(attendance);
             Toast.makeText(OrganizerPageActivity.this, "Milestone Reached!! " + event.getAttendance() + " attendees in " + event.getName(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+    /**
+     * keeps track of milestones that have already been reached
+     * @param event event to update the reached milestones for
+     */
+    private void updateMilestone(Event event){
+        if (eventMileStones.get(event) == null){
+            eventMileStones.put(event, new ArrayList<>());
+        }
+        for (Integer mileStone : mileStones){
+            if (event.getAttendance() >= mileStone && !eventMileStones.get(event).contains(mileStone)){
+                eventMileStones.get(event).add(mileStone);
+            }
+            else if (event.getAttendance() < mileStone && eventMileStones.get(event).contains(mileStone)) {
+                eventMileStones.get(event).remove(mileStone);
+            }
         }
     }
 
