@@ -74,7 +74,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             promoQrText = itemView.findViewById(R.id.promoQrText);
             expandEventButton = itemView.findViewById(R.id.expandButton);
             announcementButton = itemView.findViewById(R.id.announcementButton);
-            pdfButton = itemView.findViewById(R.id.pdf_button);
+            pdfButton = itemView.findViewById(R.id.pdfButton);
             viewmapButton = itemView.findViewById(R.id.viewMapButton);
         }
     }

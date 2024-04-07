@@ -86,7 +86,7 @@ public class AttendeePageActivitiesTest {
         onView(withId(R.id.welcomeText)).check(matches(isDisplayed()));
 
         onView(withId(R.id.scanButton)).perform(click());
-        onView(withId(R.id.scanner_view)).check(matches(isDisplayed()));
+        onView(withId(R.id.scannerView)).check(matches(isDisplayed()));
         pressBack();
 
         onView(withId(R.id.welcomeText)).check(matches(isDisplayed()));
@@ -104,7 +104,7 @@ public class AttendeePageActivitiesTest {
         onView(withId(R.id.welcomeText)).check(matches(isDisplayed()));
 
         onView(withId(R.id.promoQrCodeButton)).perform(click());
-        onView(withId(R.id.scanner_view)).check(matches(isDisplayed()));
+        onView(withId(R.id.scannerView)).check(matches(isDisplayed()));
         pressBack();
 
         onView(withId(R.id.welcomeText)).check(matches(isDisplayed()));
