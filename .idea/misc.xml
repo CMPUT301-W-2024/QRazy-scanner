@@ -4,4 +4,11 @@
     <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/app/JavaDoc" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK" />
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.5" />
+      </ProjectState>
+    </option>
+  </component>
 </project>

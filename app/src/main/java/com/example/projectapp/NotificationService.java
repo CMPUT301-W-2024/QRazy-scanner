@@ -7,21 +7,28 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import com.example.projectapp.Controller.DataHandler;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 public class NotificationService extends FirebaseMessagingService {
 
-    String channelId = "CHANNEL_ID_NOTIFICATION";
-    String channelName = "QrazyScanner";
-
+    private final String channelId = "CHANNEL_ID_NOTIFICATION";
+    private final String channelName = "QrazyScanner";
     @Override
     public void onMessageReceived(@NonNull RemoteMessage message) {
         super.onMessageReceived(message);
-        System.out.println("Got till here: " + message.getData().get("event"));
         if (message.getData().size() > 0){
             generateNotification(message.getData().get("event"), message.getData().get("announcement"));
         }
+    }
+
+    @Override
+    public void onNewToken(@NonNull String token) {
+        super.onNewToken(token);
+        DataHandler dataHandler = DataHandler.getInstance();
+        if (dataHandler.getLocalAttendee() != null)
+            dataHandler.updateAttendee(dataHandler.getLocalAttendee().getAttendeeId(), "fcmToken", token, null);
     }
 
     private void generateNotification(String textTitle, String textContent){

@@ -1,37 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_centerInParent="true"
-    android:padding="16dp">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <!-- Display your question -->
-    <TextView
-    android:id="@+id/dialogQuestion"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Can we use your check in location?"
-    android:textSize="18sp"
-    android:layout_centerHorizontal="true"
-    android:layout_marginBottom="16dp"/>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:padding="16dp">
 
-    <!-- Add buttons or other UI components as needed -->
-    <Button
-    android:id="@+id/okButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="OK"
-    android:layout_below="@id/dialogQuestion"
-    android:layout_centerHorizontal="true"
-    android:layout_marginTop="8dp"/>
+        <!-- Display your question -->
+        <TextView
+            android:id="@+id/dialogQuestion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Can we use your check in location?"
+            android:textSize="24dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"/>
 
-    <Button
-    android:id="@+id/noButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="NO"
-    android:layout_below="@id/okButton"
-    android:layout_centerHorizontal="true"
-    android:layout_marginTop="8dp"/>
+        <!-- Add buttons or other UI components as needed -->
+        <Button
+            android:id="@+id/okButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OK"
+            android:layout_below="@id/dialogQuestion"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rectangular_button"/>
+
+        <Button
+            android:id="@+id/noButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NO"
+            android:layout_below="@id/okButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rectangular_button"/>
+    </RelativeLayout>
 </RelativeLayout>

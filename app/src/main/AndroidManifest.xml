@@ -3,12 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-    <!-- Always include this permission -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- Include only if your app benefits from precise location access -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!-- Required only when requesting background location access on Android 10 (API level 29) and higher -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <uses-feature
@@ -26,21 +24,24 @@
         android:theme="@style/Theme.ProjectApp"
         tools:targetApi="31">
         <activity
-            android:name=".EventAttendeesActvity"
+            android:name=".View.ReportActivity"
+            android:exported="true"/>
+        <activity
+            android:name=".View.EventAttendeesActivity"
             android:exported="false" />
         <activity
-            android:name=".ProfileEditActivity"
+            android:name=".View.ProfileEditActivity"
             android:exported="true" />
         <activity
-            android:name=".AttendeePageActivity"
+            android:name=".View.AttendeePageActivity"
             android:exported="true">
         </activity>
-        <activity android:name=".Admin" />
+        <activity android:name=".View.Admin" />
         <activity
-            android:name=".ScanActivity"
+            android:name=".View.ScanActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".View.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,39 +50,21 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MapActivity"
+        <activity android:name=".View.MapActivity"
             android:exported="true">
         </activity>
-        <activity android:name=".GeopointDialog" />
-
-
-        <receiver
-            android:name=".AdminReceiver"
-            android:exported="true"
-            android:permission="android.permission.BIND_DEVICE_ADMIN">
-            <meta-data
-                android:name="android.app.device_admin"
-                android:resource="@xml/device_admin" />
-
-            <intent-filter>
-                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
-            </intent-filter>
-        </receiver>
+        <activity android:name=".View.GeopointDialog" />
 
         <activity
-            android:name=".CreateEventActivity"
-            android:exported="true">
-        </activity>
-        <activity
-            android:name=".CreateNewEventActivity"
+            android:name=".View.CreateNewEventActivity"
             android:exported="false" />
         <activity
-            android:name=".OrganizerPageActivity"
+            android:name=".View.OrganizerPageActivity"
             android:exported="false">
 
         </activity>
         <activity
-            android:name=".GenerateQrCodeActivity"
+            android:name=".View.GenerateQrCodeActivity"
             android:exported="false" />
 
         <service

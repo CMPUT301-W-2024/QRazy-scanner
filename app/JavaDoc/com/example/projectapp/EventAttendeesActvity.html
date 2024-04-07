@@ -79,7 +79,7 @@ loadScripts(document, 'script');</script>
 <div class="inheritance">androidx.activity.ComponentActivity
 <div class="inheritance">androidx.fragment.app.FragmentActivity
 <div class="inheritance">androidx.appcompat.app.AppCompatActivity
-<div class="inheritance">com.example.projectapp.EventAttendeesActvity</div>
+<div class="inheritance">com.example.projectapp.View.EventAttendeesActivity</div>
 </div>
 </div>
 </div>
@@ -158,7 +158,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addAttendee(com.example.projectapp.Attendee,java.util.ArrayList,com.example.projectapp.EventAttendeeAdapter)" class="member-name-link">addAttendee</a><wbr>(<a href="Attendee.html" title="class in com.example.projectapp">Attendee</a>&nbsp;attendee,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addAttendee(com.example.projectapp.Model.Attendee,java.util.ArrayList,com.example.projectapp.View.EventAttendeeAdapter)" class="member-name-link">addAttendee</a><wbr>(<a href="Attendee.html" title="class in com.example.projectapp">Attendee</a>&nbsp;attendee,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ArrayList.html" title="class or interface in java.util" class="external-link">ArrayList</a>&lt;<a href="Attendee.html" title="class in com.example.projectapp">Attendee</a>&gt;&nbsp;list,
  <a href="EventAttendeeAdapter.html" title="class in com.example.projectapp">EventAttendeeAdapter</a>&nbsp;adapter)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -174,14 +174,14 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onResume()" class="member-name-link">onResume</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeAttendee(com.example.projectapp.Attendee,java.util.ArrayList,com.example.projectapp.EventAttendeeAdapter)" class="member-name-link">removeAttendee</a><wbr>(<a href="Attendee.html" title="class in com.example.projectapp">Attendee</a>&nbsp;attendee,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeAttendee(com.example.projectapp.Model.Attendee,java.util.ArrayList,com.example.projectapp.View.EventAttendeeAdapter)" class="member-name-link">removeAttendee</a><wbr>(<a href="Attendee.html" title="class in com.example.projectapp">Attendee</a>&nbsp;attendee,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ArrayList.html" title="class or interface in java.util" class="external-link">ArrayList</a>&lt;<a href="Attendee.html" title="class in com.example.projectapp">Attendee</a>&gt;&nbsp;list,
  <a href="EventAttendeeAdapter.html" title="class in com.example.projectapp">EventAttendeeAdapter</a>&nbsp;adapter)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Removes an Attendee from the specified list and updates the adapter.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateAttendee(com.example.projectapp.Attendee,java.util.ArrayList,com.example.projectapp.EventAttendeeAdapter)" class="member-name-link">updateAttendee</a><wbr>(<a href="Attendee.html" title="class in com.example.projectapp">Attendee</a>&nbsp;attendee,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateAttendee(com.example.projectapp.Model.Attendee,java.util.ArrayList,com.example.projectapp.View.EventAttendeeAdapter)" class="member-name-link">updateAttendee</a><wbr>(<a href="Attendee.html" title="class in com.example.projectapp">Attendee</a>&nbsp;attendee,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ArrayList.html" title="class or interface in java.util" class="external-link">ArrayList</a>&lt;<a href="Attendee.html" title="class in com.example.projectapp">Attendee</a>&gt;&nbsp;list,
  <a href="EventAttendeeAdapter.html" title="class in com.example.projectapp">EventAttendeeAdapter</a>&nbsp;adapter)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -276,7 +276,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="addAttendee(com.example.projectapp.Attendee,java.util.ArrayList,com.example.projectapp.EventAttendeeAdapter)">
+<section class="detail" id="addAttendee(com.example.projectapp.Model.Attendee,java.util.ArrayList,com.example.projectapp.View.EventAttendeeAdapter)">
 <h3>addAttendee</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addAttendee</span><wbr><span class="parameters">(<a href="Attendee.html" title="class in com.example.projectapp">Attendee</a>&nbsp;attendee,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ArrayList.html" title="class or interface in java.util" class="external-link">ArrayList</a>&lt;<a href="Attendee.html" title="class in com.example.projectapp">Attendee</a>&gt;&nbsp;list,
@@ -292,7 +292,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="updateAttendee(com.example.projectapp.Attendee,java.util.ArrayList,com.example.projectapp.EventAttendeeAdapter)">
+<section class="detail" id="updateAttendee(com.example.projectapp.Model.Attendee,java.util.ArrayList,com.example.projectapp.View.EventAttendeeAdapter)">
 <h3>updateAttendee</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">updateAttendee</span><wbr><span class="parameters">(<a href="Attendee.html" title="class in com.example.projectapp">Attendee</a>&nbsp;attendee,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ArrayList.html" title="class or interface in java.util" class="external-link">ArrayList</a>&lt;<a href="Attendee.html" title="class in com.example.projectapp">Attendee</a>&gt;&nbsp;list,
@@ -307,7 +307,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="removeAttendee(com.example.projectapp.Attendee,java.util.ArrayList,com.example.projectapp.EventAttendeeAdapter)">
+<section class="detail" id="removeAttendee(com.example.projectapp.Model.Attendee,java.util.ArrayList,com.example.projectapp.View.EventAttendeeAdapter)">
 <h3>removeAttendee</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">removeAttendee</span><wbr><span class="parameters">(<a href="Attendee.html" title="class in com.example.projectapp">Attendee</a>&nbsp;attendee,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ArrayList.html" title="class or interface in java.util" class="external-link">ArrayList</a>&lt;<a href="Attendee.html" title="class in com.example.projectapp">Attendee</a>&gt;&nbsp;list,

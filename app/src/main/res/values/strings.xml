@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Project app</string>
+    <string name="app_name">Qrazy Scanner</string>
     <string name="welcome">Welcome!</string>
     <string name="joinevent">Join Event</string>
     <string name="createevent">Create Event</string>
@@ -14,4 +14,5 @@
     <string name="image_description" />
     <string name="menu_button" />
     <string name="menu">menu</string>
+    <string name="promo_qr_code"> <u>Promo QrCode</u> </string>
 </resources>

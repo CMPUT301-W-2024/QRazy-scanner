@@ -1,4 +1,4 @@
-# QRazy-scanner
+QRazy-scanner
 CMPUT301W24T55
 
 
@@ -19,3 +19,5 @@ Reference:
    - https://github.com/yuriy-budiyev/code-scanner
 4. Share Qr using URI
    - https://www.youtube.com/watch?v=eSi28xqGjbE
+5. Create pdf report
+   - https://github.com/aaviskarinfotech/POC_A13_CreateSharePDF
