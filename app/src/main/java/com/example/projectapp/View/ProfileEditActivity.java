@@ -36,7 +36,7 @@ import java.security.NoSuchAlgorithmException;
 public class ProfileEditActivity extends AppCompatActivity implements AddAttendeeCallback, LocalAttendeeListenerCallback {
     private ImageView avatar;
     private String encodedImage;
-    private ActivityResultLauncher<Intent> resultLauncher;
+    private ActivityResultLauncher<String> resultLauncher;
     private EditText userNameEditText, emailEditText, phoneEditText;
     private Button saveButton, deleteButton;
     private Attendee currentAttendee;
@@ -187,19 +187,14 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
     }
 
     private void pickImage() {
-        Intent intent = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R && android.os.ext.SdkExtensions.getExtensionVersion(android.os.Build.VERSION_CODES.R) >= 2) {
-            intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
-        }
-        resultLauncher.launch(intent);
+        resultLauncher.launch("image/*");
     }
 
     private void registerResult() {
-        resultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
+        resultLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(),
                 result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                        Uri imageUri = result.getData().getData();
+                    if (result != null) {
+                        Uri imageUri = result;
                         avatar.setImageURI(imageUri);
                         try {
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
@@ -208,8 +203,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
                             Log.e("ProfileEditActivity", "Error converting image", e);
                         }
                     }
-                }
-        );
+                });
     }
 
     public String bitmapToString(Bitmap bitmap) {
