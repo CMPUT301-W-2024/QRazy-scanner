@@ -9,7 +9,10 @@ import static org.junit.Assert.assertTrue;
 import com.example.projectapp.Model.Announcement;
 
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class AnnouncementTest {
     private Announcement announcement = new Announcement("Test Announcement", "15:00", "Test Event", "Test Organizer");
 
