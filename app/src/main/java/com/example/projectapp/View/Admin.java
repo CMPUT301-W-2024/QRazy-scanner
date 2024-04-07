@@ -133,7 +133,7 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
     public void onImagesUpdated(HashMap<String, String> images, LinearLayout layout,String collection, String field) {
         layout.removeAllViews();
         for (String document : images.keySet()){
-            addImageToLayout(images.get(document), layout, document,collection, field);
+            addImageToLayout(images.get(document), layout, document, field, collection);
         }
     }
 
@@ -254,7 +254,7 @@ public class Admin extends AppCompatActivity implements EventsListenerCallback, 
     }
 
     private void deleteImage(String documentId, String field, String collection) {
-        if (collection.equals("event")){
+        if (collection.equals("events")){
             dataHandler.updateEvent(documentId, field, null, this);
         }
         else {
