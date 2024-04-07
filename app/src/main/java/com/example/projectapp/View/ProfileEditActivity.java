@@ -40,6 +40,10 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * The ProfileEditActivity class provides an interface for users to edit their profile information,
+ * including their profile picture, name, email, and phone number.
+ */
 public class ProfileEditActivity extends AppCompatActivity implements AddAttendeeCallback, LocalAttendeeListenerCallback {
     private ImageView avatar;
     private String encodedImage;
@@ -103,6 +107,10 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         active = false;
     }
 
+    /**
+     * Deletes the current profile picture and generates a new one using the user's name.
+     * Also updates the deleteButton visibility accordingly.
+     */
     private void deleteProfilePicAndGenerateNewOne() {
         Bitmap generatedProfilePic = IdenticonGenerator.generate(currentAttendee.getName(), 128);
         if (generatedProfilePic != null) {
@@ -126,6 +134,9 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
     }
 
 
+    /**
+     * Loads existing Attendee information into the activity's UI fields and updates the delete button's visibility.
+     */
     private void loadAttendeeInfo() {
         userNameEditText.setText(currentAttendee.getName());
         emailEditText.setText(currentAttendee.getHomepage());
@@ -146,6 +157,9 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
 
     }
 
+    /**
+     * Saves changes made to the Attendee's profile information. Also handles the case when a new Attendee profile is being created.
+     */
     private void saveProfileChanges() {
         String name = userNameEditText.getText().toString().trim();
         String email = emailEditText.getText().toString().trim();
@@ -194,10 +208,16 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         }
     }
 
+    /**
+     *  Handles fetching a profile image from the device's gallery.
+     */
     private void pickImage() {
         resultLauncher.launch("image/*");
     }
 
+    /**
+     *  Initializes the ActivityResultLauncher responsible for handling image selection results.
+     */
     private void registerResult() {
         resultLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(),
                 result -> {
@@ -215,8 +235,20 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
     }
 
 
+
+    /**
+     * The IdenticonGenerator class provides a utility to generate simple, visually distinct
+     * profile pictures based on a username. These generated images are often called "Identicons".
+     */
     public static class IdenticonGenerator {
 
+        /**
+         * Generates an identicon image based on the provided username.
+         *
+         * @param username The username used to create a hash for identicon generation.
+         * @param size     The desired width and height of the generated identicon (in pixels).
+         * @return A Bitmap object representing the generated identicon, or 'null' if an error occurs.
+         */
         public static Bitmap generate(String username, int size) {
             try {
                 byte[] hash = MessageDigest.getInstance("MD5").digest(username.getBytes());
@@ -242,6 +274,15 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
             }
         }
 
+        /**
+         * Fills a rectangular cell within the identicon image with a specified color.
+         *
+         * @param bitmap   The Bitmap object representing the identicon being generated.
+         * @param x        The x-coordinate of the cell's top-left corner.
+         * @param y        The y-coordinate of the cell's top-left corner.
+         * @param cellSize The width and height of the cell (in pixels).
+         * @param color    The color to fill the cell with.
+         */
         private static void fillCell(Bitmap bitmap, int x, int y, int cellSize, int color) {
             for (int i = 0; i < cellSize; i++) {
                 for (int j = 0; j < cellSize; j++) {
@@ -259,6 +300,9 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         }
     }
 
+    /**
+     * Initiates a clean restart of the application, transitioning the user back to the MainActivity.
+     */
     private void restart(){
         Intent intent = new Intent(this, MainActivity.class);
         this.startActivity(intent);
@@ -275,6 +319,14 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         editor.apply();
     }
 
+    /**
+     * Attempts to correct the rotation of a Bitmap image based on embedded Exif orientation metadata.
+     * This is necessary when handling images captured by a camera.
+     *
+     * @param bitmap        The potentially rotated Bitmap image.
+     * @param encodedString The base64 encoded string representation of the image (used to access Exif data).
+     * @return  The corrected Bitmap image (if rotation was required), or the original Bitmap if no rotation was needed.
+     */
     private Bitmap rotateBitmapIfRequired(Bitmap bitmap, String encodedString) {
         try {
             byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);

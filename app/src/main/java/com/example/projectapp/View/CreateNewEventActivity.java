@@ -237,6 +237,14 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
                 });
     }
 
+
+
+    /**
+     * Helper method to display a time picker dialog and set the selected time into an EditText field.
+     *
+     * @param editText The EditText where the selected time should be displayed.
+     */
+
     private void timePicker(EditText editText){
 
         int hour = calendar.get(Calendar.HOUR_OF_DAY);

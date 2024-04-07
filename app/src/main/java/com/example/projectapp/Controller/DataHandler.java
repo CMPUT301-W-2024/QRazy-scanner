@@ -470,6 +470,12 @@ public class DataHandler {
         });
     }
 
+    /**
+     * Adds an event listener for geopoint updates related to a specific event.
+     *
+     * @param eventId   The unique ID of the event to monitor.
+     * @param callback  The callback object to be invoked when geopoint updates occur.
+     */
     public void addEventGeoPointsListener(String eventId, EventGeoPointsListenerCallback callback){
         DocumentReference eventDocRef = eventsRef.document(eventId);
 
