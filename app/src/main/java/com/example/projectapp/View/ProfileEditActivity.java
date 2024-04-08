@@ -130,7 +130,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
     }
 
     private boolean isUploadedProfilePic(String profilePic) {
-        return profilePic != null && profilePic.length() > 1000;
+        return profilePic != null && profilePic.length() > 9000;
     }
 
 
