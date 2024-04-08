@@ -13,12 +13,14 @@ import android.content.Context;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.GrantPermissionRule;
 
 import com.example.projectapp.View.AttendeePageActivity;
 import com.example.projectapp.View.MainActivity;
+import com.example.projectapp.View.OrganizerPageActivity;
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -31,11 +33,10 @@ public class AttendeePageActivitiesTest {
 
     @Rule
     public GrantPermissionRule mGrantPermissionRule =
-            GrantPermissionRule.grant("android.permission.CAMERA");
-
+            GrantPermissionRule.grant(android.Manifest.permission.CAMERA,android.Manifest.permission.POST_NOTIFICATIONS);
     // Create a profile
     @BeforeClass
-    public static void setUp() {
+    public static void setUp() throws InterruptedException {
         // Clear SharedPreferences
         ActivityScenario<MainActivity> mainActivityScenario = ActivityScenario.launch(MainActivity.class);
         mainActivityScenario.onActivity(activity -> {
@@ -44,6 +45,8 @@ public class AttendeePageActivitiesTest {
         });
 
         onView(withId(R.id.joinEventButton)).perform(click());
+
+        Thread.sleep(200);
         onView(withId(R.id.userNameEditText)).check(matches(isDisplayed()));
 
         onView(withId(R.id.userNameEditText)).perform(typeText("Page activities test"), closeSoftKeyboard());
