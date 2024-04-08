@@ -80,11 +80,12 @@ public class GenerateQrActivitiesTest {
 
     // create organizer and event
     @Before
-    public void setUp() {
+    public void setUp() throws InterruptedException {
         Organizer mockOrganizer = new Organizer("Test Organizer");
         dataHandler.setLocalOrganizer(mockOrganizer);
         dataHandler.addOrganizer(organizer -> {
         });
+        Thread.sleep(1000);
     }
 
     @After
@@ -151,7 +152,7 @@ public class GenerateQrActivitiesTest {
         onView(withId(R.id.newQrButton))
                 .perform(scrollTo())
                 .perform(click());
-        Thread.sleep(500);
+        Thread.sleep(1000);;
     }
 
     public void fillEventDetails() {

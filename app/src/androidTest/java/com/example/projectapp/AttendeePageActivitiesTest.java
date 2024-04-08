@@ -54,7 +54,7 @@ public class AttendeePageActivitiesTest {
         mockAttendee = new Attendee(null, "Admin Test Attendee", "test@gmail.com", "1234567890");
         dataHandler.setLocalAttendee(mockAttendee);
         dataHandler.addAttendee(mockAttendee, false,(a,e) -> {});
-        Thread.sleep(500);
+        Thread.sleep(1000);
     }
 
     @After
@@ -75,7 +75,7 @@ public class AttendeePageActivitiesTest {
         onView(withId(R.id.welcomeText)).check(matches(isDisplayed()));
 
         onView(withId(R.id.menuButton)).perform(click());
-        Thread.sleep(500);
+        Thread.sleep(1000);
         onView(withId(R.id.avatarImage)).check(matches(isDisplayed()));
         pressBack();
 
@@ -124,7 +124,7 @@ public class AttendeePageActivitiesTest {
         Organizer mockOrganizer = new Organizer("Test Organizer");
         Event mockEvent = new Event("Admin Test Event", "10-10-2024", "13:00", "14:00", mockOrganizer.getName(), mockOrganizer.getOrganizerId(), 100, "Des", null);
         dataHandler.addEvent(mockEvent, event -> {});
-        Thread.sleep(500);
+        Thread.sleep(1000);
         onView(withIndex(withId(R.id.eventNameText), 0)).check(matches(isDisplayed()));
 
         dataHandler.deleteEvent(mockEvent.getEventId(), v -> {});
@@ -137,9 +137,9 @@ public class AttendeePageActivitiesTest {
         Organizer mockOrganizer = new Organizer("Test Organizer");
         Event mockEvent = new Event("Admin Test Event", "10-10-2024", "13:00", "14:00", mockOrganizer.getName(), mockOrganizer.getOrganizerId(), 100, "Des", null);
         dataHandler.addEvent(mockEvent, event -> {});
-        Thread.sleep(500);
+        Thread.sleep(1000);
         onView(withIndex(withId(R.id.eventNameText), 0)).perform(click());
-        Thread.sleep(500);
+        Thread.sleep(1000);
         onView(withId(R.id.dialogEventPoster)).check(matches(isDisplayed()));
 
         dataHandler.deleteEvent(mockEvent.getEventId(), v -> {});
@@ -156,7 +156,7 @@ public class AttendeePageActivitiesTest {
         dataHandler.updateAttendee(dataHandler.getLocalAttendee().getAttendeeId(), "checkedInEvents." + mockEvent.getEventId(), FieldValue.increment(1), v->{});
         Announcement announcement = new Announcement("Test Announcement", "10-10-2024 14:00", mockEvent.getName(), mockOrganizer.getName());
         dataHandler.updateEvent(mockEvent.getEventId(), "announcements", FieldValue.arrayUnion(announcement), v -> {});
-        Thread.sleep(500);
+        Thread.sleep(1000);
 
         onView(withId(R.id.announcementEvent)).check(matches(isDisplayed()));
         dataHandler.deleteEvent(mockEvent.getEventId(), v -> {});

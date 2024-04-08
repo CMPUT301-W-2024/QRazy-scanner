@@ -78,7 +78,7 @@ public class OrganizerPageActivitiesTest {
         Organizer mockOrganizer = new Organizer("Test Organizer");
         dataHandler.setLocalOrganizer(mockOrganizer);
         dataHandler.addOrganizer(organizer -> {});
-        Thread.sleep(500);
+        Thread.sleep(1000);
     }
 
     @After
@@ -112,11 +112,11 @@ public class OrganizerPageActivitiesTest {
 
         createNewEvent();
         onView(withId(R.id.generateQrCodeButton)).perform(click());
-        Thread.sleep(500);
+        Thread.sleep(1000);
 
         onView(withId(R.id.finishButton)).perform(click());
 
-        Thread.sleep(500);
+        Thread.sleep(1000);
         onView(withText("activity test")).check(matches(isDisplayed()));
     }
 
@@ -188,7 +188,7 @@ public class OrganizerPageActivitiesTest {
         onView(withId(R.id.newQrButton))
                 .perform(scrollTo())
                 .perform(click());
-        Thread.sleep(500);
+        Thread.sleep(1000);
     }
 
     public void fillEventDetails() {
