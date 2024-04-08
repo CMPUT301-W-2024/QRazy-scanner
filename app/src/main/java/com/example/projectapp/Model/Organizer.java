@@ -11,7 +11,7 @@ import java.util.UUID;
  */
 public class Organizer {
     private String organizerId;
-    private ArrayList<String> events;
+    private ArrayList<Event> events;
     private String name;
 
     /**
@@ -61,7 +61,7 @@ public class Organizer {
      * @return
      *      The list of events.
      */
-    public ArrayList<String> getEvents() {
+    public ArrayList<Event> getEvents() {
         return events;
     }
 
@@ -71,7 +71,7 @@ public class Organizer {
      * @param events
      *      The new list of events.
      */
-    public void setEvents(ArrayList<String> events) {
+    public void setEvents(ArrayList<Event> events) {
         this.events = events;
     }
 

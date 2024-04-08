@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import com.example.projectapp.Model.Event;
 import com.example.projectapp.Model.Organizer;
 
 import org.junit.jupiter.api.Test;
@@ -59,14 +60,14 @@ public class OrganizerTest {
         // Check if not null
         assertNotNull(organizer.getEvents());
 
-        ArrayList<String> newEvents = new ArrayList<>();
-        newEvents.add("Event1");
-        newEvents.add("Event2");
+        Event event1 = new Event();
+
+        ArrayList<Event> newEvents = new ArrayList<>();
+        newEvents.add(event1);
 
         organizer.setEvents(newEvents);
 
         assertEquals(newEvents, organizer.getEvents());
-        assertTrue(organizer.getEvents().contains("Event1")
-                && organizer.getEvents().contains("Event2"));
+        assertTrue(organizer.getEvents().contains(event1));
     }
 }
