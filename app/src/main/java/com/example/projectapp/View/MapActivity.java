@@ -188,13 +188,9 @@ public class MapActivity extends AppCompatActivity implements EventGeoPointsList
         if (geoPoints != null){
             List<OverlayItem> overlayItems = mapToOverlayItems(geoPoints);
 
-            if (itemizedOverlay == null){
-                itemizedOverlay = new ItemizedIconOverlay<>(MapActivity.this, new ArrayList<>(), null);
-            }
-            else {
-                // Clear existing items
-                itemizedOverlay.removeAllItems();
-            }
+            itemizedOverlay = new ItemizedIconOverlay<>(MapActivity.this, new ArrayList<>(), null);
+            // Clear existing items
+            itemizedOverlay.removeAllItems();
 
             // Convert Firestore's OverlayItems to osmdroid's OverlayItems
             for (OverlayItem overlayItem : overlayItems) {
