@@ -72,12 +72,13 @@ public class OrganizerPageActivitiesTest {
             android.Manifest.permission.ACCESS_FINE_LOCATION,
             android.Manifest.permission.ACCESS_COARSE_LOCATION,
             android.Manifest.permission.READ_MEDIA_IMAGES);
-    // create organizer and event
+    // create organizer
     @Before
-    public void setUp(){
+    public void setUp() throws InterruptedException {
         Organizer mockOrganizer = new Organizer("Test Organizer");
         dataHandler.setLocalOrganizer(mockOrganizer);
         dataHandler.addOrganizer(organizer -> {});
+        Thread.sleep(500);
     }
 
     @After

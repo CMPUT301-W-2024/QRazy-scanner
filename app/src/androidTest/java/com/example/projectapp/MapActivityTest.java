@@ -58,11 +58,12 @@ public class MapActivityTest {
 
     // create organizer and event
     @Before
-    public void setUp() {
+    public void setUp() throws InterruptedException {
         Organizer mockOrganizer = new Organizer("Test Organizer");
         dataHandler.setLocalOrganizer(mockOrganizer);
         dataHandler.addOrganizer(organizer -> {
         });
+        Thread.sleep(500);
     }
 
     @After

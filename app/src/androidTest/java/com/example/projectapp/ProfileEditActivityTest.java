@@ -35,10 +35,11 @@ public class ProfileEditActivityTest {
             GrantPermissionRule.grant(android.Manifest.permission.POST_NOTIFICATIONS);
 
     @Before
-    public void setUp(){
+    public void setUp() throws InterruptedException {
         Attendee attendee = new Attendee(null, "Test Attendee", "test@gmail.com", "1234567890");
         dataHandler.setLocalAttendee(attendee);
         dataHandler.addAttendee(attendee, false, (a,e) -> {});
+        Thread.sleep(500);
     }
 
     @After
@@ -47,13 +48,15 @@ public class ProfileEditActivityTest {
     }
 
     @Test
-    public void testNameDisplayed(){
+    public void testNameDisplayed() throws InterruptedException {
         ActivityScenario.launch(AttendeePageActivity.class);
 
         onView(withId(R.id.menuButton)).perform(click());
         onView(withId(R.id.userNameEditText)).perform(click());
-        onView(withId(R.id.userNameEditText)).perform(typeText("New Name"));
+        onView(withId(R.id.userNameEditText)).perform(typeText("s"));
+        onView(withId(R.id.saveButton)).perform(click());
         pressBack();
-        onView(withText("Welcome, New Name")).check(matches(isDisplayed()));
+        Thread.sleep(500);
+        onView(withText("Welcome, Test Attendees ")).check(matches(isDisplayed()));
     }
 }
