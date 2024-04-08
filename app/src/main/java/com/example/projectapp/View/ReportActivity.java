@@ -61,6 +61,14 @@ public class ReportActivity extends AppCompatActivity {
 
 
 
+    /**
+     * Called when the ReportActivity is created. Sets up the UI, extracts the Event object
+     * from the intent, initializes variables, handles permissions if needed, sets up the report
+     * generation button, and populates event information into the UI.
+     *
+     * @param savedInstanceState  If the activity is being re-initialized after previously being shut down,
+     *                            then this Bundle contains the data it most recently supplied in onSaveInstanceState().
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

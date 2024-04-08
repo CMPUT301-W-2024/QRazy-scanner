@@ -56,7 +56,13 @@ public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdap
         this.listener = listener;
     }
 
-    // Create new views (invoked by the layout manager)
+    /**
+     * Called by the RecyclerView when a new ViewHolder needs to be created to display an event item.
+     *
+     * @param viewGroup  The parent ViewGroup that the new ViewHolder will be attached to.
+     * @param viewType   An integer code used for potential view type differentiation (not used here).
+     * @return           A new ViewHolder instance to hold the view hierarchy for an event item.
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view, which defines the UI of the list item
@@ -65,7 +71,12 @@ public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdap
         return new ViewHolder(view);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
+    /**
+     * Called by the RecyclerView to populate the data of a specific event item into the ViewHolder.
+     *
+     * @param viewHolder The ViewHolder whose views should be updated.
+     * @param position   The index of the event within the list to be displayed.
+     */
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Event event = events.get(position);
@@ -78,7 +89,11 @@ public class AttendeeEventAdapter extends RecyclerView.Adapter<AttendeeEventAdap
         viewHolder.dateText.setText(event.getDate());
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
+    /**
+     * Returns the total number of events in the dataset to be displayed by the RecyclerView.
+     *
+     * @return The size of the events list.
+     */
     @Override
     public int getItemCount() {
         return events.size();

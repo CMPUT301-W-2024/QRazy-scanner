@@ -140,6 +140,12 @@ public class GenerateQrCodeActivity extends AppCompatActivity implements GetQrCo
         return bmp;
     }
 
+    /**
+     * Called when an update related to the QR code generation process occurs
+     * Handles displaying appropriate feedback messages to the user.
+     *
+     * @param eventId  The ID of the event for which the QR code was generated.
+     */
     @Override
     public void onUpdateEvent(String eventId) {
         if (eventId != null){

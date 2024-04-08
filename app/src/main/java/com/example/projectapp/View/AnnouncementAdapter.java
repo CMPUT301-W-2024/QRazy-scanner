@@ -45,6 +45,13 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
         }
     }
 
+    /**
+     * Called by the RecyclerView to create a new ViewHolder.
+     *
+     * @param parent    The parent ViewGroup of the new ViewHolder.
+     * @param viewType  The type of the new View).
+     * @return          A new ViewHolder for displaying an announcement item.
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -52,6 +59,12 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
         return new ViewHolder(view);
     }
 
+    /**
+     * Called by the RecyclerView to bind announcement data to a ViewHolder for display.
+     *
+     * @param holder   The ViewHolder to bind data to.
+     * @param position The position of the announcement within the list.
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Announcement announcement = announcements.get(position);
@@ -62,6 +75,10 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
         holder.dateTime.setText(announcement.getDateTime());
     }
 
+    /**
+     * Returns the total number of announcements to be displayed.
+     * @return The size of the announcement list.
+     */
     @Override
     public int getItemCount() {
         return announcements.size();

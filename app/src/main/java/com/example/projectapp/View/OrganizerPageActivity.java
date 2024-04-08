@@ -95,6 +95,9 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
 
     }
 
+    /**
+     * call super
+     */
     @Override
     protected void onResume() {
 
@@ -112,7 +115,9 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
 
     }
 
-
+    /**
+     * call super
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -198,6 +203,14 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
         }
     }
 
+    /**
+     * Called when an update occurs to the Firestore collection of events managed by this organizer.
+     * Handles adding, modifying, and removing events from the RecyclerView according to the
+     * update type.
+     *
+     * @param updateType The type of update that occurred.
+     * @param event      The Event object that was affected.
+     */
     @Override
     public void onOrganizerEventsUpdated(DocumentChange.Type updateType, Event event) {
         switch (updateType) {
@@ -213,6 +226,13 @@ public class OrganizerPageActivity extends AppCompatActivity implements Organize
         }
     }
 
+    /**
+     * Called when the organizer's profile data is successfully retrieved from Firestore.
+     * Triggers the transition to the CreateNewEventActivity if the organizer exists.
+     * Otherwise, displays an error message.
+     *
+     * @param organizer  The Organizer object retrieved from Firestore.
+     */
     @Override
     public void onAddOrganizer(Organizer organizer) {
         if (organizer != null){

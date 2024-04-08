@@ -191,6 +191,12 @@ public class CreateNewEventActivity extends AppCompatActivity implements AddEven
         dataHandler.addEvent(newEvent, this);
     }
 
+    /**
+     * Called when an event has been successfully added.
+     * Displays toasts with appropriate messages and handles navigation to the QR code generation activity.
+     *
+     * @param event The newly added Event object (or null if the addition failed).
+     */
     @Override
     public void onAddEvent(Event event) {
         // Success handling
