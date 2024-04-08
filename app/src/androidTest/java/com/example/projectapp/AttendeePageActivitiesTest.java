@@ -33,13 +33,17 @@ public class AttendeePageActivitiesTest {
     public GrantPermissionRule mGrantPermissionRule =
             GrantPermissionRule.grant("android.permission.CAMERA");
 
+    @Rule
+    public GrantPermissionRule mGrantPermissionRule2 =
+            GrantPermissionRule.grant("android.permission.POST_NOTIFICATIONS");
+
     // Create a profile
     @BeforeClass
     public static void setUp() {
         // Clear SharedPreferences
         ActivityScenario<MainActivity> mainActivityScenario = ActivityScenario.launch(MainActivity.class);
         mainActivityScenario.onActivity(activity -> {
-            activity.getSharedPreferences("your_prefs", Context.MODE_PRIVATE)
+            activity.getSharedPreferences("AttendeePrefs", Context.MODE_PRIVATE)
                     .edit().clear().apply();
         });
 

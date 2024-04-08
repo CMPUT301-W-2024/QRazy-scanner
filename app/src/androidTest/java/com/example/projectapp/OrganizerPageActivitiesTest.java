@@ -1,5 +1,7 @@
 package com.example.projectapp;
 
+import android.Manifest;
+
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -63,9 +65,10 @@ public class OrganizerPageActivitiesTest {
 
     @Rule
     public GrantPermissionRule permissionRule = GrantPermissionRule.grant(
-            "android.Manifest.permission.ACCESS_FINE_LOCATION",
-            "android.Manifest.permission.ACCESS_COARSE_LOCATION",
-            "android.Manifest.permission.ACCESS_BACKGROUND_LOCATION");
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+
     // create organizer and event
     @Before
     public void setUp(){
@@ -163,8 +166,8 @@ public class OrganizerPageActivitiesTest {
 
         ActivityScenario.launch(MapActivity.class);
 
-        Thread.sleep(100);
-        onView(withId(R.id.mapView)).check(matches(isDisplayed()));
+        Thread.sleep(1000);
+        onView(withId(R.id.goBackButton)).check(matches(isDisplayed()));
         onView(withId(R.id.goBackButton)).perform(click());
 
         ActivityScenario.launch(OrganizerPageActivity.class);
