@@ -13,10 +13,13 @@ import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertNotNull;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.TimePicker;
 
 import androidx.test.core.app.ActivityScenario;
@@ -64,7 +67,7 @@ import java.util.ArrayList;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class OrganizerPageActivitiesTest {
+public class GenerateQrActivitiesTest {
     DataHandler dataHandler = DataHandler.getInstance();
 
     @Rule
@@ -72,52 +75,23 @@ public class OrganizerPageActivitiesTest {
             android.Manifest.permission.ACCESS_FINE_LOCATION,
             android.Manifest.permission.ACCESS_COARSE_LOCATION,
             android.Manifest.permission.READ_MEDIA_IMAGES);
+
     // create organizer and event
     @Before
-    public void setUp(){
+    public void setUp() {
         Organizer mockOrganizer = new Organizer("Test Organizer");
         dataHandler.setLocalOrganizer(mockOrganizer);
-        dataHandler.addOrganizer(organizer -> {});
-    }
-
-    @After
-    public void tearDown(){
-        FirebaseFirestore.getInstance().collection("events").whereEqualTo("organizerId", dataHandler.getLocalOrganizer().getOrganizerId()).get().addOnSuccessListener(documentSnapshots->{
-            for (QueryDocumentSnapshot d : documentSnapshots){
-                d.getReference().delete();
-            }
+        dataHandler.addOrganizer(organizer -> {
         });
     }
 
-    /**
-     * Test to check if clicking create new event switches from
-     * 'Organizer Page' activity to 'Create New Event'
-     *  activity and back to 'Organizer Page'
-     */
-    @Test
-    public void testCreateNewEventActivitySwitch(){
-        ActivityScenario.launch(OrganizerPageActivity.class);
-
-        onView(withId(R.id.createNewEventButton)).perform(click());
-        onView(withId(R.id.eventNameEditText)).check(matches(isDisplayed()));
-        pressBack();
-        onView(withId(R.id.allEventsTextView)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void testNewEventDisplays() throws InterruptedException {
-        ActivityScenario.launch(OrganizerPageActivity.class);
-
-        createNewEvent();
-        onView(withId(R.id.newQrButton))
-                .perform(scrollTo())
-                .perform(click());
-        Thread.sleep(500);
-
-        onView(withId(R.id.finishButton)).perform(click());
-
-        Thread.sleep(500);
-        onView(withText("activity test")).check(matches(isDisplayed()));
+    @After
+    public void tearDown() {
+        FirebaseFirestore.getInstance().collection("events").whereEqualTo("organizerId", dataHandler.getLocalOrganizer().getOrganizerId()).get().addOnSuccessListener(documentSnapshots -> {
+            for (QueryDocumentSnapshot d : documentSnapshots) {
+                d.getReference().delete();
+            }
+        });
     }
 
     @Test
@@ -126,58 +100,28 @@ public class OrganizerPageActivitiesTest {
 
         createNewEvent();
         onView(withId(R.id.generateQrCodeButton)).perform(click());
-        onView(withId(R.id.finishButton)).perform(click());
-        onView(withId(R.id.expandButton)).perform(click());
-        onView(withId(R.id.eventQrView)).check(matches(isDisplayed()));
+        onView(withId(R.id.qrCodeImageView)).check(((view, noViewFoundException) -> {
+            ImageView imageView = (ImageView) view;
+            imageView.setDrawingCacheEnabled(true);
+            Bitmap bitmap = imageView.getDrawingCache();
+            assertNotNull(bitmap);
+        }));
     }
 
     @Test
-    public void testMapActivitySwitch() throws InterruptedException {
+    public void testPromoQrCodeDisplays() throws InterruptedException {
         ActivityScenario.launch(OrganizerPageActivity.class);
 
         createNewEvent();
-        onView(withId(R.id.finishButton)).perform(click());
-        onView(withId(R.id.expandButton)).perform(click());
-        onView(withId(R.id.viewMapButton)).perform(click());
-        onView(withId(R.id.mapView)).check(matches(isDisplayed()));
-        pressBack();
-        onView(withId(R.id.allEventsTextView)).check(matches(isDisplayed()));
+        onView(withId(R.id.generatePromotionQrCodeButton)).perform(click());
+        onView(withId(R.id.qrCodeImageView)).check(((view, noViewFoundException) -> {
+            ImageView imageView = (ImageView) view;
+            imageView.setDrawingCacheEnabled(true);
+            Bitmap bitmap = imageView.getDrawingCache();
+            assertNotNull(bitmap);
+        }));
     }
 
-    @Test
-    public void testReportActivitySwitch() throws InterruptedException {
-        ActivityScenario.launch(OrganizerPageActivity.class);
-
-        createNewEvent();
-        onView(withId(R.id.finishButton)).perform(click());
-        onView(withId(R.id.expandButton)).perform(click());
-        onView(withId(R.id.reportButton)).perform(click());
-        onView(withId(R.id.reportText)).check(matches(isDisplayed()));
-        pressBack();
-        onView(withId(R.id.allEventsTextView)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void testEventAttendeesActivitySwitch() throws InterruptedException{
-        ActivityScenario.launch(OrganizerPageActivity.class);
-
-        createNewEvent();
-        onView(withId(R.id.finishButton)).perform(click());
-        onView(withId(R.id.attendeeCountTextView)).perform(click());
-        onView(withId(R.id.eventAttendeesList)).check(matches(isDisplayed()));
-        pressBack();
-        onView(withId(R.id.allEventsTextView)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void testGenerateQRCodeActivitySwitch() throws InterruptedException {
-        ActivityScenario.launch(OrganizerPageActivity.class);
-
-        createNewEvent();
-        onView(withId(R.id.finishButton)).perform(click());
-        onView(withId(R.id.expandButton)).perform(click());
-        onView(withId(R.id.allEventsTextView)).check(matches(isDisplayed()));
-    }
 
     public void createNewEvent() throws InterruptedException {
         onView(withId(R.id.createNewEventButton)).perform(click());
@@ -259,5 +203,4 @@ public class OrganizerPageActivitiesTest {
             }
         };
     }
-
 }

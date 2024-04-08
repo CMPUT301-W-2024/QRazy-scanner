@@ -57,7 +57,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         ImageView eventQrView, promoQrView;
         TextView eventQrText, promoQrText;
         ImageButton expandEventButton, announcementButton;
-        Button viewmapButton;
+        Button viewMapButton;
         Button pdfButton;
 
         public ViewHolder(View itemView) {
@@ -75,7 +75,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             expandEventButton = itemView.findViewById(R.id.expandButton);
             announcementButton = itemView.findViewById(R.id.announcementButton);
             pdfButton = itemView.findViewById(R.id.pdfButton);
-            viewmapButton = itemView.findViewById(R.id.viewMapButton);
+            viewMapButton = itemView.findViewById(R.id.viewMapButton);
         }
     }
 
@@ -177,8 +177,8 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             builder.show();
         });
 
-        holder.viewmapButton.setVisibility(event.getTrackLocation() ? View.VISIBLE : View.INVISIBLE);
-        holder.viewmapButton.setOnClickListener(v -> {
+        holder.viewMapButton.setVisibility(event.getTrackLocation() ? View.VISIBLE : View.INVISIBLE);
+        holder.viewMapButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, MapActivity.class);
             intent.putExtra("EVENT_ID", event.getEventId());
             context.startActivity(intent);
