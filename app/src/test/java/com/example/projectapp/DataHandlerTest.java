@@ -76,12 +76,12 @@ public class DataHandlerTest {
         //when(mockCollectionRef.document(anyString())).thenReturn(mockDocumentRef);
 
         when(mockAttendeeDocRef.getId()).thenReturn("mockAttendeeID");
-
+        when(mockOrganizerDocRef.getId()).thenReturn("mockOrganizerID");
         when(mockEventDocRef.getId()).thenReturn("mockEventID");
 
-        when(mockAttendeesRef.add(any(Attendee.class))).thenReturn(mockTask);
-        when(mockOrganizersRef.add(any(Organizer.class))).thenReturn(mockTask);
-        when(mockEventsRef.add(any(Event.class))).thenReturn(mockTask);
+        when(mockAttendeesColRef.add(any(Attendee.class))).thenReturn(mockTask);
+        when(mockOrganizersColRef.add(any(Organizer.class))).thenReturn(mockTask);
+        when(mockEventsColRef.add(any(Event.class))).thenReturn(mockTask);
 
         mockDataHandler = new DataHandler();
     }
@@ -91,8 +91,8 @@ public class DataHandlerTest {
         Organizer mockOrganizer = mock(Organizer.class);
         //DocumentReference attendeeDocRef = attendeesRef.document(attendee.getAttendeeId());
 
-        when(mockOrganizersRef.getId()).thenReturn("mockOrganizerID");
-        when(mockOrganizerDocRef.getId()).thenReturn("mockOrganizerID");
+        //when(mockOrganizersRef.getId()).thenReturn("mockOrganizerID");
+
 
         // Set the local attendee
         mockDataHandler.addOrganizer(new AddOrganizerCallback() {
@@ -104,7 +104,7 @@ public class DataHandlerTest {
 
         mockDataHandler.setLocalOrganizer(mockOrganizer);
 
-        // Verify that the local attendee is set correctly
+        // Verify that the local organizer is set correctly
         assertEquals("mockOrganizerID", mockDataHandler.getLocalOrganizer());
     }
     
