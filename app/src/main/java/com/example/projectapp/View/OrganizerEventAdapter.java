@@ -182,7 +182,9 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             context.startActivity(intent);
         });
 
-        holder.viewMapButton.setVisibility(event.getTrackLocation() ? View.VISIBLE : View.GONE);
+        if (event.getTrackLocation() != null){
+            holder.viewMapButton.setVisibility(event.getTrackLocation() ? View.VISIBLE : View.GONE);
+        }
 
         holder.viewMapButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, MapActivity.class);
