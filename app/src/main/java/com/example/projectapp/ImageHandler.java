@@ -51,7 +51,6 @@ public class ImageHandler {
             matrix.postScale(scale, scale);
             Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
 
-            // Convert the resized bitmap to a Base64 encoded string
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             int quality = 100; // Initial quality
             resizedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
