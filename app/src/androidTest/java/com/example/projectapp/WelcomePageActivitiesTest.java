@@ -31,7 +31,7 @@ public class WelcomePageActivitiesTest {
 
     @Rule
     public ActivityScenarioRule<MainActivity> activityScenarioRule =
-            new ActivityScenarioRule<>(WelcomeFragment.class);
+            new ActivityScenarioRule<>(MainActivity.class);
 
     /**
      * Verifies that the ‘Create Event’ button
