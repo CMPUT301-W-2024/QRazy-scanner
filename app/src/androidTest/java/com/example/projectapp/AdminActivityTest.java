@@ -44,12 +44,10 @@ public class AdminActivityTest {
     public void setUp() throws InterruptedException {
         mockOrganizer = new Organizer("Test Organizer");
         mockEvent = new Event("Admin Test Event", "10-10-2024", "13:00", "14:00", mockOrganizer.getName(), mockOrganizer.getOrganizerId(), 100, "Des", null);
-        mockEvent.setEventId("0");
         mockAttendee = new Attendee(null, "Admin Test Attendee", "test@gmail.com", "1234567890");
-        mockAttendee.setAttendeeId("0");
         dataHandler.addEvent(mockEvent, event -> {});
         dataHandler.addAttendee(mockAttendee, false, (a,e) -> {});
-        Thread.sleep(5000); // events take time to pop up
+        Thread.sleep(10000); // events take time to pop up
     }
 
     @After
