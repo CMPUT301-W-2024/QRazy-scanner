@@ -53,7 +53,7 @@ public class DataHandler {
      * Private constructor initializes the DataHandler with
      * Firestore database, collection references, and settings.
      */
-    private DataHandler(){
+    public DataHandler(){
         db = FirebaseFirestore.getInstance();
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder().setLocalCacheSettings(MemoryCacheSettings.newBuilder().build()).build();
         db.setFirestoreSettings(settings);
@@ -632,6 +632,13 @@ public class DataHandler {
         googleCredentials.refreshIfExpired();
 
         return googleCredentials.getAccessToken().getTokenValue();
+    }
+
+    public DataHandler(FirebaseFirestore database) {
+        this.db = database;
+        this.attendeesRef = db.collection("attendees");
+        this.organizersRef = db.collection("organizers");
+        this.eventsRef = db.collection("events");
     }
 
 }
