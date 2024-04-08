@@ -76,9 +76,11 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.4.0")
     androidTestImplementation("org.mockito:mockito-core:3.12.4")
     androidTestImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
-    androidTestImplementation("androidx.test:runner:1.4.0")
+    androidTestImplementation("androidx.test:runner:1.5.2")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.0-alpha03")
     androidTestImplementation("androidx.test:rules:1.6.0-alpha03")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("org.mockito:mockito-android:3.11.2")
 
 tasks.withType<Test> {
     useJUnitPlatform()
