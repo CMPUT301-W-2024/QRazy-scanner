@@ -70,7 +70,7 @@ public class ImageHandler {
         } else {
             // No resizing needed, directly convert the original bitmap to a Base64 encoded string
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
             byte[] byteArray = baos.toByteArray();
             return Base64.encodeToString(byteArray, Base64.DEFAULT);
         }
