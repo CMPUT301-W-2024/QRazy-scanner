@@ -72,6 +72,9 @@ public class AnnouncementTest {
         assertEquals(newOrganizer, announcement.getOrganizer());
     }
 
+    /**
+     * Tests for getting and setting the date and time.
+     */
     @Test
     void testEquals() {
         // Equals With Null
@@ -92,8 +95,12 @@ public class AnnouncementTest {
         assertFalse(announcement.equals(differentAnnouncement));
     }
 
+    /**
+     * Tests the hashCode method for Announcement objects.
+     */
     @Test
-    void testHashCodeC() {
+    void testHashCode() {
+        // Same Objects
         Announcement anotherAnnouncement = new Announcement("Test Announcement", "15:00", "Test Event", "Test Organizer");
         assertEquals(announcement.hashCode(), anotherAnnouncement.hashCode());
 
