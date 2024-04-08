@@ -105,6 +105,7 @@ public class EventAttendeesActivity extends AppCompatActivity implements EventAt
      */
     public void removeAttendee(Attendee attendee, ArrayList<Attendee> list, EventAttendeeAdapter adapter){
         list.remove(attendee);
+        adapter.notifyDataSetChanged();
     }
 
     /**
