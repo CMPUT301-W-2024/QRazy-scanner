@@ -161,13 +161,13 @@ android:layout_height="match_parent">
                 android:id="@+id/checkInLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Get Check-in Locations"/>
+                android:text="Check-in Locations On"/>
 
             <RadioButton
                 android:id="@+id/noCheckInLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Don't Get Check-in Locations"/>
+                android:text="Check-in Locations Off"/>
         </RadioGroup>
 
         <!-- Buttons for QR code generation -->
@@ -179,7 +179,7 @@ android:layout_height="match_parent">
                 android:id="@+id/newQrButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Generate QR Code"
+                android:text="Generate QRCode"
                 android:textColor="@color/red"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 app:layout_constraintStart_toStartOf="parent"

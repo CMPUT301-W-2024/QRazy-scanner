@@ -19,6 +19,13 @@ public class NotificationService extends FirebaseMessagingService {
 
     private final String channelId = "CHANNEL_ID_NOTIFICATION";
     private final String channelName = "QrazyScanner";
+
+    /**
+     * Called when a new Firebase Cloud Messaging (FCM) message is received. Extracts data
+     * from the message payload and triggers a notification.
+     *
+     * @param message The RemoteMessage object containing the message data.
+     */
     @Override
     public void onMessageReceived(@NonNull RemoteMessage message) {
         super.onMessageReceived(message);
@@ -27,6 +34,12 @@ public class NotificationService extends FirebaseMessagingService {
         }
     }
 
+    /**
+     * Called when a new Firebase Cloud Messaging (FCM) registration token is generated.  Updates
+     * the locally stored Attendee's FCM token in the data store
+     *
+     * @param token The newly generated FCM token.
+     */
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);

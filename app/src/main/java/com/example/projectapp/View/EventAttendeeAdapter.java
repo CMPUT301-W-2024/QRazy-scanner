@@ -62,7 +62,13 @@ public class EventAttendeeAdapter extends RecyclerView.Adapter<EventAttendeeAdap
         this.listener = listener;
     }
 
-    // Create new views (invoked by the layout manager)
+    /**
+     * Called by the RecyclerView when a new ViewHolder needs to be created to display an attendee item.
+     *
+     * @param viewGroup  The parent ViewGroup that the new ViewHolder will be attached to.
+     * @param viewType   An integer code used for potential view type differentiation (not used here).
+     * @return           A new ViewHolder instance to hold the view hierarchy for an attendee item.
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view, which defines the UI of the list item
@@ -71,7 +77,12 @@ public class EventAttendeeAdapter extends RecyclerView.Adapter<EventAttendeeAdap
         return new ViewHolder(view);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
+    /**
+     * Called by the RecyclerView to populate the data of a specific attendee item into the ViewHolder.
+     *
+     * @param viewHolder The ViewHolder whose views should be updated.
+     * @param position   The index of the attendee within the list to be displayed.
+     */
     @Override
     public void onBindViewHolder(EventAttendeeAdapter.ViewHolder viewHolder, final int position) {
         Attendee attendee = attendees.get(position);
@@ -93,7 +104,11 @@ public class EventAttendeeAdapter extends RecyclerView.Adapter<EventAttendeeAdap
         }
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
+    /**
+     * Returns the total number of attendees in the dataset to be displayed by the RecyclerView.
+     *
+     * @return The size of the attendees list.
+     */
     @Override
     public int getItemCount() {
         return attendees.size();

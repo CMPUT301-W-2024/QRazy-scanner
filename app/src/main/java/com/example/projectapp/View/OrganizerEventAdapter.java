@@ -80,6 +80,13 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         }
     }
 
+    /**
+     * Called by the RecyclerView to create a new ViewHolder.
+     *
+     * @param parent   The parent ViewGroup of the new ViewHolder.
+     * @param viewType The type of the new View.
+     * @return         A new ViewHolder for displaying an Event item.
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -87,6 +94,13 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         return new ViewHolder(view);
     }
 
+    /**
+     * Called by the RecyclerView to populate event data into a ViewHolder.
+     * Sets up click listeners and handles visibility of QR codes and expandable sections.
+     *
+     * @param holder   The ViewHolder to bind data to.
+     * @param position The position of the Event within the list.
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Event event = events.get(position);
@@ -182,11 +196,22 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         });
     }
 
+    /**
+     * Returns the total number of Event items to be displayed.
+     *
+     * @return The size of the events list.
+     */
     @Override
     public int getItemCount() {
         return events.size();
     }
 
+    /**
+     *  Handles sending announcements to attendees of a given event.
+     *
+     * @param message The text content of the announcement.
+     * @param event   The Event for which the announcement is being sent.
+     */
     private void sendAnnouncement(String message, Event event){
         DataHandler dataHandler = DataHandler.getInstance();
         // gets set of all checked and signed up attendees
@@ -213,6 +238,11 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
     }
 
 
+    /**
+     * Callback triggered after an Event update attempt. Displays feedback to the user.
+     *
+     * @param eventId The ID of the Event that was updated (or null if failure).
+     */
     @Override
     public void onUpdateEvent(String eventId) {
         if (eventId != null){

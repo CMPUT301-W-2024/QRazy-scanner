@@ -1,1 +1,4 @@
 com.example.projectapp
+com.example.projectapp.Controller
+com.example.projectapp.Model
+com.example.projectapp.View

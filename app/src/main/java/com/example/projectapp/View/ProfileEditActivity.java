@@ -95,11 +95,17 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         });
     }
 
+    /**
+     * call super
+     */
     @Override
     protected void onResume() {
         super.onResume();
         active = true;
     }
+    /**
+     * call super
+     */
 
     @Override
     protected void onPause() {
@@ -119,8 +125,10 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         }
     }
 
-
-
+    /**
+     * Updates the visibility of the delete button based on the current attendee's profile picture.
+     * If the current attendee exists and has an uploaded profile picture, the delete button is made visible.
+     */
     private void updateDeleteButtonVisibility() {
         if (currentAttendee != null && isUploadedProfilePic(currentAttendee.getProfilePic())) {
             deleteButton.setVisibility(View.VISIBLE);
@@ -129,6 +137,13 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         }
     }
 
+    /**
+     * Checks if a given profile picture string represents an uploaded profile picture.
+     *
+     * @param profilePic  The profile picture string to be evaluated.
+     * @return            True if the profile picture string is not null and has a length greater than
+     *                    9000 characters (indicating an uploaded image), false otherwise.
+     */
     private boolean isUploadedProfilePic(String profilePic) {
         return profilePic != null && profilePic.length() > 9000;
     }
@@ -194,6 +209,15 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         }
     }
 
+    /**
+     * Called when an Attendee has been successfully added or updated.
+     * Displays toasts with appropriate messages, handles navigation to the AttendeePageActivity
+     * if it's a newly added attendee, and closes the current activity.
+     *
+     * @param attendee     The updated Attendee object.
+     * @param newAttendee  A boolean flag indicating whether the attendee was newly created
+     *                     or an existing attendee was modified.
+     */
     @Override
     public void onAddAttendee(Attendee attendee, boolean newAttendee) {
         if (attendee != null){
@@ -294,6 +318,10 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         }
     }
 
+    /**
+     * Called when the locally stored Attendee has been deleted.  If the activity is currently
+     * active, it clears the locally stored Attendee reference and triggers a restart.
+     */
     @Override
     public void onLocalAttendeeDeleted() {
         if (active){

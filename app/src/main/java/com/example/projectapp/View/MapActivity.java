@@ -90,7 +90,14 @@ public class MapActivity extends AppCompatActivity implements EventGeoPointsList
         });
     }
 
-    // Handle permission request result
+    /**
+     * Handles the result of a location permission request. If permission is granted,
+     * proceeds to set up the map. If denied, displays a toast indicating the denial.
+     *
+     * @param requestCode The integer code that identifies the permission request.
+     * @param permissions An array of the requested permission strings.
+     * @param grantResults An array of integers indicating whether the corresponding permissions were granted.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -169,6 +176,13 @@ public class MapActivity extends AppCompatActivity implements EventGeoPointsList
         return overlayItems;
     }
 
+    /**
+     * Callback method triggered when an update occurs regarding GeoPoints associated with an event.
+     * This method handles the conversion of GeoPoints from Firestore to map overlay items
+     * and displays them on the map.
+     *
+     * @param geoPoints A list of GeoPoint objects representing locations from Firestore.
+     */
     @Override
     public void onEventGeoPointsUpdated(List<com.google.firebase.firestore.GeoPoint> geoPoints) {
         if (geoPoints != null){

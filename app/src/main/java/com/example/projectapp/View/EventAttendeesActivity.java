@@ -51,11 +51,17 @@ public class EventAttendeesActivity extends AppCompatActivity implements EventAt
         signedUpAttendeesListView.setAdapter(signedUpAttendeeAdapter);
     }
 
+    /**
+     * call super class
+     */
     @Override
     protected void onResume() {
         super.onResume();
     }
 
+    /**
+     * call super class
+     */
     @Override
     protected void onPause() {
         super.onPause();
