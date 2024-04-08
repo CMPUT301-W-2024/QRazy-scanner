@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projectapp.Controller.DataHandler;
 import com.example.projectapp.Controller.GetAttendeeCallback;
+import com.example.projectapp.ImageHandler;
 import com.example.projectapp.Model.Announcement;
 import com.example.projectapp.Model.Attendee;
 import com.example.projectapp.Model.Event;
@@ -57,8 +58,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         ImageView eventQrView, promoQrView;
         TextView eventQrText, promoQrText;
         ImageButton expandEventButton, announcementButton;
-        Button viewMapButton;
-        Button pdfButton;
+        Button viewMapButton, pdfButton, generateQrButton;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -76,6 +76,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             announcementButton = itemView.findViewById(R.id.announcementButton);
             pdfButton = itemView.findViewById(R.id.pdfButton);
             viewMapButton = itemView.findViewById(R.id.viewMapButton);
+            generateQrButton = itemView.findViewById(R.id.eventAdapterQrButton);
         }
     }
 
@@ -96,11 +97,15 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         holder.eventTimeTextView.setText(event.getStartTime() + " - " +event.getEndTime());
 
         if (event.getQrCode() != null){
-            Bitmap bitmap = stringToBitmap(event.getQrCode());
+            Bitmap bitmap = ImageHandler.getInstance().stringToBitmap(event.getQrCode());
             if (bitmap != null){
                 holder.eventQrView.setImageBitmap(bitmap);
                 holder.eventQrView.setVisibility(View.VISIBLE);
                 holder.eventQrText.setVisibility(View.VISIBLE);
+            }
+            else {
+                holder.eventQrView.setVisibility(View.GONE);
+                holder.eventQrText.setVisibility(View.GONE);
             }
         }
         else {
@@ -109,7 +114,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         }
 
         if (event.getPromoQrCode() != null){
-            Bitmap bitmap = stringToBitmap(event.getPromoQrCode());
+            Bitmap bitmap = ImageHandler.getInstance().stringToBitmap(event.getPromoQrCode());
             holder.promoQrView.setImageBitmap(bitmap);
             holder.promoQrView.setVisibility(View.VISIBLE);
             holder.promoQrText.setVisibility(View.VISIBLE);
@@ -143,28 +148,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    DataHandler dataHandler = DataHandler.getInstance();
-                    // gets set of all checked and signed up attendees
-                    Set<String> unionAttendees = new HashSet<>(event.getCheckedAttendees().keySet());
-                    unionAttendees.addAll(event.getSignedAttendees());
-
-                    for (String attendeeId : unionAttendees){
-                        dataHandler.getAttendee(attendeeId, new GetAttendeeCallback() {
-                            @Override
-                            public void onGetAttendee(Attendee attendee, boolean deleted) {
-                                try {
-                                    dataHandler.sendNotification(attendee.getFcmToken() ,event.getName(), input.getText().toString());
-                                } catch (Exception e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
-                        });
-                    }
-
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-                    Date currentDateTime = new Date();
-                    Announcement announcement = new Announcement(input.getText().toString(), sdf.format(currentDateTime), event.getName(), event.getOrganizerName());
-                    dataHandler.updateEvent(event.getEventId(), "announcements", FieldValue.arrayUnion(announcement), OrganizerEventAdapter.this);
+                    sendAnnouncement(input.getText().toString(), event);
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -177,7 +161,15 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             builder.show();
         });
 
-        holder.viewMapButton.setVisibility(event.getTrackLocation() ? View.VISIBLE : View.INVISIBLE);
+
+        holder.generateQrButton.setOnClickListener(v -> {
+            Intent intent = new Intent(context, GenerateQrCodeActivity.class);
+            intent.putExtra("EVENT_ID", event.getEventId());
+            context.startActivity(intent);
+        });
+
+        holder.viewMapButton.setVisibility(event.getTrackLocation() ? View.VISIBLE : View.GONE);
+
         holder.viewMapButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, MapActivity.class);
             intent.putExtra("EVENT_ID", event.getEventId());
@@ -195,22 +187,31 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         return events.size();
     }
 
+    private void sendAnnouncement(String message, Event event){
+        DataHandler dataHandler = DataHandler.getInstance();
+        // gets set of all checked and signed up attendees
+        Set<String> unionAttendees = new HashSet<>(event.getCheckedAttendees().keySet());
+        unionAttendees.addAll(event.getSignedAttendees());
 
-    /**
-     * Function to convert a Base64 encoded string to a Bitmap.
-     * @param encodedString The Base64 encoded string representation of an image.
-     * @return The Bitmap image or null if an error occurs.
-     */
-    public Bitmap stringToBitmap(String encodedString) {
-        try {
-            byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-            return bitmap;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+        for (String attendeeId : unionAttendees){
+            dataHandler.getAttendee(attendeeId, new GetAttendeeCallback() {
+                @Override
+                public void onGetAttendee(Attendee attendee, boolean deleted) {
+                    try {
+                        dataHandler.sendNotification(attendee.getFcmToken() ,event.getName(), message);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
         }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date currentDateTime = new Date();
+        Announcement announcement = new Announcement(message, sdf.format(currentDateTime), event.getName(), event.getOrganizerName());
+        dataHandler.updateEvent(event.getEventId(), "announcements", FieldValue.arrayUnion(announcement), OrganizerEventAdapter.this);
     }
+
 
     @Override
     public void onUpdateEvent(String eventId) {

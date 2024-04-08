@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.projectapp.Controller.AddAttendeeCallback;
 import com.example.projectapp.Controller.DataHandler;
 import com.example.projectapp.Controller.LocalAttendeeListenerCallback;
+import com.example.projectapp.ImageHandler;
 import com.example.projectapp.Model.Attendee;
 import com.example.projectapp.R;
 
@@ -51,6 +52,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
     private Button saveButton, deleteButton;
     private Attendee currentAttendee;
     private final DataHandler dataHandler = DataHandler.getInstance();
+    private final ImageHandler imageHandler = ImageHandler.getInstance();
     private boolean active;
 
     @Override
@@ -113,7 +115,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         Bitmap generatedProfilePic = IdenticonGenerator.generate(currentAttendee.getName(), 128);
         if (generatedProfilePic != null) {
             avatar.setImageBitmap(generatedProfilePic);
-            encodedImage = bitmapToString(generatedProfilePic);
+            encodedImage = imageHandler.bitmapToString(generatedProfilePic);
         }
     }
 
@@ -128,7 +130,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
     }
 
     private boolean isUploadedProfilePic(String profilePic) {
-        return profilePic != null && profilePic.length() > 1000;
+        return profilePic != null && profilePic.length() > 9000;
     }
 
 
@@ -142,17 +144,16 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
 
         encodedImage = currentAttendee.getProfilePic();
         if (encodedImage != null && !encodedImage.isEmpty()) {
-            Bitmap bitmap = stringToBitmap(encodedImage);
+            Bitmap bitmap = imageHandler.stringToBitmap(encodedImage);
             if (bitmap != null) {
-                //bitmap = ExifUtil.rotateBitmap(bitmap, exifOrientation);;
-                Log.i("ProfileEditActivity", "encodedString1 "+ bitmapToString(bitmap)+ "vs " + encodedImage);
+
                 avatar.setImageBitmap(bitmap);
             }
         }
         else {
             Bitmap generatedProfilePic = IdenticonGenerator.generate(currentAttendee.getName(), 128);
             avatar.setImageBitmap(generatedProfilePic);
-            encodedImage = bitmapToString(generatedProfilePic);
+            encodedImage = imageHandler.bitmapToString(generatedProfilePic);
         }
 
     }
@@ -173,7 +174,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         if (encodedImage == null || encodedImage.isEmpty()) {
             Bitmap generatedProfilePic = IdenticonGenerator.generate(name, 128);
             if (generatedProfilePic != null) {
-                encodedImage = bitmapToString(generatedProfilePic);
+                encodedImage = imageHandler.bitmapToString(generatedProfilePic);
             }
         }
 
@@ -226,7 +227,7 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
                         avatar.setImageURI(imageUri);
                         try {
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-                            encodedImage = bitmapToString(bitmap);
+                            encodedImage = imageHandler.bitmapToString(bitmap);
                         } catch (IOException e) {
                             Log.e("ProfileEditActivity", "Error converting image", e);
                         }
@@ -234,77 +235,10 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
                 });
     }
 
-    /**
-     *  Converts a bitmap into a Base64 encoded string and optionally implements downsizing and rotation.
-     *
-     *  @param bitmap  The Bitmap to be converted.
-     *  @return The Base64 encoded string representation of the image.
-     */
-    public String bitmapToString(Bitmap bitmap) {
-        int maxSize = 3072; // Maximum dimension (width or height) for the resized bitmap
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-
-        // Check if resizing is needed
-        if (width > maxSize || height > maxSize) {
-            float scale = Math.min(((float) maxSize) / width, ((float) maxSize) / height);
-            Matrix matrix = new Matrix();
-            matrix.postScale(scale, scale);
-            Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
-
-            // Rotate the resized bitmap by 90 degrees (adjust as needed)
-            matrix.postRotate(90); // You can change the rotation angle here
-
-            Bitmap rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0, resizedBitmap.getWidth(), resizedBitmap.getHeight(), matrix, true);
-
-            // Convert the rotated bitmap to a Base64 encoded string
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            int quality = 100; // Initial quality
-            rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
-
-            while (baos.size() > 1024 * 1024) { // 1 MiB in bytes
-                baos.reset(); // Reset the stream
-                quality -= 10; // Reduce quality by 10 each time
-                if (quality <= 0) {
-                    break; // Exit loop if quality reaches 0
-                }
-                rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
-            }
-
-            byte[] byteArray = baos.toByteArray();
-            Log.i("ProfileEditActivity", "encodedString2 " + Base64.encodeToString(byteArray, Base64.DEFAULT));
-            return Base64.encodeToString(byteArray, Base64.DEFAULT);
-        } else {
-            // No resizing needed, directly convert the original bitmap to a Base64 encoded string
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] byteArray = baos.toByteArray();
-            return Base64.encodeToString(byteArray, Base64.DEFAULT);
-        }
-    }
 
 
     /**
-     *  Converts a Base64 encoded string into a Bitmap object.
-     *
-     *  @param encodedString  The Base64 encoded image string
-     *  @return  The Bitmap object, or 'null' if decoding failed
-     */
-    public Bitmap stringToBitmap(String encodedString) {
-        try {
-            Log.i("ProfileEditActivity", "encodedString3 "+ encodedString);
-            byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-            return bitmap;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
 
-    }
-
-    /**
      * The IdenticonGenerator class provides a utility to generate simple, visually distinct
      * profile pictures based on a username. These generated images are often called "Identicons".
      */
@@ -385,50 +319,6 @@ public class ProfileEditActivity extends AppCompatActivity implements AddAttende
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("attendeeId", dataHandler.getLocalAttendee().getAttendeeId());
         editor.apply();
-    }
-
-    /**
-     * Attempts to correct the rotation of a Bitmap image based on embedded Exif orientation metadata.
-     * This is necessary when handling images captured by a camera.
-     *
-     * @param bitmap        The potentially rotated Bitmap image.
-     * @param encodedString The base64 encoded string representation of the image (used to access Exif data).
-     * @return  The corrected Bitmap image (if rotation was required), or the original Bitmap if no rotation was needed.
-     */
-    private Bitmap rotateBitmapIfRequired(Bitmap bitmap, String encodedString) {
-        try {
-            byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
-            File file = File.createTempFile("temp", null, getCacheDir());
-            FileOutputStream fos = new FileOutputStream(file);
-            fos.write(decodedBytes);
-            fos.close();
-
-            ExifInterface exif = new ExifInterface(file.getAbsolutePath());
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
-            Matrix matrix = new Matrix();
-            switch (orientation) {
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    matrix.postRotate(90);
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    matrix.postRotate(180);
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    matrix.postRotate(270);
-                    break;
-                default:
-                    return bitmap;
-            }
-
-            Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-            file.delete(); // Clean up temporary file
-            return rotatedBitmap;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return bitmap;
-        }
     }
 
 }

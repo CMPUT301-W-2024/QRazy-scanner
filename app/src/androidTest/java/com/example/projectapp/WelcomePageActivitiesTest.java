@@ -9,6 +9,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.rule.GrantPermissionRule;
 
 import com.example.projectapp.View.MainActivity;
 
@@ -23,6 +24,9 @@ import org.junit.runner.RunWith;
  */
 @RunWith(AndroidJUnit4.class)
 public class WelcomePageActivitiesTest {
+    @Rule
+    public GrantPermissionRule mGrantPermissionRule =
+            GrantPermissionRule.grant(android.Manifest.permission.POST_NOTIFICATIONS);
 
     @Rule
     public ActivityScenarioRule<MainActivity> activityScenarioRule =
@@ -35,7 +39,7 @@ public class WelcomePageActivitiesTest {
     @Test
     public void testCreateEventButton() {
         onView(withId(R.id.createEventButton)).perform(click());
-        onView(withId(R.id.organizerNameEditText)).check(matches(isDisplayed()));
+        onView(withId(R.id.allEventsTextView)).check(matches(isDisplayed()));
     }
 
     /**

@@ -87,6 +87,7 @@ public class OrganizerPageActivitiesTest {
                 d.getReference().delete();
             }
         });
+        FirebaseFirestore.getInstance().collection("organizers").document(dataHandler.getLocalOrganizer().getOrganizerId()).delete();
     }
 
     /**
@@ -109,9 +110,7 @@ public class OrganizerPageActivitiesTest {
         ActivityScenario.launch(OrganizerPageActivity.class);
 
         createNewEvent();
-        onView(withId(R.id.newQrButton))
-                .perform(scrollTo())
-                .perform(click());
+        onView(withId(R.id.generateQrCodeButton)).perform(click());
         Thread.sleep(500);
 
         onView(withId(R.id.finishButton)).perform(click());
@@ -151,7 +150,7 @@ public class OrganizerPageActivitiesTest {
         createNewEvent();
         onView(withId(R.id.finishButton)).perform(click());
         onView(withId(R.id.expandButton)).perform(click());
-        onView(withId(R.id.reportButton)).perform(click());
+        onView(withId(R.id.pdfButton)).perform(click());
         onView(withId(R.id.reportText)).check(matches(isDisplayed()));
         pressBack();
         onView(withId(R.id.allEventsTextView)).check(matches(isDisplayed()));
@@ -176,6 +175,9 @@ public class OrganizerPageActivitiesTest {
         createNewEvent();
         onView(withId(R.id.finishButton)).perform(click());
         onView(withId(R.id.expandButton)).perform(click());
+        onView(withId(R.id.eventAdapterQrButton)).perform(click());
+        onView(withId(R.id.generateQrCodeButton)).check(matches(isDisplayed()));
+        pressBack();
         onView(withId(R.id.allEventsTextView)).check(matches(isDisplayed()));
     }
 

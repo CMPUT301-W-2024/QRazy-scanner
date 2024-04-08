@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Load the WelcomeFragment initially
         String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        Toast.makeText(this, "Android ID: " + androidId, Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Android ID: " + androidId, Toast.LENGTH_LONG).show();
         if (isSpecificDevice(androidId)) {
             // If it's the admin device, start the Admin activity
             Intent adminIntent = new Intent(this, Admin.class);
@@ -67,7 +67,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Replace "SpecificAndroidID" with the actual Android ID of the admin device
 
-        return androidId.equals("136463934ec8e91f");
+        return androidId.equals("8acf804d1b4ee359");
+
     }
 
 }
