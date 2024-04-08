@@ -57,6 +57,6 @@ public class ProfileEditActivityTest {
         onView(withId(R.id.saveButton)).perform(click());
         pressBack();
         Thread.sleep(500);
-        onView(withText("Welcome, Test Attendees ")).check(matches(isDisplayed()));
+        onView(withText("Test Attendees ")).check(matches(isDisplayed()));
     }
 }

@@ -12,6 +12,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.GrantPermissionRule;
 
 import com.example.projectapp.View.MainActivity;
+import com.example.projectapp.View.WelcomeFragment;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,9 +38,10 @@ public class WelcomePageActivitiesTest {
      * transitions to 'Organizer Page' activity
      */
     @Test
-    public void testCreateEventButton() {
+    public void testCreateEventButton() throws InterruptedException {
         onView(withId(R.id.createEventButton)).perform(click());
-        onView(withId(R.id.allEventsTextView)).check(matches(isDisplayed()));
+        Thread.sleep(500);
+        onView(withId(R.id.headerTextView)).check(matches(isDisplayed()));
     }
 
     /**
@@ -48,9 +50,9 @@ public class WelcomePageActivitiesTest {
      * 'Attendee Page' activity if returning user
      */
     @Test
-    public void testJoinEventButton(){
+    public void testJoinEventButton() throws InterruptedException {
         onView(withId(R.id.joinEventButton)).perform(click());
-
+        Thread.sleep(500);
         try {
             // If new user, profile fragment will be displayed
             onView(withId(R.id.userNameEditText)).check(matches(isDisplayed()));
