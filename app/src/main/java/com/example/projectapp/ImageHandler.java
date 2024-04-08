@@ -53,7 +53,7 @@ public class ImageHandler {
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             int quality = 100; // Initial quality
-            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+            resizedBitmap.compress(Bitmap.CompressFormat.PNG, quality, baos);
 
             while (baos.size() > 1024 * 1024) { // 1 MiB in bytes
                 baos.reset(); // Reset the stream
@@ -61,7 +61,7 @@ public class ImageHandler {
                 if (quality <= 0) {
                     break; // Exit loop if quality reaches 0
                 }
-                resizedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+                resizedBitmap.compress(Bitmap.CompressFormat.PNG, quality, baos);
             }
 
             byte[] byteArray = baos.toByteArray();

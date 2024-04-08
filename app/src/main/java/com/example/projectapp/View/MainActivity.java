@@ -67,8 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Replace "SpecificAndroidID" with the actual Android ID of the admin device
 
-        return androidId.equals("8acf804d1b4ee359");
-
+        return androidId.equals("0422ca4b2d9bacd");
     }
 
 }
