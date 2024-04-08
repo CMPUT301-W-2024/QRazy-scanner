@@ -25,6 +25,7 @@ import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.matcher.RootMatchers;
 import androidx.test.espresso.matcher.ViewMatchers;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.GrantPermissionRule;
@@ -58,42 +59,21 @@ import java.util.ArrayList;
 @RunWith(AndroidJUnit4.class)
 public class OrganizerPageActivitiesTest {
     DataHandler dataHandler = DataHandler.getInstance();
-    Event event = new Event("organizer page activity","2024-01-01", "00:00", "01:00", "Organizer Activity", "123456789", 50, "Sample description", "poster.png");
-    Organizer organizer = new Organizer("Organizer Activity");
+
+    @Rule
+    public ActivityScenarioRule<OrganizerPageActivity> scenario = new
+            ActivityScenarioRule<OrganizerPageActivity>(OrganizerPageActivity.class);
 
     @Rule
     public GrantPermissionRule permissionRule = GrantPermissionRule.grant(
-            "android.Manifest.permission.ACCESS_FINE_LOCATION",
-            "android.Manifest.permission.ACCESS_COARSE_LOCATION",
-            "android.Manifest.permission.ACCESS_BACKGROUND_LOCATION");
+            android.Manifest.permission.ACCESS_FINE_LOCATION,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            android.Manifest.permission.READ_MEDIA_IMAGES);
     // create organizer and event
     @Before
     public void setUp(){
-        event.setQrCode("iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAIAAABEtEjdAAAAAXNSR0IArs4c6QAAAANzQklUBQYFMwuNgAAACZhJREFUeJzt3EuOa0UQRdEyqvlPuWggIUQDJSZ5Ed53rQHY92NvZeu8fn5");
-        event.setPromoQrCode("iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAIAAABEtEjdAAAAAXNSR0IArs4c6QAAAANzQklUBQYFMwuNgAAACZNJREFUeJzt3EGu20YQRVEp0P63");
-
-        event.setOrganizerName(organizer.getName());
-        event.setOrganizerId(organizer.getOrganizerId());
-
-        //DocumentReference eventDocRef = FirebaseFirestore.getInstance().collection("events").document(event.getEventId());
-        //eventDocRef.set(event);
-
-        ArrayList<Event> eventArray = new ArrayList<>(); // Create an array with a single slot
-        eventArray.add(event); // Assign the event object to the first index of the array
-
-        organizer.setEvents(eventArray);
+        Organizer organizer = new Organizer("Organizer Activity");
         dataHandler.setLocalOrganizer(organizer);
-        //dataHandler.addEvent(event, AddEventCallback );
-
-    }
-
-    @After
-    public void tearDown(){
-        DocumentReference eventDocRef = FirebaseFirestore.getInstance().collection("events").document(event.getEventId());
-        eventDocRef.delete();
-
-        DocumentReference OrganizerDocRef = FirebaseFirestore.getInstance().collection("organizers").document((dataHandler.getLocalOrganizer()).getOrganizerId());
-        OrganizerDocRef.delete();
     }
 
     /**
@@ -103,7 +83,7 @@ public class OrganizerPageActivitiesTest {
      */
     @Test
     public void testCreateNewEventActivity() {
-        ActivityScenario.launch(OrganizerPageActivity.class);
+
         onView(withId(R.id.allEventsTextView)).check(matches(isDisplayed()));
 
         onView(withId(R.id.createNewEventButton)).perform(click());
@@ -114,13 +94,10 @@ public class OrganizerPageActivitiesTest {
     }
 
     @Test
-    public void testGenerateQRCodeActivity() {
-        ActivityScenario.launch(OrganizerPageActivity.class);
+    public void testGenerateQRCodeActivity() throws InterruptedException {
 
         onView(withId(R.id.allEventsTextView)).check(matches(isDisplayed()));
         onView(withId(R.id.createNewEventButton)).perform(click());
-
-        ActivityScenario.launch(CreateNewEventActivity.class);
 
         fillEventDetails();
 
@@ -128,12 +105,9 @@ public class OrganizerPageActivitiesTest {
                 .perform(scrollTo())
                 .perform(click());
 
-        ActivityScenario.launch(GenerateQrCodeActivity.class);
-
+        Thread.sleep(500);
         onView(withId(R.id.qrCodeImageView)).check(matches(isDisplayed()));
         onView(withId(R.id.finishButton)).perform(click());
-
-        ActivityScenario.launch(OrganizerPageActivity.class);
 
         onView(withId(R.id.allEventsTextView)).check(matches(isDisplayed()));
     }
@@ -145,86 +119,42 @@ public class OrganizerPageActivitiesTest {
      */
     @Test
     public void testMapAndReportAndLiveAttendeeActivities() throws InterruptedException {
-        ActivityScenario.launch(OrganizerPageActivity.class);
 
         onView(withId(R.id.allEventsTextView)).check(matches(isDisplayed()));
         onView(withId(R.id.createNewEventButton)).perform(click());
-        ActivityScenario.launch(CreateNewEventActivity.class);
+
         fillEventDetails();
         onView(withId(R.id.newQrButton)).perform(scrollTo()).perform(click());
-        ActivityScenario.launch(GenerateQrCodeActivity.class);
+
+        Thread.sleep(500);
         onView(withId(R.id.qrCodeImageView)).check(matches(isDisplayed()));
         onView(withId(R.id.finishButton)).perform(click());
-        ActivityScenario.launch(OrganizerPageActivity.class);
+
         onView(withId(R.id.allEventsTextView)).check(matches(isDisplayed()));
 
-        onView(withId(R.id.expandButton)).perform(click());
+        onView((withId(R.id.expandButton))).perform(click());
         onView(withId(R.id.viewMapButton)).perform(click());
 
-        ActivityScenario.launch(MapActivity.class);
-
-        Thread.sleep(100);
+        Thread.sleep(500);
         onView(withId(R.id.mapView)).check(matches(isDisplayed()));
         onView(withId(R.id.goBackButton)).perform(click());
 
-        ActivityScenario.launch(OrganizerPageActivity.class);
         onView(withId(R.id.allEventsTextView)).check(matches(isDisplayed()));
-
         onView(withId(R.id.attendeeCountTextView)).perform(click());
 
-        ActivityScenario.launch(EventAttendeesActivity.class);
-        onView(withId(R.id.checkedInAttendeesList)).check(matches(isDisplayed()));
+        Thread.sleep(500);
+        onView(withId(R.id.eventAttendeesList)).check(matches(isDisplayed()));
         pressBack();
 
-        ActivityScenario.launch(OrganizerPageActivity.class);
         onView(withId(R.id.allEventsTextView)).check(matches(isDisplayed()));
-
-        ActivityScenario.launch(ReportActivity.class);
         onView(withId(R.id.pdfButton)).perform(click());
+
+        Thread.sleep(200);
         onView(withId(R.id.reportButton)).check(matches(isDisplayed()));
         pressBack();
 
-        ActivityScenario.launch(OrganizerPageActivity.class);
         onView(withId(R.id.allEventsTextView)).check(matches(isDisplayed()));
     }
-
-    /**
-     * Test to check if clicking 'Live attendee count' switches from
-     * 'Organizer Page' activity to 'Event Attendees' activity and
-     * back to 'Organizer Page'
-     */
-    /*@Test
-    public void testEventAttendeesActivity() {
-        // Launch OrganizerPageActivity
-        ActivityScenario<OrganizerPageActivity> attendeePageActivityScenario = ActivityScenario.launch(OrganizerPageActivity.class);
-
-        onView(withId(R.id.organizerNameEditText)).check(matches(isDisplayed()));
-
-        onView(withId(R.id.attendeeCountTextView)).perform(click());
-        onView(withId(R.id.checkedInAttendeesList)).check(matches(isDisplayed()));
-        pressBack();
-
-        onView(withId(R.id.organizerNameEditText)).check(matches(isDisplayed()));
-    }
-
-    /**
-     * Test to check if clicking pdf button switches from
-     * 'Organizer Page' activity to 'Report' activity and
-     * back to 'Organizer Page'
-     */
-    /*@Test
-    public void testReportActivity() {
-        // Launch OrganizerPageActivity
-        ActivityScenario<OrganizerPageActivity> attendeePageActivityScenario = ActivityScenario.launch(OrganizerPageActivity.class);
-
-        onView(withId(R.id.organizerNameEditText)).check(matches(isDisplayed()));
-
-        onView(withId(R.id.pdfButton)).perform(click());
-        onView(withId(R.id.reportButton)).check(matches(isDisplayed()));
-        pressBack();
-
-        onView(withId(R.id.organizerNameEditText)).check(matches(isDisplayed()));
-    }*/
 
     public void fillEventDetails() {
         onView(withId(R.id.eventNameEditText)).perform(click());
